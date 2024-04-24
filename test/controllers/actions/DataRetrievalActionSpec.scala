@@ -29,18 +29,18 @@ import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
-  class Harness(sessionRepository: SessionRepository) extends DataRetrievalActionImpl(sessionRepository) {
+  class Harness(sessionRepository: SessionRepository) extends DataRetrievalActionImpl(sessionRepository)(ec) {
     def callTransform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
   }
 
-  "Data Retrieval Action" - {
+  "Data Retrieval Action" when {
 
-    "when there is no data in the cache" - {
+    "when there is no data in the cache" when {
 
       "must set userAnswers to 'None' in the request" in {
 
         val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(None)
+        when(sessionRepository.get("id")) thenReturn Future(None)(ec)
         val action = new Harness(sessionRepository)
 
         val result = action.callTransform(IdentifierRequest(FakeRequest(), "id")).futureValue
@@ -49,12 +49,12 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "when there is data in the cache" - {
+    "when there is data in the cache" when {
 
       "must build a userAnswers object and add it to the request" in {
 
         val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
+        when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))(ec)
         val action = new Harness(sessionRepository)
 
         val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id")).futureValue

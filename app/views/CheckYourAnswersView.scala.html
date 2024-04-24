@@ -14,12 +14,18 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
+@import views.ViewUtils.titleNoForm
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
+
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList
 )
 
-@(list: SummaryList)(implicit request: Request[_], messages: Messages)
+@(list: SummaryList)(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 

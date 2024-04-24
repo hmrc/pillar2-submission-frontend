@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class AuthControllerSpec extends SpecBase with MockitoSugar {
 
-  "signOut" - {
+  "signOut" when {
 
     "must clear user answers and redirect to sign out, specifying the exit survey as the continue URL" in {
 
@@ -61,7 +61,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
     }
   }
 
-  "signOutNoSurvey" - {
+  "signOutNoSurvey" when {
 
     "must clear users answers and redirect to sign out, specifying SignedOut as the continue URL" in {
 

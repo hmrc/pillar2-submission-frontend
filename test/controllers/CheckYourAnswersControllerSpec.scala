@@ -24,7 +24,7 @@ import views.html.CheckYourAnswersView
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  "Check Your Answers Controller" - {
+  "Check Your Answers Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -39,7 +39,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val list = SummaryListViewModel(Seq.empty)
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
       }
     }
 

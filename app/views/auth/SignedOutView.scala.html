@@ -14,12 +14,17 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
+@import views.ViewUtils.titleNoForm
+
 @this(
     layout: templates.Layout,
     govukButton: GovukButton
 )
 
-@()(implicit request: Request[_], messages: Messages)
+
+@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("signedOut.title")),

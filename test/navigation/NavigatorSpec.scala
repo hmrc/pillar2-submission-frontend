@@ -25,9 +25,9 @@ class NavigatorSpec extends SpecBase {
 
   val navigator = new Navigator
 
-  "Navigator" - {
+  "Navigator" when {
 
-    "in Normal mode" - {
+    "in Normal mode" when {
 
       "must go from a page that doesn't exist in the route map to Index" in {
 
@@ -36,7 +36,7 @@ class NavigatorSpec extends SpecBase {
       }
     }
 
-    "in Check mode" - {
+    "in Check mode" when {
 
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 

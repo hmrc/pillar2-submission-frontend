@@ -30,9 +30,9 @@ class SessionActionSpec extends SpecBase {
     def onPageLoad(): Action[AnyContent] = action(_ => Results.Ok)
   }
 
-  "Session Action" - {
+  "Session Action" when {
 
-    "when there is no active session" - {
+    "when there is no active session" when {
 
       "must redirect to the session expired page" in {
 
@@ -41,7 +41,7 @@ class SessionActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
-          val sessionAction = new SessionIdentifierAction(bodyParsers)
+          val sessionAction = new SessionIdentifierAction(bodyParsers)(ec)
 
           val controller = new Harness(sessionAction)
 
@@ -53,7 +53,7 @@ class SessionActionSpec extends SpecBase {
       }
     }
 
-    "when there is an active session" - {
+    "when there is an active session" when {
 
       "must perform the action" in {
 
@@ -62,7 +62,7 @@ class SessionActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
-          val sessionAction = new SessionIdentifierAction(bodyParsers)
+          val sessionAction = new SessionIdentifierAction(bodyParsers)(ec)
 
           val controller = new Harness(sessionAction)
 

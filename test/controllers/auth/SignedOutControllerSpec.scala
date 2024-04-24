@@ -23,7 +23,7 @@ import views.html.auth.SignedOutView
 
 class SignedOutControllerSpec extends SpecBase {
 
-  "SignedOut Controller" - {
+  "SignedOut Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -37,7 +37,7 @@ class SignedOutControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SignedOutView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
   }
