@@ -78,13 +78,13 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val govukBackLink            = new GovukBackLink
   val govukWarningText         = new GovukWarningText
   val formWithCSRF             = new FormWithCSRF
-  val heading                  = new heading
+  val heading                  = new Heading
   val h2                       = new HeadingH2
-  val paragraphBody            = new paragraphBody
-  val paragraphBodyLink        = new paragraphBodyLink
+  val paragraphBody            = new ParagraphBody
+  val paragraphBodyLink        = new ParagraphBodyLink
   val span                     = new Span
   val paragraphMessageWithLink = new ParagraphMessageWithLink
-  val sectionHeader            = new sectionHeader
+  val sectionHeader            = new SectionHeader
 
   val hmrcPageHeading = new HmrcPageHeading
   val govUkInsetText  = new GovukInsetText
