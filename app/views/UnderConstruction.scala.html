@@ -28,7 +28,7 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
+    pageTitle = titleNoForm(messages("index.title")), showSignOut = false,   showBackLink = false, timeout = false) {
 
     @heading(messages("under_construction.heading"))
 
