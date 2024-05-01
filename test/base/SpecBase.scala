@@ -153,16 +153,6 @@ trait SpecBase
         )
     )
 
-  protected def stubGetUserAnswerConnector(expectedEndpoint: String, expectedStatus: Int, expectedBody: JsValue): StubMapping =
-    server.stubFor(
-      get(urlEqualTo(s"$expectedEndpoint"))
-        .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-            .withBody(expectedBody.toString())
-        )
-    )
-
   protected def stubDelete(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
     server.stubFor(
       delete(urlEqualTo(s"$expectedEndpoint"))
