@@ -14,18 +14,26 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
-    layout: templates.Layout
+        layout: templates.Layout,
+        paragraphBody: ParagraphBody,
+        heading: Heading
 )
 
-@()(implicit request: Request[_], messages: Messages)
+
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("unauthorised.title")),
-    timeout   = false
+    showBackLink = false,
+    timeout = false,
+    authorised = false
 ) {
 
-    <h1 class="govuk-heading-xl">@messages("unauthorised.heading")</h1>
+    @heading(messages("unauthorised.heading"))
+    @paragraphBody(messages("unauthorised.guidance"))
 
-    <p class="govuk-body">@messages("unauthorised.guidance")</p>
 }

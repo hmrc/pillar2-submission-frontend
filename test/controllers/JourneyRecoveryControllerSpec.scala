@@ -24,9 +24,9 @@ import views.html.{JourneyRecoveryContinueView, JourneyRecoveryStartAgainView}
 
 class JourneyRecoveryControllerSpec extends SpecBase {
 
-  "JourneyRecovery Controller" - {
+  "JourneyRecovery Controller" when {
 
-    "when a relative continue Url is supplied" - {
+    "when a relative continue Url is supplied" when {
 
       "must return OK and the continue view" in {
 
@@ -41,12 +41,12 @@ class JourneyRecoveryControllerSpec extends SpecBase {
           val continueView = application.injector.instanceOf[JourneyRecoveryContinueView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual continueView(continueUrl.unsafeValue)(request, messages(application)).toString
+          contentAsString(result) mustEqual continueView(continueUrl.unsafeValue)(request, appConfig(application), messages(application)).toString
         }
       }
     }
 
-    "when an absolute continue Url is supplied" - {
+    "when an absolute continue Url is supplied" when {
 
       "must return OK and the start again view" in {
 
@@ -61,12 +61,12 @@ class JourneyRecoveryControllerSpec extends SpecBase {
           val startAgainView = application.injector.instanceOf[JourneyRecoveryStartAgainView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual startAgainView()(request, messages(application)).toString
+          contentAsString(result) mustEqual startAgainView()(request, appConfig(application), messages(application)).toString
         }
       }
     }
 
-    "when no continue Url is supplied" - {
+    "when no continue Url is supplied" when {
 
       "must return OK and the start again view" in {
 
@@ -80,7 +80,7 @@ class JourneyRecoveryControllerSpec extends SpecBase {
           val startAgainView = application.injector.instanceOf[JourneyRecoveryStartAgainView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual startAgainView()(request, messages(application)).toString
+          contentAsString(result) mustEqual startAgainView()(request, appConfig(application), messages(application)).toString
         }
       }
     }

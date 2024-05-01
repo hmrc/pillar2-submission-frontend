@@ -16,12 +16,16 @@
 
 package config
 
-import com.google.inject.AbstractModule
+import com.google.inject.{AbstractModule, Provides}
+import com.google.inject.name.Named
 import controllers.actions._
+import play.api.{Configuration, Environment}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.{Clock, ZoneOffset}
+import javax.inject.Singleton
 
-class Module extends AbstractModule {
+class Module(environment: Environment, configuration: Configuration) extends AbstractModule {
 
   override def configure(): Unit = {
 
@@ -33,4 +37,10 @@ class Module extends AbstractModule {
 
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
   }
+
+  @Provides
+  @Named("pillar2Url")
+  @Singleton
+  def registerPillar2UrlProvider(servicesConfig: ServicesConfig): String =
+    servicesConfig.baseUrl("pillar2")
 }

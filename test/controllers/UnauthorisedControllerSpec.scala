@@ -23,7 +23,7 @@ import views.html.UnauthorisedView
 
 class UnauthorisedControllerSpec extends SpecBase {
 
-  "Unauthorised Controller" - {
+  "Unauthorised Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -37,7 +37,7 @@ class UnauthorisedControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UnauthorisedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
   }

@@ -14,6 +14,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 import java.time.{Clock, Instant, ZoneId}
 import java.time.temporal.ChronoUnit
+import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SessionRepositorySpec
@@ -27,6 +28,7 @@ class SessionRepositorySpec
 
   private val instant = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
+  implicit lazy val ec:           ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
 
   private val userAnswers = UserAnswers("id", Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
 
@@ -35,9 +37,8 @@ class SessionRepositorySpec
 
   protected override val repository = new SessionRepository(
     mongoComponent = mongoComponent,
-    appConfig      = mockAppConfig,
     clock          = stubClock
-  )
+  )(appConfig = mockAppConfig, ec = ec)
 
   ".set" - {
 

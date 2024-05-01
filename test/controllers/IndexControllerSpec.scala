@@ -23,7 +23,7 @@ import views.html.IndexView
 
 class IndexControllerSpec extends SpecBase {
 
-  "Index Controller" - {
+  "Index Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -38,7 +38,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
   }
