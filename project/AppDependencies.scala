@@ -3,8 +3,8 @@ import sbt._
 
 object AppDependencies {
 
-  private val bootstrapVersion = "8.3.0"
-  private val hmrcMongoVersion = "1.6.0"
+  private val bootstrapVersion = "8.4.0"
+  private val hmrcMongoVersion = "1.7.0"
   private val jsoupVersion      = "1.12.1"
   private val scalaCheckVersion = "1.17.0"
   private val seleniumVersion   = "4.4.0"
@@ -29,7 +29,11 @@ object AppDependencies {
     "org.seleniumhq.selenium" % "htmlunit-driver"           % "3.64.0",
     "com.danielasfregola"     %% "random-data-generator"    % "2.9",
     "org.mockito"            %% "mockito-scala-scalatest"   % "1.17.29",
-  ).map(_ % "test, it")
+  ).map(_ % Test)
+
+  val it: Seq[ModuleID] = Seq(
+    "uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion % Test
+  )
 
   def apply(): Seq[ModuleID] = compile ++ test
 }
