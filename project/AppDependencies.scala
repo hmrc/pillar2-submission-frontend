@@ -22,7 +22,7 @@ object AppDependencies {
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "5.1.0",
     "io.github.wolfendale"    %% "scalacheck-gen-regexp"    %  "0.1.3",
     "org.scalatestplus"       %% "scalatestplus-scalacheck" % "3.1.0.0-RC2",
-    "uk.gov.hmrc"             %% "bootstrap-test-play-28"   % bootstrapVersion,
+    "uk.gov.hmrc"             %% "bootstrap-test-play-30"   % bootstrapVersion,
     "com.vladsch.flexmark"    %  "flexmark-all"             % "0.62.2",
     "org.jsoup"               % "jsoup"                     % jsoupVersion,
     "org.seleniumhq.selenium" % "selenium-java"             % seleniumVersion,
