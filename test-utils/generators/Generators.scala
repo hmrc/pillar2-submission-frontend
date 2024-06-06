@@ -17,12 +17,12 @@
 package generators
 
 import java.time.{Instant, LocalDate, ZoneOffset}
-
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
+import wolfendale.scalacheck.regexp.RegexpGen
 
-trait Generators extends ModelGenerators {
+trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
 
@@ -110,5 +110,11 @@ trait Generators extends ModelGenerators {
     Gen.choose(toMillis(min), toMillis(max)).map { millis =>
       Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
     }
+  }
+
+  def nonEmptyRegexConformingStringWithMaxLength(regex: String, maxLength: Int): Gen[String] = {
+    val regexGen = RegexpGen.from(regex)
+    regexGen
+      .suchThat(s => s.trim.nonEmpty && s.length <= maxLength)
   }
 }

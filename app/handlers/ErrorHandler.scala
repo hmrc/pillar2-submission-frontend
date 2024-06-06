@@ -25,8 +25,6 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.ErrorTemplate
 
-import scala.concurrent.ExecutionContext
-
 @Singleton
 class ErrorHandler @Inject() (
   val messagesApi:    MessagesApi,

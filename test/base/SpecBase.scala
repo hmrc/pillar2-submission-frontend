@@ -26,7 +26,7 @@ import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Play.materializer
 import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
@@ -36,9 +36,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import play.api.{Application, Configuration}
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,6 +49,7 @@ trait SpecBase
     with ScalaFutures
     with BeforeAndAfterEach
     with Matchers
+    with TryValues
     with Results
     with HttpProtocol
     with AllMocks
@@ -59,12 +60,24 @@ trait SpecBase
     with EssentialActionCaller
     with HeaderNames
     with ViewInstances
-    with WireMockServerHandler
     with IntegrationPatience
-    with GuiceOneAppPerSuite {
+    with GuiceOneAppPerSuite
+    with WireMockServerHandler {
 
   val userAnswersId: String = "id"
+  val PlrReference:  String = "XMPLR0123456789"
 
+  type AgentRetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
+
+  val pillar2AgentEnrolment: Enrolments =
+    Enrolments(Set(Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None)))
+
+  val pillar2AgentEnrolmentWithDelegatedAuth: Enrolments = Enrolments(
+    Set(
+      Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None),
+      Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", Some("pillar2-auth"))
+    )
+  )
   def emptyUserAnswers:        UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:        ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:        HeaderCarrier     = HeaderCarrier()
@@ -81,11 +94,8 @@ trait SpecBase
       mockFrontendAppConfig,
       new BodyParsers.Default
     ) {
-      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
         Future.successful(Right(IdentifierRequest(request, "internalId")))
-      }
     }
 
   def preAuthenticatedEnrolmentActionBuilders(enrolments: Option[Set[Enrolment]] = None): AuthenticatedIdentifierAction =
@@ -95,7 +105,6 @@ trait SpecBase
       new BodyParsers.Default
     ) {
       override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
         val identifierRequest = IdentifierRequest(request, "internalId", enrolments.getOrElse(Set.empty))
         Future.successful(Right(identifierRequest))
       }
@@ -107,19 +116,23 @@ trait SpecBase
   }
 
   def preDataRetrievalActionImpl: DataRetrievalActionImpl = new DataRetrievalActionImpl(mockSessionRepository)(ec) {
-    override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
       Future(OptionalDataRequest(request.request, request.userId, Some(emptyUserAnswers)))(ec)
-    }
   }
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None, enrolments: Set[Enrolment] = Set.empty): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+    userAnswers:    Option[UserAnswers] = None,
+    enrolments:     Set[Enrolment] = Set.empty,
+    additionalData: Map[String, Any] = Map.empty
+  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
-        Configuration(
-          "metrics.enabled"         -> "false",
-          "auditing.enabled"        -> false,
-          "features.grsStubEnabled" -> true
+        Configuration.from(
+          Map(
+            "metrics.enabled"         -> "false",
+            "auditing.enabled"        -> false,
+            "features.grsStubEnabled" -> true
+          ) ++ additionalData
         )
       )
       .overrides(

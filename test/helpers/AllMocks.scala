@@ -17,13 +17,14 @@
 package helpers
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction}
+import connectors.SubscriptionConnector
+import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction}
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
-import play.api.mvc.MessagesControllerComponents
 import repositories.SessionRepository
+import services.SubscriptionService
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -32,15 +33,18 @@ import views.html.CheckYourAnswersView
 //TODO: Add all mocking instants in here.
 trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
 
-  val mockAuditConnector:       AuditConnector       = mock[AuditConnector]
-  val mockAuthConnector:        AuthConnector        = mock[AuthConnector]
-  val mockFrontendAppConfig:    FrontendAppConfig    = mock[FrontendAppConfig]
-  val mockMessagesApi:          MessagesApi          = mock[MessagesApi]
-  val mockSessionRepository:    SessionRepository    = mock[SessionRepository]
-  val mockDataRetrievalAction:  DataRetrievalAction  = mock[DataRetrievalAction]
-  val mockDataRequiredAction:   DataRequiredAction   = mock[DataRequiredAction]
-  val mockCheckYourAnswersView: CheckYourAnswersView = mock[CheckYourAnswersView]
-  val mockHttpClient:           HttpClient           = mock[HttpClient]
+  val mockAuditConnector:        AuditConnector        = mock[AuditConnector]
+  val mockAuthConnector:         AuthConnector         = mock[AuthConnector]
+  val mockFrontendAppConfig:     FrontendAppConfig     = mock[FrontendAppConfig]
+  val mockMessagesApi:           MessagesApi           = mock[MessagesApi]
+  val mockSessionRepository:     SessionRepository     = mock[SessionRepository]
+  val mockDataRetrievalAction:   DataRetrievalAction   = mock[DataRetrievalAction]
+  val mockDataRequiredAction:    DataRequiredAction    = mock[DataRequiredAction]
+  val mockCheckYourAnswersView:  CheckYourAnswersView  = mock[CheckYourAnswersView]
+  val mockHttpClient:            HttpClient            = mock[HttpClient]
+  val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
+  val mockSubscriptionService:   SubscriptionService   = mock[SubscriptionService]
+  val mockAgentIdentifierAction: AgentIdentifierAction = mock[AgentIdentifierAction]
 
   override protected def beforeEach(): Unit =
     Seq(
@@ -52,6 +56,9 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockDataRetrievalAction,
       mockDataRequiredAction,
       mockCheckYourAnswersView,
-      mockHttpClient
+      mockHttpClient,
+      mockSubscriptionConnector,
+      mockSubscriptionService,
+      mockAgentIdentifierAction
     ).foreach(Mockito.reset(_))
 }

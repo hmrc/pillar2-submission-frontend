@@ -23,3 +23,15 @@ GET         /unauthorised/standard-user                  controllers.Unauthorise
 GET         /unauthorised/individual                     controllers.UnauthorisedIndividualAffinityController.onPageLoad
 GET         /unauthorised/agent                          controllers.UnauthorisedAgentAffinityController.onPageLoad
 GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
+
+GET         /asa/input-pillar-2-id                       controllers.AgentController.onPageLoadClientPillarId
+POST        /asa/input-pillar-2-id                       controllers.AgentController.onSubmitClientPillarId
+GET         /asa/confirm                                 controllers.AgentController.onPageLoadConfirmClientDetails
+POST        /asa/confirm                                 controllers.AgentController.onSubmitConfirmClientDetails(pillar2Id: String)
+GET         /asa/error/no-match                          controllers.AgentController.onPageLoadNoClientMatch
+GET         /asa/error/system                            controllers.AgentController.onPageLoadError
+GET         /asa/error/not-authorised                    controllers.AgentController.onPageLoadUnauthorised
+GET         /asa/error/individual                        controllers.AgentController.onPageLoadIndividualError
+GET         /asa/error/organisation                      controllers.AgentController.onPageLoadOrganisationError
+GET         /asa/home                                    controllers.ASAStubController.onPageLoad
+
