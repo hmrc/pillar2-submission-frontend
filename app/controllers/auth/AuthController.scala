@@ -22,10 +22,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2SessionKeys
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +46,7 @@ class AuthController @Inject() (
         case Some(internalId) =>
           sessionRepository.clear(internalId)
         case _ =>
-          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
+          logger.warn(s"Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(controllers.routes.UnauthorisedController.onPageLoad)))
       }
       .map { _ =>
@@ -67,7 +66,7 @@ class AuthController @Inject() (
         case Some(internalId) =>
           sessionRepository.clear(internalId)
         case _ =>
-          logger.warn(s"[Session ID: ${Pillar2SessionKeys.sessionId(hc)}] - Unable to retrieve internal id or affinity group")
+          logger.warn(s"Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(controllers.routes.UnauthorisedController.onPageLoad)))
       }
       .map { _ =>
