@@ -28,7 +28,7 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("agent.individual.title"))) {
+@layout(pageTitle = titleNoForm(messages("agent.individual.title")), showBackLink = false) {
 
     @h(messages("agent.individual.heading"), classes = "govuk-heading-l")
     @p(messages("agent.individual.p1"))
