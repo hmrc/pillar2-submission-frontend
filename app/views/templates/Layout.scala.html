@@ -16,7 +16,6 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
-@import views.html.helper.CSPNonce
 @import play.twirl.api.Html
 
 @this(
@@ -69,7 +68,7 @@
 }
 
 @if(showBackLink) {
-    @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withCssClass("govuk-!-display-none-print"))
+    @govukBackLink(BackLinkViewModel(href = "#").withAttribute(("data-module","hmrc-back-link")).withCssClass("js-visible").withCssClass("govuk-!-display-none-print"))
 }
 }
 
@@ -85,7 +84,7 @@
     pageTitle   = Some(pageTitle),
     headBlock   = Some(head),
     headerBlock = Some(hmrcStandardHeader(
-        serviceUrl  = if (authorised) Some(routes.IndexController.onPageLoad.url) else Some(appConfig.startPagePillar2SubmissionUrl),
+        serviceUrl  = Some(controllers.routes.IndexController.onPageLoadBanner.url),
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
         phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
     )),

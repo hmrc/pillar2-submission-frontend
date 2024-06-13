@@ -25,6 +25,9 @@ import java.time.LocalDate
 
 trait Mappings extends Formatters with Constraints {
 
+  protected def pillar2Id(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
+    of(pillar2IdFormatter(errorKey, args))
+
   protected def text(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
 

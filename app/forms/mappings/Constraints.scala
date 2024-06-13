@@ -102,4 +102,13 @@ trait Constraints {
       case _ =>
         Invalid(errorKey)
     }
+
+  protected def equalLength(charLength: Int, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.length == charLength =>
+        Valid
+      case _ =>
+        Invalid(errorKey, charLength)
+    }
+
 }

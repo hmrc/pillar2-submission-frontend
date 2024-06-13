@@ -1,4 +1,4 @@
-service.name = pillar2-submission-frontend
+service.name = Report Pillar 2 top-up taxes
 
 site.back = Back
 site.remove = Remove
@@ -6,6 +6,7 @@ site.change = Change
 site.no = No
 site.yes = Yes
 site.continue = Continue
+site.confirm-and-continue = Confirm and continue
 site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
@@ -38,9 +39,11 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = pillar2-submission-frontend
-index.heading = pillar2 phase 2 Frontend
+index.title = Welcome to Report Pillar 2 top-up taxes
+index.heading = Welcome to Report Pillar 2 top-up taxes
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
+
+under_construction.heading = Under Construction
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
@@ -81,3 +84,61 @@ unauthorised.agent.hyper1 = sign in via Agent Services.
 unauthorised.agent.message3 = If you need to request authorisation to report Pillar 2 top-up taxes, you must
 unauthorised.agent.hyper2 = request authorisation via Agent services.
 unauthorised.agent.hyper3 = Find out more about who can report for Pillar 2 top-up taxes
+
+###############################################
+#
+# Agent Services
+#
+###############################################
+agent.pillar2Ref.title = What is your client’s Pillar 2 top-up taxes ID?
+agent.pillar2Ref.heading = What is your client’s Pillar 2 top-up taxes ID?
+agent.pillar2Ref.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage.
+agent.pillar2Ref.error.required = Enter your client’s Pillar 2 top-up taxes ID
+agent.pillar2Ref.error.format = Enter a Pillar 2 top-up taxes ID in the correct format, like XMPLR0123456789
+agent.pillar2Ref.error.length = Pillar 2 top-up taxes ID must be 15 characters
+
+agent.clientConfirm.title = Confirm your client’s details
+agent.clientConfirm.heading = Confirm your client’s details
+agent.clientConfirm.h2.upe = Client’s ultimate parent
+agent.clientConfirm.h2.id = Client’s Pillar 2 top-up taxes ID
+agent.clientConfirm.link = Enter a different client’s Pillar 2 top-up taxes ID
+
+agent.noMatch.title = Your client’s details did not match HMRC records
+agent.noMatch.heading = Your client’s details did not match HMRC records
+agent.noMatch.p1 = We could not match the details you entered with records held by HMRC.
+agent.noMatch.link = Re-enter your client’s Pillar 2 top-up taxes ID to try again
+
+agent.error.title = Sorry, there is a problem with the service
+agent.error.heading = Sorry, there is a problem with the service
+agent.error.p1 = Please try again later.
+agent.error.link = Return to your Agent Services Account
+
+agent.unauthorised.title = You have not been authorised to report this client’s Pillar 2 top-up taxes
+agent.unauthorised.heading = You have not been authorised to report this client’s Pillar 2 top-up taxes
+agent.unauthorised.p1 = You need to
+agent.unauthorised.link = request authorisation to report and manage this client’s Pillar 2 top-up taxes
+
+agent.individual.title = Sorry, you’re unable to use this service
+agent.individual.heading = Sorry, you’re unable to use this service
+agent.individual.p1 = You’ve signed in with an individual account.
+agent.individual.p2 = Only users with an agent services account can use this service.
+agent.individual.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+agent.individual.bullet.p1.link = sign in via agent services
+agent.individual.bullet.p2 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+agent.individual.bullet.p2.link = request authorisation on agent services
+agent.individual.link = Find out more about who can report for Pillar 2 top-up taxes
+
+agent.organisation.title = Sorry, you’re unable to use this service
+agent.organisation.heading = Sorry, you’re unable to use this service
+agent.organisation.p1 = You’ve signed in with an organisations account.
+agent.organisation.p2 = Only users with an agent services account can use this service.
+agent.organisation.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+agent.organisation.bullet.p1.link = sign in via agent services
+agent.organisation.bullet.p2 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+agent.organisation.bullet.p2.link = request authorisation on agent services
+agent.organisation.link = Find out more about who can report for Pillar 2 top-up taxes
+
+asa.agent.title = ASA Home page for Pillar 2 top-up taxes screen
+asa.agent.heading = ASA Home page for Pillar 2 top-up taxes screen
+asa.agent.p1 = This screen is  home page in development and local for ASA, but  for QA, staging  and production, ASA has it own pages.
+###############################################
