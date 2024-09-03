@@ -36,3 +36,4 @@ GET         /asa/error/individual                        controllers.AgentContro
 GET         /asa/error/organisation                      controllers.AgentController.onPageLoadOrganisationError
 GET         /asa/home                                    controllers.ASAStubController.onPageLoad
 
+GET         /below-threshold-notification/start                                                      controllers.btn.BtnBeforeStartController.onPageLoad

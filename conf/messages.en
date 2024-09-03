@@ -142,3 +142,23 @@ asa.agent.title = ASA Home page for Pillar 2 top-up taxes screen
 asa.agent.heading = ASA Home page for Pillar 2 top-up taxes screen
 asa.agent.p1 = This screen is  home page in development and local for ASA, but  for QA, staging  and production, ASA has it own pages.
 ###############################################
+
+
+btn.BtnBeforeStart.title = Below Threshold Notification
+btn.BtnBeforeStart.header = Below Threshold Notification
+btn.BtnBeforeStart.p1 = A Below-Threshold Notification removes your group’s obligation to submit a UKTR for the current accounting period and all future ones.
+btn.BtnBeforeStart.header2 = Who can submit a Below-Threshold Notification
+btn.BtnBeforeStart.p2 = You can submit a Below-Threshold Notification if the group:
+btn.BtnBeforeStart.li1 = does not have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
+btn.BtnBeforeStart.li2 = is not expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
+btn.BtnBeforeStart.header3 = Before you start
+btn.BtnBeforeStart.p3 = To submit a Below-Threshold Notification you will need to tell us:
+
+btn.BtnBeforeStart.li3 = the start and end date of the group’s accounting period
+btn.BtnBeforeStart.li4 = whether the group has entities located in the UK
+btn.BtnBeforeStart.li5 = whether the group’s consolidated annual revenues have been €750 million or more in at least 2 of the previous 4 accounting periods.
+btn.BtnBeforeStart.li6 = whether the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
+
+
+
+
