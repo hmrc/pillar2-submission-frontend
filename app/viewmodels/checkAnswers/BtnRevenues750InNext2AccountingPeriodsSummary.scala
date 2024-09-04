@@ -24,21 +24,19 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object BtnRevenues750InNext2AccountingPeriodsSummary  {
+object BtnRevenues750InNext2AccountingPeriodsSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(BtnRevenues750InNext2AccountingPeriodsPage).map {
-      answer =>
+    answers.get(BtnRevenues750InNext2AccountingPeriodsPage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
 
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = "btnRevenues750InNext2AccountingPeriods.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("btnRevenues750InNext2AccountingPeriods.change.hidden"))
-          )
+      SummaryListRowViewModel(
+        key = "btnRevenues750InNext2AccountingPeriods.checkYourAnswersLabel",
+        value = ValueViewModel(value),
+        actions = Seq(
+          ActionItemViewModel("site.change", routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("btnRevenues750InNext2AccountingPeriods.change.hidden"))
         )
+      )
     }
 }
