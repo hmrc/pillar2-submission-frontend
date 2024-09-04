@@ -178,3 +178,9 @@ btnRevenues750In2AccountingPeriod.heading = Did the group have consolidated annu
 btnRevenues750In2AccountingPeriod.checkYourAnswersLabel = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
 btnRevenues750In2AccountingPeriod.error.required = Select yes if the group has consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
 btnRevenues750In2AccountingPeriod.change.hidden = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
+
+btnRevenues750InNext2AccountingPeriods.title = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+btnRevenues750InNext2AccountingPeriods.heading = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+btnRevenues750InNext2AccountingPeriods.checkYourAnswersLabel = btnRevenues750InNext2AccountingPeriods
+btnRevenues750InNext2AccountingPeriods.error.required = Select yes if the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
+btnRevenues750InNext2AccountingPeriods.change.hidden = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?

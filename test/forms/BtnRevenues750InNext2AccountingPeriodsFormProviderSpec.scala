@@ -3,12 +3,12 @@ package forms
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class BtnRevenues750In2AccountingPeriodFormProviderSpec extends BooleanFieldBehaviours {
+class BtnRevenues750InNext2AccountingPeriodsFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "btnRevenues750In2AccountingPeriod.error.required"
-  val invalidKey  = "error.boolean"
+  val requiredKey = "btnRevenues750InNext2AccountingPeriods.error.required"
+  val invalidKey = "error.boolean"
 
-  val form = new BtnRevenues750In2AccountingPeriodFormProvider()()
+  val form = new BtnRevenues750InNext2AccountingPeriodsFormProvider()()
 
   ".value" - {
 

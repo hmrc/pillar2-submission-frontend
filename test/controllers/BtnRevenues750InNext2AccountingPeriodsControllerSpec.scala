@@ -1,43 +1,43 @@
 package controllers
 
 import base.SpecBase
-import forms.BtnRevenues750In2AccountingPeriodFormProvider
+import forms.BtnRevenues750InNext2AccountingPeriodsFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.BtnRevenues750In2AccountingPeriodPage
+import pages.BtnRevenues750InNext2AccountingPeriodsPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.BtnRevenues750In2AccountingPeriodView
+import views.html.BtnRevenues750InNext2AccountingPeriodsView
 
 import scala.concurrent.Future
 
-class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with MockitoSugar {
+class BtnRevenues750InNext2AccountingPeriodsControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new BtnRevenues750In2AccountingPeriodFormProvider()
-  val form         = formProvider()
+  val formProvider = new BtnRevenues750InNext2AccountingPeriodsFormProvider()
+  val form = formProvider()
 
-  lazy val btnRevenues750In2AccountingPeriodRoute = routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode).url
+  lazy val btnRevenues750InNext2AccountingPeriodsRoute = routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode).url
 
-  "BtnRevenues750In2AccountingPeriod Controller" - {
+  "BtnRevenues750InNext2AccountingPeriods Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, btnRevenues750In2AccountingPeriodRoute)
+        val request = FakeRequest(GET, btnRevenues750InNext2AccountingPeriodsRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[BtnRevenues750In2AccountingPeriodView]
+        val view = application.injector.instanceOf[BtnRevenues750InNext2AccountingPeriodsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -46,14 +46,14 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(BtnRevenues750In2AccountingPeriodPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(BtnRevenues750InNext2AccountingPeriodsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, btnRevenues750In2AccountingPeriodRoute)
+        val request = FakeRequest(GET, btnRevenues750InNext2AccountingPeriodsRoute)
 
-        val view = application.injector.instanceOf[BtnRevenues750In2AccountingPeriodView]
+        val view = application.injector.instanceOf[BtnRevenues750InNext2AccountingPeriodsView]
 
         val result = route(application, request).value
 
@@ -78,7 +78,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
 
       running(application) {
         val request =
-          FakeRequest(POST, btnRevenues750In2AccountingPeriodRoute)
+          FakeRequest(POST, btnRevenues750InNext2AccountingPeriodsRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -94,12 +94,12 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
 
       running(application) {
         val request =
-          FakeRequest(POST, btnRevenues750In2AccountingPeriodRoute)
+          FakeRequest(POST, btnRevenues750InNext2AccountingPeriodsRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[BtnRevenues750In2AccountingPeriodView]
+        val view = application.injector.instanceOf[BtnRevenues750InNext2AccountingPeriodsView]
 
         val result = route(application, request).value
 
@@ -113,7 +113,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, btnRevenues750In2AccountingPeriodRoute)
+        val request = FakeRequest(GET, btnRevenues750InNext2AccountingPeriodsRoute)
 
         val result = route(application, request).value
 
@@ -128,7 +128,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
 
       running(application) {
         val request =
-          FakeRequest(POST, btnRevenues750In2AccountingPeriodRoute)
+          FakeRequest(POST, btnRevenues750InNext2AccountingPeriodsRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value

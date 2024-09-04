@@ -32,38 +32,36 @@ import views.html.BtnRevenues750In2AccountingPeriodView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BtnRevenues750In2AccountingPeriodController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: BtnRevenues750In2AccountingPeriodFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: BtnRevenues750In2AccountingPeriodView
-                                 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+class BtnRevenues750In2AccountingPeriodController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository:        SessionRepository,
+  navigator:                Navigator,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  formProvider:             BtnRevenues750In2AccountingPeriodFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     BtnRevenues750In2AccountingPeriodView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
+    with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(BtnRevenues750In2AccountingPeriodPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      val preparedForm = request.userAnswers.get(BtnRevenues750In2AccountingPeriodPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(BtnRevenues750In2AccountingPeriodPage, value))
