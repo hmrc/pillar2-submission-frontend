@@ -41,5 +41,10 @@ GET         /below-threshold-notification/submit/questions/accounting-period    
 
 GET        /below-threshold-notification/submit/questions/domestic-or-multinational                       controllers.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = NormalMode)
 POST       /below-threshold-notification/submit/questions/domestic-or-multinational                         controllers.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = NormalMode)
-GET        /below-threshold-notification/submit/questions/domestic-or-multinational                   controllers.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = CheckMode)
-POST       /below-threshold-notification/submit/questions/domestic-or-multinational                  controllers.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = CheckMode)
+GET        /below-threshold-notification/submit/questions/change-domestic-or-multinational                   controllers.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = CheckMode)
+POST       /below-threshold-notification/submit/questions/change-domestic-or-multinational                  controllers.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = CheckMode)
+
+GET        /below-threshold-notification/submit/questions/annual-revenues                        controllers.BtnRevenues750In2AccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
+POST       /below-threshold-notification/submit/questions/annual-revenues                        controllers.BtnRevenues750In2AccountingPeriodController.onSubmit(mode: Mode = NormalMode)
+GET        /below-threshold-notification/submit/questions/change-annual-revenues                  controllers.BtnRevenues750In2AccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST       /below-threshold-notification/submit/questions/change-annual-revenues                  controllers.BtnRevenues750In2AccountingPeriodController.onSubmit(mode: Mode = CheckMode)
