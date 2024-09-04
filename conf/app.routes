@@ -37,3 +37,9 @@ GET         /asa/error/organisation                      controllers.AgentContro
 GET         /asa/home                                    controllers.ASAStubController.onPageLoad
 
 GET         /below-threshold-notification/start                                                      controllers.btn.BtnBeforeStartController.onPageLoad
+GET         /below-threshold-notification/submit/questions/accounting-period                         controllers.btn.BtnAccountingPeriodController.onPageLoad
+
+GET        /below-threshold-notification/submit/questions/domestic-or-multinational                       controllers.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = NormalMode)
+POST       /below-threshold-notification/submit/questions/domestic-or-multinational                         controllers.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = NormalMode)
+GET        /below-threshold-notification/submit/questions/domestic-or-multinational                   controllers.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = CheckMode)
+POST       /below-threshold-notification/submit/questions/domestic-or-multinational                  controllers.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = CheckMode)

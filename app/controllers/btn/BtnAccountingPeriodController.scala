@@ -20,21 +20,34 @@ import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.BtnBeforeStartView
+import viewmodels.govuk.summarylist._
+import viewmodels.implicits._
+import views.html.BtnAccountingPeriodView
 
 import javax.inject.Inject
 
-class BtnBeforeStartController @Inject() (
+class BtnAccountingPeriodController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  view:                     BtnBeforeStartView,
+  view:                     BtnAccountingPeriodView,
   identify:                 IdentifierAction
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    Ok(view())
+    val list = SummaryListViewModel(
+      rows = Seq(
+        SummaryListRowViewModel("btn.btnAccountingPeriod.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2024")))),
+        SummaryListRowViewModel(
+          "btn.btnAccountingPeriod.endAccountDate",
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2025").toString))
+        )
+      )
+    )
+    Ok(view(list))
   }
 
 }
