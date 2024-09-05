@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.BtnEntitiesBothInUKAndOutsideFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.{BtnNavigator, Navigator}
 import pages.EntitiesBothInUKAndOutsidePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class BtnEntitiesBothInUKAndOutsideController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository:        SessionRepository,
-  navigator:                Navigator,
+  navigator:                BtnNavigator,
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,

@@ -17,6 +17,7 @@
 package views.btn
 
 import base.ViewSpecBase
+import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.BtnBeforeStartView
@@ -24,7 +25,7 @@ import views.html.BtnBeforeStartView
 class BtnBeforeStartViewSpec extends ViewSpecBase {
 
   val page: BtnBeforeStartView = inject[BtnBeforeStartView]
-  val view: Document           = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document           = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
 
   "Btn Before Start View" should {
 

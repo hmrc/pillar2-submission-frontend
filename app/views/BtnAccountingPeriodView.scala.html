@@ -33,7 +33,7 @@
         govukSummaryList: GovukSummaryList
 )
 
-@(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle    = titleNoForm(messages("btn.btnAccountingPeriod.title"))
 ) {
@@ -43,6 +43,6 @@
     @govukSummaryList(list)
     @paragraphMessageWithLink(linkMessage = messages("btn.btnAccountingPeriod.link"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url, linkClass = "govuk-link", linkRel = "noopener noreferrer",  message2 = Some(messages("btn.btnAccountingPeriod.p2")))
     @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.routes.UnderConstructionController.onPageLoad.url)
+        ButtonViewModel(messages("site.continue")).asLink(controllers.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode).url)
     )
 }

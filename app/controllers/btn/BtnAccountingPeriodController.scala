@@ -18,6 +18,7 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
+import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -28,16 +29,17 @@ import viewmodels.implicits._
 import views.html.BtnAccountingPeriodView
 
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class BtnAccountingPeriodController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     BtnAccountingPeriodView,
   identify:                 IdentifierAction
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = identify { implicit request =>
     val list = SummaryListViewModel(
       rows = Seq(
         SummaryListRowViewModel("btn.btnAccountingPeriod.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2024")))),
@@ -47,7 +49,7 @@ class BtnAccountingPeriodController @Inject() (
         )
       )
     )
-    Ok(view(list))
+    Ok(view(list, mode))
   }
 
 }
