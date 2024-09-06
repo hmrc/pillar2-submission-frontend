@@ -161,7 +161,7 @@ btn.BtnBeforeStart.li6 = whether the group is expected to make consolidated annu
 
 btn.btnAccountingPeriod.title = Submit a Below-Threshold Notification for your group’s current accounting period
 btn.btnAccountingPeriod.header = Submit a Below-Threshold Notification for your group’s current accounting period
-btn.btnAccountingPeriod.p1 = The Below-Threshold Notification you submit will remove your group's obligation to submit a UKTR for this current accounting period and all future ones.
+btn.btnAccountingPeriod.p1 = The Below-Threshold Notification you submit will remove your group’s obligation to submit a UKTR for this current accounting period and all future ones.
 btn.btnAccountingPeriod.startAccountDate = Start date of accounting period
 btn.btnAccountingPeriod.endAccountDate = End date of accounting period
 btn.btnAccountingPeriod.link = Update your group’s current accounting period,

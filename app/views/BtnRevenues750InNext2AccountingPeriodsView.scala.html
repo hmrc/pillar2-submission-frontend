@@ -28,7 +28,7 @@
 
 @layout(pageTitle = title(form, messages("btnRevenues750InNext2AccountingPeriods.title"))) {
 
-    @formHelper(action = routes.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

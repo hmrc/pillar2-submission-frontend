@@ -43,6 +43,6 @@
     @govukSummaryList(list)
     @paragraphMessageWithLink(linkMessage = messages("btn.btnAccountingPeriod.link"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url, linkClass = "govuk-link", linkRel = "noopener noreferrer",  message2 = Some(messages("btn.btnAccountingPeriod.p2")))
     @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode).url)
+        ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode).url)
     )
 }

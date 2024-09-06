@@ -34,7 +34,7 @@ object BtnRevenues750InNext2AccountingPeriodsSummary {
         key = "btnRevenues750InNext2AccountingPeriods.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("btnRevenues750InNext2AccountingPeriods.change.hidden"))
         )
       )

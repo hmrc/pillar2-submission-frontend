@@ -19,7 +19,6 @@ package controllers
 import base.SpecBase
 import forms.BtnEntitiesBothInUKAndOutsideFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -40,7 +39,7 @@ class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoS
   val formProvider = new BtnEntitiesBothInUKAndOutsideFormProvider()
   val form         = formProvider()
 
-  lazy val entitiesBothInUKAndOutsideRoute = routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(NormalMode).url
+  lazy val entitiesBothInUKAndOutsideRoute = controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(NormalMode).url
 
   "EntitiesBothInUKAndOutside Controller" when {
 
@@ -87,7 +86,6 @@ class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoS
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            // bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -100,7 +98,7 @@ class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode).url
       }
     }
 
@@ -124,34 +122,5 @@ class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoS
       }
     }
 
-    //    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-    //
-    //      val application = applicationBuilder(userAnswers = None).build()
-    //
-    //      running(application) {
-    //        val request = FakeRequest(GET, entitiesBothInUKAndOutsideRoute)
-    //
-    //        val result = route(application, request).value
-    //
-    //        status(result) mustEqual SEE_OTHER
-    //        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-    //      }
-    //    }
-    //
-    //    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-    //
-    //      val application = applicationBuilder(userAnswers = None).build()
-    //
-    //      running(application) {
-    //        val request =
-    //          FakeRequest(POST, entitiesBothInUKAndOutsideRoute)
-    //            .withFormUrlEncodedBody(("value", "true"))
-    //
-    //        val result = route(application, request).value
-    //
-    //        status(result) mustEqual SEE_OTHER
-    //        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-    //      }
-    //    }
   }
 }

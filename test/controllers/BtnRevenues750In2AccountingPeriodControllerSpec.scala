@@ -40,7 +40,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
   val formProvider = new BtnRevenues750In2AccountingPeriodFormProvider()
   val form         = formProvider()
 
-  lazy val btnRevenues750In2AccountingPeriodRoute = routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode).url
+  lazy val btnRevenues750In2AccountingPeriodRoute = controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode).url
 
   "BtnRevenues750In2AccountingPeriod Controller" when {
 
@@ -124,34 +124,5 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
       }
     }
 
-//    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-//
-//      val application = applicationBuilder(userAnswers = None).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, btnRevenues750In2AccountingPeriodRoute)
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-//      }
-//    }
-
-//    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-//
-//      val application = applicationBuilder(userAnswers = None).build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, btnRevenues750In2AccountingPeriodRoute)
-//            .withFormUrlEncodedBody(("value", "true"))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-//      }
-//    }
   }
 }

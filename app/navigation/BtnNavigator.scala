@@ -42,9 +42,9 @@ class BtnNavigator @Inject() {
       .get(EntitiesBothInUKAndOutsidePage)
       .map { provided =>
         if (provided) {
-          controllers.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode)
+          controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode)
         } else {
-          controllers.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
+          controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
