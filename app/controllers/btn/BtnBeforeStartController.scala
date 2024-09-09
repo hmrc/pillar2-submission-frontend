@@ -18,11 +18,12 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
+import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.BtnBeforeStartView
-import models.Mode
+
 import javax.inject.Inject
 
 class BtnBeforeStartController @Inject() (

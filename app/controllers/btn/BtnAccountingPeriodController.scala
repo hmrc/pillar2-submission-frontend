@@ -17,9 +17,9 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
 import models.{MneOrDomestic, Mode}
-import pages.{EntitiesBothInUKAndOutsidePage, SubAccountingPeriodPage, SubMneOrDomesticPage}
+import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -30,7 +30,7 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.BtnAccountingPeriodView
 
-import javax.inject.{Inject, Named}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class BtnAccountingPeriodController @Inject() (
@@ -44,26 +44,21 @@ class BtnAccountingPeriodController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
     val dateHelper = new ViewHelpers()
-    val startDate = request.maybeSubscriptionLocalData
+    val accountsDate = request.maybeSubscriptionLocalData
       .flatMap(_.get(SubAccountingPeriodPage))
       .map { answer =>
-        HtmlFormat.escape(dateHelper.formatDateGDS(answer.startDate))
-      }
-    val endDate = request.maybeSubscriptionLocalData
-      .flatMap(_.get(SubAccountingPeriodPage))
-      .map { answer =>
-        HtmlFormat.escape(dateHelper.formatDateGDS(answer.endDate))
+        answer
       }
 
     val list = SummaryListViewModel(
       rows = Seq(
         SummaryListRowViewModel(
           "btn.btnAccountingPeriod.startAccountDate",
-          value = ValueViewModel(HtmlContent(HtmlFormat.escape(startDate.getOrElse().toString)))
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(accountsDate.map(d => dateHelper.formatDateGDS(d.startDate)).toString)))
         ),
         SummaryListRowViewModel(
           "btn.btnAccountingPeriod.endAccountDate",
-          value = ValueViewModel(HtmlContent(HtmlFormat.escape(endDate.getOrElse().toString)))
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(accountsDate.map(d => dateHelper.formatDateGDS(d.endDate.)).toString)))
         )
       )
     )
