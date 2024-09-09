@@ -58,7 +58,7 @@ class BtnAccountingPeriodController @Inject() (
         ),
         SummaryListRowViewModel(
           "btn.btnAccountingPeriod.endAccountDate",
-          value = ValueViewModel(HtmlContent(HtmlFormat.escape(accountsDate.map(d => dateHelper.formatDateGDS(d.endDate.)).toString)))
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(accountsDate.map(d => dateHelper.formatDateGDS(d.endDate)).toString)))
         )
       )
     )
