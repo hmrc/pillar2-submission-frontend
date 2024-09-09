@@ -30,19 +30,22 @@
         p: ParagraphBody,
         heading: Heading,
         bulletList: BulletList,
-        govukSummaryList: GovukSummaryList
+        govukSummaryList: GovukSummaryList,
+        formHelper: FormWithCSRF,
 )
 
 @(list: SummaryList, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle    = titleNoForm(messages("btn.btnAccountingPeriod.title"))
 ) {
+    @formHelper(action = controllers.btn.routes.BtnAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
-    @heading(messages("btn.btnAccountingPeriod.header"), classes = "govuk-heading-l")
-    @p(messages("btn.btnAccountingPeriod.p1"))
-    @govukSummaryList(list)
-    @paragraphMessageWithLink(linkMessage = messages("btn.btnAccountingPeriod.link"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url, linkClass = "govuk-link", linkRel = "noopener noreferrer",  message2 = Some(messages("btn.btnAccountingPeriod.p2")))
-    @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode).url)
-    )
+        @heading(messages("btn.btnAccountingPeriod.header"), classes = "govuk-heading-l")
+        @p(messages("btn.btnAccountingPeriod.p1"))
+        @govukSummaryList(list)
+        @paragraphMessageWithLink(linkMessage = messages("btn.btnAccountingPeriod.link"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url, linkClass = "govuk-link", linkRel = "noopener noreferrer", message2 = Some(messages("btn.btnAccountingPeriod.p2")))
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
 }

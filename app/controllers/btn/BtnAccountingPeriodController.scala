@@ -17,39 +17,69 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
-import models.Mode
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import models.{MneOrDomestic, Mode}
+import pages.{EntitiesBothInUKAndOutsidePage, SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.BtnAccountingPeriodView
 
-import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import javax.inject.{Inject, Named}
+import scala.concurrent.{ExecutionContext, Future}
 
 class BtnAccountingPeriodController @Inject() (
   val controllerComponents: MessagesControllerComponents,
+  getData:                  SubscriptionDataRetrievalAction,
   view:                     BtnAccountingPeriodView,
   identify:                 IdentifierAction
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
+    val dateHelper = new ViewHelpers()
+    val startDate = request.maybeSubscriptionLocalData
+      .flatMap(_.get(SubAccountingPeriodPage))
+      .map { answer =>
+        HtmlFormat.escape(dateHelper.formatDateGDS(answer.startDate))
+      }
+    val endDate = request.maybeSubscriptionLocalData
+      .flatMap(_.get(SubAccountingPeriodPage))
+      .map { answer =>
+        HtmlFormat.escape(dateHelper.formatDateGDS(answer.endDate))
+      }
+
     val list = SummaryListViewModel(
       rows = Seq(
-        SummaryListRowViewModel("btn.btnAccountingPeriod.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2024")))),
+        SummaryListRowViewModel(
+          "btn.btnAccountingPeriod.startAccountDate",
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(startDate.getOrElse().toString)))
+        ),
         SummaryListRowViewModel(
           "btn.btnAccountingPeriod.endAccountDate",
-          value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2025").toString))
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(endDate.getOrElse().toString)))
         )
       )
     )
     Ok(view(list, mode))
+  }
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async { implicit request =>
+    request.maybeSubscriptionLocalData
+      .flatMap(_.get(SubMneOrDomesticPage))
+      .map { answer =>
+        if (answer == MneOrDomestic.Uk)
+          Future.successful(Redirect(controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(mode)))
+        else Future.successful(Redirect(controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode)))
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
+
   }
 
 }

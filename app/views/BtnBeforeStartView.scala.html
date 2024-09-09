@@ -56,6 +56,6 @@
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 
     @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BtnAccountingPeriodController.onPageLoad().url)
+        ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BtnAccountingPeriodController.onPageLoad(mode).url)
     )
 }
