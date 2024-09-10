@@ -44,25 +44,27 @@ class BtnAccountingPeriodController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
     val dateHelper = new ViewHelpers()
-    val accountsDate = request.maybeSubscriptionLocalData
+    request.maybeSubscriptionLocalData
       .flatMap(_.get(SubAccountingPeriodPage))
       .map { answer =>
-        answer
-      }
-
-    val list = SummaryListViewModel(
-      rows = Seq(
-        SummaryListRowViewModel(
-          "btn.btnAccountingPeriod.startAccountDate",
-          value = ValueViewModel(HtmlContent(HtmlFormat.escape(accountsDate.map(d => dateHelper.formatDateGDS(d.startDate)).toString)))
-        ),
-        SummaryListRowViewModel(
-          "btn.btnAccountingPeriod.endAccountDate",
-          value = ValueViewModel(HtmlContent(HtmlFormat.escape(accountsDate.map(d => dateHelper.formatDateGDS(d.endDate)).toString)))
+        val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer.startDate))
+        val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(answer.endDate))
+        val list = SummaryListViewModel(
+          rows = Seq(
+            SummaryListRowViewModel(
+              "btn.btnAccountingPeriod.startAccountDate",
+              value = ValueViewModel(HtmlContent(startDate))
+            ),
+            SummaryListRowViewModel(
+              "btn.btnAccountingPeriod.endAccountDate",
+              value = ValueViewModel(HtmlContent(endDate))
+            )
+          )
         )
-      )
-    )
-    Ok(view(list, mode))
+        Ok(view(list, mode))
+      }
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None)))
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async { implicit request =>
