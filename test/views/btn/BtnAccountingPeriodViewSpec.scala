@@ -38,7 +38,7 @@ class BtnAccountingPeriodViewSpec extends ViewSpecBase {
   )
 
   val page: BtnAccountingPeriodView = inject[BtnAccountingPeriodView]
-  val view: Document                = Jsoup.parse(page(list, NormalMode)(request, appConfig, messages).toString())
+  val view: Document                = Jsoup.parse(page(list, NormalMode, "test-url")(request, appConfig, messages).toString())
 
   "Btn Before Start View" should {
 

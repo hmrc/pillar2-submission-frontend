@@ -39,6 +39,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   val signOutUrl:       String = configuration.get[String]("urls.signOut")
   val asaHomePageUrl:   String = configuration.get[String]("urls.asaHomePage")
+  val pillar2Frontend:  String = configuration.get[String]("urls.pillar2Frontend")
 
   val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
 

@@ -34,7 +34,7 @@
         formHelper: FormWithCSRF,
 )
 
-@(list: SummaryList, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList, mode: Mode, pillar2Frontend: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle    = titleNoForm(messages("btn.btnAccountingPeriod.title"))
 ) {
@@ -43,7 +43,7 @@
         @heading(messages("btn.btnAccountingPeriod.header"), classes = "govuk-heading-l")
         @p(messages("btn.btnAccountingPeriod.p1"))
         @govukSummaryList(list)
-        @paragraphMessageWithLink(linkMessage = messages("btn.btnAccountingPeriod.link"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url, linkClass = "govuk-link", linkRel = "noopener noreferrer", message2 = Some(messages("btn.btnAccountingPeriod.p2")))
+        @paragraphMessageWithLink(linkMessage = messages("btn.btnAccountingPeriod.link"), linkUrl = pillar2Frontend, linkClass = "govuk-link", linkRel = "noopener noreferrer", message2 = Some(messages("btn.btnAccountingPeriod.p2")))
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )
