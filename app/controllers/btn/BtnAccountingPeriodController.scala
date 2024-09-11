@@ -43,8 +43,8 @@ class BtnAccountingPeriodController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
-    val dateHelper      = new ViewHelpers()
-    val pillar2Frontend = appConfig.pillar2Frontend
+    val dateHelper         = new ViewHelpers()
+    val pillar2FrontendUrl = appConfig.pillar2FrontendUrl
     request.maybeSubscriptionLocalData
       .flatMap(_.get(SubAccountingPeriodPage))
       .map { answer =>
@@ -62,7 +62,7 @@ class BtnAccountingPeriodController @Inject() (
             )
           )
         )
-        Ok(view(list, mode, pillar2Frontend))
+        Ok(view(list, mode, pillar2FrontendUrl))
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None)))
 
