@@ -32,13 +32,13 @@ class BtnRevenues750In2AccountingPeriodViewSpec extends ViewSpecBase {
 
     "have a title" in {
       view.getElementsByTag("title").text must include(
-        "Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods"
+        "Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
       )
     }
 
     "have a h1 heading" in {
       view.getElementsByTag("h1").text must include(
-        "Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods"
+        "Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
       )
     }
 

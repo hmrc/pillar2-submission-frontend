@@ -29,22 +29,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
-//  def readSubscription(
-//    plrReference: String
-//  )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
-//    val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
-//
-//    http
-//      .GET[HttpResponse](subscriptionUrl)
-//      .map {
-//        case response if response.status == 200 =>
-//          Some(Json.parse(response.body).as[SubscriptionData])
-//        case e =>
-//          logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
-//          None
-//      }
-//  }
-
   def readSubscription(
     plrReference: String
   )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {

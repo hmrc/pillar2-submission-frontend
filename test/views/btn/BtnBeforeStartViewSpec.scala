@@ -55,14 +55,14 @@ class BtnBeforeStartViewSpec extends ViewSpecBase {
         "To submit a Below-Threshold Notification you will need to tell us:"
       )
       view.getElementsByTag("li").text must include(
-        "does not have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods."
+        "does not have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods"
       )
       view.getElementsByTag("li").text must include(
         "is not expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods"
       )
       view.getElementsByTag("li").text must include("the start and end date of the group’s accounting period")
       view.getElementsByTag("li").text must include(
-        "whether the group’s consolidated annual revenues have been €750 million or more in at least 2 of the previous 4 accounting periods."
+        "whether the group’s consolidated annual revenues have been €750 million or more in at least 2 of the previous 4 accounting periods"
       )
       view.getElementsByTag("li").text must include(
         "whether the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods "
