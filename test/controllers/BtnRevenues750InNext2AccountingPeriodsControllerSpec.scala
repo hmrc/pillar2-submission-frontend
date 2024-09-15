@@ -88,7 +88,6 @@ class BtnRevenues750InNext2AccountingPeriodsControllerSpec extends SpecBase with
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -101,7 +100,7 @@ class BtnRevenues750InNext2AccountingPeriodsControllerSpec extends SpecBase with
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
 

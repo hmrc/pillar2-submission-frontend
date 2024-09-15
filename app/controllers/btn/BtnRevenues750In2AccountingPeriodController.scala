@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.BtnRevenues750In2AccountingPeriodFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.{BtnNavigator, Navigator}
 import pages.BtnRevenues750In2AccountingPeriodPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,20 +28,20 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.BtnRevenues750In2AccountingPeriodView
 
-import javax.inject.{Inject, Named}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class BtnRevenues750In2AccountingPeriodController @Inject() (
-  override val messagesApi:               MessagesApi,
-  sessionRepository:                      SessionRepository,
-  navigator:                              Navigator,
-  @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  getData:                                DataRetrievalAction,
-  requireData:                            DataRequiredAction,
-  formProvider:                           BtnRevenues750In2AccountingPeriodFormProvider,
-  val controllerComponents:               MessagesControllerComponents,
-  view:                                   BtnRevenues750In2AccountingPeriodView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+  override val messagesApi: MessagesApi,
+  sessionRepository:        SessionRepository,
+  navigator:                BtnNavigator,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  formProvider:             BtnRevenues750In2AccountingPeriodFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     BtnRevenues750In2AccountingPeriodView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

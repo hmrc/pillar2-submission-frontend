@@ -41,8 +41,6 @@ import scala.concurrent.Future
 
 class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new BtnRevenues750In2AccountingPeriodFormProvider()
   val form         = formProvider()
 
@@ -150,12 +148,12 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
       running(application) {
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
         val request =
           FakeRequest(POST, btnRevenues750In2AccountingPeriodRoute)
             .withFormUrlEncodedBody(("value", "true"))
@@ -163,7 +161,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
 

@@ -33,8 +33,10 @@ class BtnNavigator @Inject() {
   }
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case EntitiesBothInUKAndOutsidePage => entitiesBothInUKAndOutside
-    case _                              => _ => routes.IndexController.onPageLoad
+    case EntitiesBothInUKAndOutsidePage             => entitiesBothInUKAndOutside
+    case BtnRevenues750In2AccountingPeriodPage      => btnRevenues750In2AccountingPeriod
+    case BtnRevenues750InNext2AccountingPeriodsPage => btnRevenues750InNext2AccountingPeriods
+    case _                                          => _ => routes.IndexController.onPageLoad
   }
 
   private def entitiesBothInUKAndOutside(userAnswers: UserAnswers): Call =
@@ -45,6 +47,29 @@ class BtnNavigator @Inject() {
           controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode)
         } else {
           controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def btnRevenues750In2AccountingPeriod(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(BtnRevenues750In2AccountingPeriodPage)
+      .map { provided =>
+        if (provided) {
+          controllers.routes.UnderConstructionController.onPageLoad
+        } else {
+          controllers.routes.UnderConstructionController.onPageLoad
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+  private def btnRevenues750InNext2AccountingPeriods(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(BtnRevenues750InNext2AccountingPeriodsPage)
+      .map { provided =>
+        if (provided) {
+          controllers.routes.UnderConstructionController.onPageLoad
+        } else {
+          controllers.routes.UnderConstructionController.onPageLoad
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
