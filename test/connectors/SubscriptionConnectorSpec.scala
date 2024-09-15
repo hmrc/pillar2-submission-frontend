@@ -19,11 +19,14 @@ package connectors
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.SubscriptionConnectorSpec._
+import models.{InternalIssueError, MneOrDomestic, NonUKAddress}
 import models.subscription._
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
+
+import java.time.LocalDate
 
 class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
@@ -35,11 +38,14 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
   private val subscriptionDataJson = Json.parse(successfulResponseJson).as[SubscriptionData]
+  val subscriptionSuccess: JsValue = Json.toJson(SubscriptionSuccess(subscriptionDataJson))
+
   "SubscriptionConnector" must {
+
     "readSubscription" should {
 
       "return Some(json) when the backend has returned 200 OK with data" in {
-        stubGet(s"$readSubscriptionPath/$plrReference", OK, successfulResponseJson)
+        stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
         val result: Option[SubscriptionData] = connector.readSubscription(plrReference).futureValue
 
         result mustBe defined
@@ -47,13 +53,51 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
       }
 
+      "return NoResult error when the backend has returned a 404 status" in {
+        stubGet(s"$readSubscriptionPath/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
+        val result = connector.readSubscription(plrReference).futureValue
+        result mustBe None
+      }
+
+      "return None when the backend has returned a response else than 200 or 404 status" in {
+        stubGet(s"$readSubscriptionPath/$plrReference", errorCodes.sample.value, unsuccessfulResponseJson)
+        val result = connector.readSubscription(plrReference)
+        result.failed.futureValue mustBe InternalIssueError
+      }
+    }
+
+    "getSubscriptionCache" should {
+      val emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
+        subMneOrDomestic = MneOrDomestic.Uk,
+        subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
+        subPrimaryContactName = "",
+        subPrimaryEmail = "",
+        subPrimaryPhonePreference = false,
+        subPrimaryCapturePhone = None,
+        subAddSecondaryContact = false,
+        subSecondaryContactName = None,
+        subSecondaryEmail = None,
+        subSecondaryCapturePhone = None,
+        subSecondaryPhonePreference = Some(false),
+        subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
+      )
+
+      "return Some(json) when the backend has returned 200 OK with data" in {
+        stubGet(s"$getSubscription/$id", OK, Json.toJson(emptySubscriptionLocalData).toString)
+        val result: Option[SubscriptionLocalData] = connector.getSubscriptionCache(id).futureValue
+
+        result mustBe defined
+        result mustBe Some(emptySubscriptionLocalData)
+
+      }
+
       "return None when the backend has returned a non-success status code" in {
         server.stubFor(
-          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-            .willReturn(aResponse().withStatus(errorCodes.sample.value).withBody(unsuccessfulResponseJson))
+          get(urlEqualTo(s"$getSubscription/$id"))
+            .willReturn(aResponse().withStatus(errorCodes.sample.value))
         )
 
-        val result = connector.readSubscription(plrReference).futureValue
+        val result = connector.getSubscriptionCache(id).futureValue
         result mustBe None
       }
     }
@@ -64,7 +108,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 object SubscriptionConnectorSpec {
   val apiUrl = "/report-pillar2-top-up-taxes"
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
-
+  private val getSubscription      = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
   private val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/read-subscription"
   private val id                   = "testId"
   private val plrReference         = "testPlrRef"
@@ -119,4 +163,7 @@ object SubscriptionConnectorSpec {
       |""".stripMargin
 
   private val unsuccessfulResponseJson = """{ "status": "error" }"""
+  private val unsuccessfulNotFoundJson =
+    """{ "status": "404",
+      | "error": "there is nothing here" }""".stripMargin
 }

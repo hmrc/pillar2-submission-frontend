@@ -20,6 +20,7 @@
 @this(
         layout: templates.Layout,
         paragraphBody: ParagraphBody,
+        link: Link,
         heading: Heading
 )
 
@@ -34,6 +35,9 @@
 ) {
 
     @heading(messages("unauthorised.heading"))
-    @paragraphBody(messages("unauthorised.guidance"))
+    @paragraphBody(messages("unauthorised.guidance", link(
+        text = messages("unauthorised.guidance.link"),
+        call = Call("GET", appConfig.startPagePillar2SubmissionUrl)
+    )))
 
 }
