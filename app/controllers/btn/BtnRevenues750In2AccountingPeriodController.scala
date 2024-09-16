@@ -28,20 +28,20 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.BtnRevenues750In2AccountingPeriodView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class BtnRevenues750In2AccountingPeriodController @Inject() (
-  override val messagesApi: MessagesApi,
-  sessionRepository:        SessionRepository,
-  navigator:                Navigator,
-  identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  formProvider:             BtnRevenues750In2AccountingPeriodFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     BtnRevenues750In2AccountingPeriodView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  override val messagesApi:               MessagesApi,
+  sessionRepository:                      SessionRepository,
+  navigator:                              Navigator,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                DataRetrievalAction,
+  requireData:                            DataRequiredAction,
+  formProvider:                           BtnRevenues750In2AccountingPeriodFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   BtnRevenues750In2AccountingPeriodView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

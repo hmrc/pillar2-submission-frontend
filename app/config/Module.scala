@@ -16,7 +16,7 @@
 
 package config
 
-import com.google.inject.name.Named
+import com.google.inject.name.{Named, Names}
 import com.google.inject.{AbstractModule, Provides}
 import controllers.actions._
 import play.api.{Configuration, Environment}
@@ -35,6 +35,7 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
     bind(classOf[SubscriptionDataRetrievalAction]).to(classOf[SubscriptionDataRetrievalActionImpl]).asEagerSingleton()
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
+    bind(classOf[IdentifierAction]).annotatedWith(Names.named("EnrolmentIdentifier")).to(classOf[EnrolmentIdentifierAction]).asEagerSingleton()
 
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
   }

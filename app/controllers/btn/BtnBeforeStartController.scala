@@ -34,7 +34,9 @@ class BtnBeforeStartController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = identify  { implicit request =>
+    // read subscription cache - to get pillar2ID
+    // Read subscription  and store into session repository.
     Ok(view(mode))
   }
 

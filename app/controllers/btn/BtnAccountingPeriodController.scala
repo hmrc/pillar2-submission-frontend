@@ -30,15 +30,15 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.BtnAccountingPeriodView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class BtnAccountingPeriodController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  getData:                  SubscriptionDataRetrievalAction,
-  view:                     BtnAccountingPeriodView,
-  identify:                 IdentifierAction
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  val controllerComponents:               MessagesControllerComponents,
+  getData:                                SubscriptionDataRetrievalAction,
+  view:                                   BtnAccountingPeriodView,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

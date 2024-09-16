@@ -18,6 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.BtnRevenues750In2AccountingPeriodFormProvider
+import controllers.actions.TestAuthRetrievals.Ops
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -29,8 +30,13 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.SubscriptionService
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, EnrolmentIdentifier, Enrolments, User}
 import views.html.BtnRevenues750In2AccountingPeriodView
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with MockitoSugar {
@@ -42,19 +48,76 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
 
   lazy val btnRevenues750In2AccountingPeriodRoute = controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode).url
 
+  private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
+
+  val enrolments: Set[Enrolment] = Set(
+    Enrolment(
+      key = "HMRC-PILLAR2-ORG",
+      identifiers = Seq(
+        EnrolmentIdentifier("PLRID", "12345678"),
+        EnrolmentIdentifier("UTR", "ABC12345")
+      ),
+      state = "activated"
+    )
+  )
+
+  val agentEnrolment: Set[Enrolment] =
+    Set(
+      Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
+    )
+  val id:           String = UUID.randomUUID().toString
+  val groupId:      String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
+
   "BtnRevenues750In2AccountingPeriod Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
 
+      running(application) {
+        val request = FakeRequest(GET, btnRevenues750In2AccountingPeriodRoute)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[BtnRevenues750In2AccountingPeriodView]
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET even agent want to access" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), agentEnrolment)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+      when(mockSessionRepository.get(any()))
+        .thenReturn(Future.successful(Some(emptyUserAnswers)))
+      when(mockSessionRepository.set(any()))
+        .thenReturn(Future.successful(true))
       running(application) {
         val request = FakeRequest(GET, btnRevenues750In2AccountingPeriodRoute)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[BtnRevenues750In2AccountingPeriodView]
-
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, appConfig(application), messages(application)).toString
       }
@@ -64,7 +127,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
 
       val userAnswers = UserAnswers(userAnswersId).set(BtnRevenues750In2AccountingPeriodPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers), enrolments).build()
 
       running(application) {
         val request = FakeRequest(GET, btnRevenues750In2AccountingPeriodRoute)
@@ -85,7 +148,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -106,7 +169,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments).build()
 
       running(application) {
         val request =
