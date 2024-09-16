@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.btn
 
 import base.SpecBase
 import forms.BtnRevenues750InNext2AccountingPeriodsFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,7 +28,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.BtnRevenues750InNext2AccountingPeriodsView
+import views.html.btn.BtnRevenues750InNext2AccountingPeriodsView
 
 import scala.concurrent.Future
 

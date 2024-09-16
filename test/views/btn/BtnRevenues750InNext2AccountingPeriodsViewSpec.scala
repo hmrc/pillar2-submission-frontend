@@ -21,7 +21,7 @@ import forms.BtnRevenues750InNext2AccountingPeriodsFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.{BtnBeforeStartView, BtnRevenues750InNext2AccountingPeriodsView}
+import views.html.btn.BtnRevenues750InNext2AccountingPeriodsView
 
 class BtnRevenues750InNext2AccountingPeriodsViewSpec extends ViewSpecBase {
   val formProvider = new BtnRevenues750InNext2AccountingPeriodsFormProvider

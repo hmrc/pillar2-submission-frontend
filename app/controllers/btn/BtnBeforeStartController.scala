@@ -22,7 +22,7 @@ import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.BtnBeforeStartView
+import views.html.btn.BtnBeforeStartView
 
 import javax.inject.Inject
 

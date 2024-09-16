@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.btn
 
 import base.SpecBase
-import forms.BtnRevenues750In2AccountingPeriodFormProvider
 import controllers.actions.TestAuthRetrievals.Ops
+import forms.BtnRevenues750In2AccountingPeriodFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.BtnRevenues750In2AccountingPeriodPage
 import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.SubscriptionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, EnrolmentIdentifier, Enrolments, User}
-import views.html.BtnRevenues750In2AccountingPeriodView
+import uk.gov.hmrc.auth.core._
+import views.html.btn.BtnRevenues750In2AccountingPeriodView
 
 import java.util.UUID
 import scala.concurrent.Future

@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-import views.html.BtnAccountingPeriodView
+import views.html.btn.BtnAccountingPeriodView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}

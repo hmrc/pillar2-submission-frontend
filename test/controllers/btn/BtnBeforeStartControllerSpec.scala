@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.btn
 
 import base.SpecBase
-import controllers.actions.TestAuthRetrievals.Ops
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
-import views.html.{BtnBeforeStartView, IndexView}
-
-import scala.concurrent.Future
+import views.html.btn.BtnBeforeStartView
 
 class BtnBeforeStartControllerSpec extends SpecBase {
 

@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.BtnBeforeStartView
+import views.html.btn.BtnBeforeStartView
 
 class BtnBeforeStartViewSpec extends ViewSpecBase {
 

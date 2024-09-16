@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.btn
 
 import base.SpecBase
 import forms.BtnEntitiesBothInUKAndOutsideFormProvider
@@ -28,7 +28,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.BtnEntitiesBothInUKAndOutsideView
+import views.html.btn.BtnEntitiesBothInUKAndOutsideView
 
 import scala.concurrent.Future
 
