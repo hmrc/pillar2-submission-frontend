@@ -22,7 +22,7 @@ import java.time.LocalDate
 
 trait SubscriptionLocalDataFixture {
   private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
-  private val contactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
+  private val contactDetails           = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
   private lazy val currentDate: LocalDate = LocalDate.now()
 
   val subscriptionData: SubscriptionData = SubscriptionData(

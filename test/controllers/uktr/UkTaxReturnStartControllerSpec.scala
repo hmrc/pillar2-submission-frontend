@@ -47,14 +47,12 @@ class UkTaxReturnStartControllerSpec extends SpecBase {
         state = "activated"
       )
     )
-    val plrReference         = "testPlrRef"
+    val plrReference = "testPlrRef"
 
     "must return OK and the correct view if PlrReference in session" in {
       val ua = UserAnswers(userAnswersId).setOrException(PlrReferencePage, plrReference)
       val application = applicationBuilder(Some(ua), enrolments)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SubscriptionService].toInstance(mockSubscriptionService))
         .build()
       when(mockSessionRepository.get(any()))
         .thenReturn(Future.successful(Some(ua)))
@@ -72,9 +70,7 @@ class UkTaxReturnStartControllerSpec extends SpecBase {
     "must return OK and the correct view if AgentClientPillar2Reference in session" in {
       val ua = UserAnswers(userAnswersId).setOrException(AgentClientPillar2ReferencePage, plrReference)
       val application = applicationBuilder(Some(ua), enrolments)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SubscriptionService].toInstance(mockSubscriptionService))
         .build()
       when(mockSessionRepository.get(any()))
         .thenReturn(Future.successful(Some(ua)))
@@ -91,9 +87,7 @@ class UkTaxReturnStartControllerSpec extends SpecBase {
 
     "must redirect to Journey Recovery Controller if no PlrReference or no AgentClientPillar2Reference in session" in {
       val application = applicationBuilder(Some(emptyUserAnswers), enrolments)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository), bind[SubscriptionService].toInstance(mockSubscriptionService))
         .build()
       when(mockSessionRepository.get(any()))
         .thenReturn(Future.successful(Some(emptyUserAnswers)))

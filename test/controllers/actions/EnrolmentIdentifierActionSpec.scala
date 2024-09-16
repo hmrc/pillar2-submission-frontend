@@ -484,8 +484,8 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
           val authAction  = new EnrolmentIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
-          val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(FakeRequest())
+          val controller  = new Harness(authAction)
+          val result      = controller.onPageLoad()(FakeRequest())
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value must startWith(appConfig.loginUrl)
         }

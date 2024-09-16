@@ -27,8 +27,8 @@ class UkTaxReturnStartViewSpec extends ViewSpecBase {
 
   "UK Tax Return Start View with inactiveStatus false" should {
 
-    val inactiveStatus: Boolean = false
-    val view: Document = Jsoup.parse(page(inactiveStatus)(request, appConfig, messages).toString())
+    val inactiveStatus: Boolean  = false
+    val view:           Document = Jsoup.parse(page(inactiveStatus)(request, appConfig, messages).toString())
 
     "have a title" in {
       view.getElementsByTag("title").text must include("UK Tax Return (UKTR)")
@@ -38,7 +38,8 @@ class UkTaxReturnStartViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-notification-banner__title").text() mustNot include("Important")
       view.getElementsByClass("govuk-notification-banner__heading").text() mustNot include(
         "Your account has a Below Threshold Notification (BTN) and is inactive. " +
-          "Submit a UK tax return (UKTR) to re-activate your account.")
+          "Submit a UK tax return (UKTR) to re-activate your account."
+      )
     }
 
     "have a h1 heading" in {
@@ -90,8 +91,8 @@ class UkTaxReturnStartViewSpec extends ViewSpecBase {
 
   "UK Tax Return Start View with inactiveStatus true" should {
 
-    val inactiveStatus: Boolean = true
-    val view: Document = Jsoup.parse(page(inactiveStatus)(request, appConfig, messages).toString())
+    val inactiveStatus: Boolean  = true
+    val view:           Document = Jsoup.parse(page(inactiveStatus)(request, appConfig, messages).toString())
 
     "have a title" in {
       view.getElementsByTag("title").text must include("UK Tax Return (UKTR)")
@@ -101,7 +102,8 @@ class UkTaxReturnStartViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-notification-banner__title").text() must include("Important")
       view.getElementsByClass("govuk-notification-banner__heading").text() must include(
         "Your account has a Below Threshold Notification (BTN) and is inactive. " +
-        "Submit a UK tax return (UKTR) to re-activate your account.")
+          "Submit a UK tax return (UKTR) to re-activate your account."
+      )
     }
 
     "have a h1 heading" in {
@@ -150,7 +152,5 @@ class UkTaxReturnStartViewSpec extends ViewSpecBase {
     }
 
   }
-
-
 
 }
