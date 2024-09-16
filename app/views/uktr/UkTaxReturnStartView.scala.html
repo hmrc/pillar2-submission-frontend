@@ -40,12 +40,12 @@
     @pWithLink(
         message1 = Some(messages("uktr.UkTaxReturnStart.p4")),
         linkMessage = messages("uktr.UkTaxReturnStart.p4.link"),
-        linkUrl = "",
+        linkUrl = appConfig.changeAccountingPeriodUrl,
         linkFullStop = true
     )
     @p(messages("uktr.UkTaxReturnStart.p5"))
     @pWithLink(
         linkMessage = messages("uktr.UkTaxReturnStart.p6.link"),
-        linkUrl = ""
+        linkUrl = appConfig.ukTaxReturnSupplierListUrl
     )
 }
