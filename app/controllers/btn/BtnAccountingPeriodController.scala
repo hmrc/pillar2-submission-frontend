@@ -19,7 +19,7 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
 import models.{MneOrDomestic, Mode}
-import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
+import pages.{PlrReferencePage, SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -44,7 +44,8 @@ class BtnAccountingPeriodController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
     val dateHelper         = new ViewHelpers()
-    val pillar2FrontendUrl = appConfig.pillar2FrontendUrl
+    val pillar2FrontendUrl = appConfig.changeAccountingPeriodUrl
+//    println("plr ref......................" +request.maybeSubscriptionLocalData.flatMap(_.get(PlrReferencePage)))
     request.maybeSubscriptionLocalData
       .flatMap(_.get(SubAccountingPeriodPage))
       .map { answer =>

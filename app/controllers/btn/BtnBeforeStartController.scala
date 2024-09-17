@@ -16,27 +16,45 @@
 
 package controllers.btn
 
+import cats.data.OptionT
+import cats.data.OptionT.liftF
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
-import models.Mode
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{Mode, UserAnswers}
+import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BtnBeforeStartView
 
 import javax.inject.Inject
+import scala.concurrent.Future
 
 class BtnBeforeStartController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     BtnBeforeStartView,
-  identify:                 IdentifierAction
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  subscriptionService:      SubscriptionService,
+  sessionRepository:        SessionRepository
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify  { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     // read subscription cache - to get pillar2ID
     // Read subscription  and store into session repository.
+    for {
+      mayBeUserAnswer <- liftF(sessionRepository.get(request.userId))
+      userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
+      maybeSubscriptionLocalData <- OptionT.liftF(subscriptionService.getSubscriptionCache(request.userId))
+      subscriptionData           <- OptionT.fromOption[Future](maybeSubscriptionLocalData)
+      updatedAnswers             <- OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, subscriptionData.plrReference)))
+      _                          <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+    } yield (): Unit
     Ok(view(mode))
   }
 
