@@ -19,7 +19,7 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
 import models.{MneOrDomestic, Mode}
-import pages.{PlrReferencePage, SubAccountingPeriodPage, SubMneOrDomesticPage}
+import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -28,11 +28,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-import views.html.btn.BtnAccountingPeriodView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
-
+import views.html.btn.BtnAccountingPeriodView
 class BtnAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   getData:                                SubscriptionDataRetrievalAction,
@@ -43,9 +42,8 @@ class BtnAccountingPeriodController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
-    val dateHelper         = new ViewHelpers()
-    val pillar2FrontendUrl = appConfig.changeAccountingPeriodUrl
-//    println("plr ref......................" +request.maybeSubscriptionLocalData.flatMap(_.get(PlrReferencePage)))
+    val dateHelper                = new ViewHelpers()
+    val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
     request.maybeSubscriptionLocalData
       .flatMap(_.get(SubAccountingPeriodPage))
       .map { answer =>
@@ -63,7 +61,7 @@ class BtnAccountingPeriodController @Inject() (
             )
           )
         )
-        Ok(view(list, mode, pillar2FrontendUrl))
+        Ok(view(list, mode, changeAccountingPeriodUrl))
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None)))
 

@@ -41,22 +41,20 @@ class BtnBeforeStartController @Inject() (
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
-  subscriptionConnector:    SubscriptionConnector,
+  subscriptionService:      SubscriptionService,
   sessionRepository:        SessionRepository
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    // read subscription cache - to get pillar2ID
-    // Read subscription  and store into session repository.
     for {
       mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
       userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
-      maybeSubscriptionLocalData <- OptionT.liftF(subscriptionConnector.getSubscriptionCache(request.userId))
-      subscriptionData           <- OptionT.fromOption[Future](maybeSubscriptionLocalData)
-      updatedAnswers             <- OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, subscriptionData.plrReference)))
-      _                          <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+      maybeSubscriptionLocalData <- OptionT.liftF(subscriptionService.getSubscriptionCache(request.userId))
+      updatedAnswers <-
+        OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, maybeSubscriptionLocalData.plrReference)))
+      _ <- OptionT.liftF(sessionRepository.set(updatedAnswers))
     } yield (): Unit
     Ok(view(mode))
   }

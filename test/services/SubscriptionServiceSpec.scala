@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors._
-import models.subscription._
+import models.InternalIssueError
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
@@ -35,17 +35,6 @@ class SubscriptionServiceSpec extends SpecBase {
 
   val id           = "testId"
   val plrReference = "testPlrRef"
-
-  val subscriptionData: SubscriptionData = SubscriptionData(
-    formBundleNumber = "form bundle",
-    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
-    upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-    primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-    secondaryContactDetails = None,
-    filingMemberDetails = None,
-    accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
-    accountStatus = Some(AccountStatus(false))
-  )
 
   "SubscriptionService" must {
 
@@ -100,6 +89,39 @@ class SubscriptionServiceSpec extends SpecBase {
           val resultFuture = service.readSubscription("plr")
 
           resultFuture.failed.futureValue shouldBe a[RuntimeException]
+        }
+      }
+
+      "return getSubscriptionCache object when the connector returns valid data and transformation is successful" in {
+
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.getSubscriptionCache("userid").futureValue
+
+          result mustBe someSubscriptionLocalData
+        }
+      }
+
+      "return InternalIssueError when the connector for getSubscriptionCache" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.failed(InternalIssueError))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.getSubscriptionCache("userid").failed.futureValue
+          result mustBe models.InternalIssueError
         }
       }
 

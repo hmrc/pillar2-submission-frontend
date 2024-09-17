@@ -16,36 +16,29 @@
 
 package helpers
 
-import models.requests.SubscriptionDataRequest
-import models.subscription._
 import models.{MneOrDomestic, NonUKAddress}
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.govuk.summarylist.SummaryListViewModel
+import models.subscription._
 
 import java.time.LocalDate
 
 trait SubscriptionLocalDataFixture {
   private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
+  private val contactDetails           = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
+  private lazy val currentDate: LocalDate = LocalDate.now()
 
-  lazy val currentDate: LocalDate = LocalDate.now()
-
-  val emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
-    subMneOrDomestic = MneOrDomestic.Uk,
-    subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
-    subPrimaryContactName = "",
-    subPrimaryEmail = "",
-    subPrimaryPhonePreference = false,
-    subPrimaryCapturePhone = None,
-    subAddSecondaryContact = false,
-    subSecondaryContactName = None,
-    subSecondaryEmail = None,
-    subSecondaryCapturePhone = None,
-    subSecondaryPhonePreference = Some(false),
-    subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
+  val subscriptionData: SubscriptionData = SubscriptionData(
+    formBundleNumber = "form bundle",
+    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
+    upeCorrespAddressDetails = upeCorrespondenceAddress,
+    primaryContactDetails = contactDetails,
+    secondaryContactDetails = None,
+    filingMemberDetails = None,
+    accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
+    accountStatus = Some(AccountStatus(false))
   )
 
   val someSubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
     subMneOrDomestic = MneOrDomestic.Uk,
     subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
     subPrimaryContactName = "John",
@@ -59,4 +52,21 @@ trait SubscriptionLocalDataFixture {
     subSecondaryPhonePreference = Some(true),
     subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB")
   )
+
+  val someSubscriptionLocalDataUkOther: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
+    subMneOrDomestic = MneOrDomestic.UkAndOther,
+    subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
+    subPrimaryContactName = "John",
+    subPrimaryEmail = "john@email.com",
+    subPrimaryPhonePreference = true,
+    subPrimaryCapturePhone = Some("123"),
+    subAddSecondaryContact = true,
+    subSecondaryContactName = Some("Doe"),
+    subSecondaryEmail = Some("doe@email.com"),
+    subSecondaryCapturePhone = Some("123"),
+    subSecondaryPhonePreference = Some(true),
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB")
+  )
+
 }
