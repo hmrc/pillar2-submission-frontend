@@ -18,7 +18,9 @@ package controllers.btn
 
 import cats.data.OptionT
 import cats.data.OptionT.liftF
+import cats.implicits.catsStdInstancesForFuture
 import config.FrontendAppConfig
+import connectors.SubscriptionConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{Mode, UserAnswers}
 import pages.PlrReferencePage
@@ -30,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BtnBeforeStartView
 
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class BtnBeforeStartController @Inject() (
@@ -38,7 +41,7 @@ class BtnBeforeStartController @Inject() (
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
-  subscriptionService:      SubscriptionService,
+  subscriptionConnector:    SubscriptionConnector,
   sessionRepository:        SessionRepository
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
@@ -48,9 +51,9 @@ class BtnBeforeStartController @Inject() (
     // read subscription cache - to get pillar2ID
     // Read subscription  and store into session repository.
     for {
-      mayBeUserAnswer <- liftF(sessionRepository.get(request.userId))
+      mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
       userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
-      maybeSubscriptionLocalData <- OptionT.liftF(subscriptionService.getSubscriptionCache(request.userId))
+      maybeSubscriptionLocalData <- OptionT.liftF(subscriptionConnector.getSubscriptionCache(request.userId))
       subscriptionData           <- OptionT.fromOption[Future](maybeSubscriptionLocalData)
       updatedAnswers             <- OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, subscriptionData.plrReference)))
       _                          <- OptionT.liftF(sessionRepository.set(updatedAnswers))
