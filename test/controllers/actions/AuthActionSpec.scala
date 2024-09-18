@@ -247,7 +247,7 @@ class AuthActionSpec extends SpecBase {
 
     "when the user is logged in as an Agent" must {
 
-      "must fail and redirect to agent screen" in {
+      "must succeed and continue" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -261,9 +261,7 @@ class AuthActionSpec extends SpecBase {
           val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe controllers.routes.UnauthorisedAgentAffinityController.onPageLoad.url
+          status(result) mustBe OK
 
         }
       }
