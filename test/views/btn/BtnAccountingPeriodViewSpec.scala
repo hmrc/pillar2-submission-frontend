@@ -40,7 +40,7 @@ class BtnAccountingPeriodViewSpec extends ViewSpecBase {
   val page: BtnAccountingPeriodView = inject[BtnAccountingPeriodView]
   val view: Document                = Jsoup.parse(page(list, NormalMode, "test-url")(request, appConfig, messages).toString())
 
-  "Btn Before Start View" should {
+  "Btn Accounting Period View" should {
 
     "have a title" in {
       view.getElementsByTag("title").text must include("Submit a Below-Threshold Notification for your group’s current accounting period")

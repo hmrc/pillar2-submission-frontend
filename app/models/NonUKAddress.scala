@@ -33,7 +33,6 @@ package models
  */
 
 import play.api.libs.json.{Json, OFormat}
-import play.twirl.api.HtmlFormat
 
 case class NonUKAddress(
   addressLine1: String,
@@ -42,19 +41,7 @@ case class NonUKAddress(
   addressLine4: Option[String],
   postalCode:   Option[String],
   countryCode:  String
-) {
-
-  val field1:      String = HtmlFormat.escape(addressLine1).toString + "<br>"
-  val field2:      String = if (addressLine2.isDefined) HtmlFormat.escape(addressLine2.mkString("")) + "<br>" else ""
-  val field3:      String = HtmlFormat.escape(addressLine3).toString + "<br>"
-  val field4:      String = if (addressLine4.isDefined) HtmlFormat.escape(addressLine4.mkString("")) + "<br>" else ""
-  val postcode:    String = if (postalCode.isDefined) HtmlFormat.escape(postalCode.mkString("")) + "<br>" else ""
-  val fullAddress: String = field1 + field2 + field3 + field4 + postcode
-
-  val getAddressList: List[String] =
-    List(addressLine1, addressLine2.getOrElse(""), addressLine3, addressLine4.getOrElse(""), postalCode.getOrElse(""), countryCode).filter(_.nonEmpty)
-
-}
+)
 object NonUKAddress {
   implicit val format: OFormat[NonUKAddress] = Json.format[NonUKAddress]
 }

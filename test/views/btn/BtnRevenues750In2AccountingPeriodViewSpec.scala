@@ -28,7 +28,7 @@ class BtnRevenues750In2AccountingPeriodViewSpec extends ViewSpecBase {
   val page: BtnRevenues750In2AccountingPeriodView = inject[BtnRevenues750In2AccountingPeriodView]
   val view: Document                              = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
-  "Btn Before Start View" should {
+  "Btn Revenues 750 In 2 Accounting Period View" should {
 
     "have a title" in {
       view.getElementsByTag("title").text must include(
