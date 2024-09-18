@@ -31,19 +31,19 @@ import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BtnBeforeStartView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class BtnBeforeStartController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  view:                     BtnBeforeStartView,
-  identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  subscriptionService:      SubscriptionService,
-  sessionRepository:        SessionRepository
-)(implicit appConfig:       FrontendAppConfig)
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   BtnBeforeStartView,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                DataRetrievalAction,
+  requireData:                            DataRequiredAction,
+  subscriptionService:                    SubscriptionService,
+  sessionRepository:                      SessionRepository
+)(implicit appConfig:                     FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

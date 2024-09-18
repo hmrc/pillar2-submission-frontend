@@ -28,20 +28,20 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BtnEntitiesBothInUKAndOutsideView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class BtnEntitiesBothInUKAndOutsideController @Inject() (
-  override val messagesApi: MessagesApi,
-  sessionRepository:        SessionRepository,
-  navigator:                BtnNavigator,
-  identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  formProvider:             BtnEntitiesBothInUKAndOutsideFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     BtnEntitiesBothInUKAndOutsideView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  override val messagesApi:               MessagesApi,
+  sessionRepository:                      SessionRepository,
+  navigator:                              BtnNavigator,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                DataRetrievalAction,
+  requireData:                            DataRequiredAction,
+  formProvider:                           BtnEntitiesBothInUKAndOutsideFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   BtnEntitiesBothInUKAndOutsideView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

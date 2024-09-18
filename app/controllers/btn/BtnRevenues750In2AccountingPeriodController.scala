@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.BtnRevenues750In2AccountingPeriodFormProvider
 import models.Mode
-import navigation.{BtnNavigator, Navigator}
+import navigation.BtnNavigator
 import pages.BtnRevenues750In2AccountingPeriodPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
