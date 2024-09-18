@@ -36,14 +36,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class BtnBeforeStartController @Inject() (
-  val controllerComponents:               MessagesControllerComponents,
-  view:                                   BtnBeforeStartView,
-  @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  getData:                                DataRetrievalAction,
-  requireData:                            DataRequiredAction,
-  subscriptionService:                    SubscriptionService,
-  sessionRepository:                      SessionRepository
-)(implicit appConfig:                     FrontendAppConfig)
+  val controllerComponents: MessagesControllerComponents,
+  view:                     BtnBeforeStartView,
+  identify:                 IdentifierAction,
+  getData:                  DataRetrievalAction,
+  requireData:              DataRequiredAction,
+  subscriptionService:      SubscriptionService,
+  sessionRepository:        SessionRepository
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -17,10 +17,8 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import controllers.actions.EnrolmentIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, VerifyAgentClientPredicate, defaultPredicate}
-import controllers.routes
+import controllers.actions.EnrolmentIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, VerifyAgentClientPredicate, VerifyOrgUserPredicate, defaultPredicate}
 import models.requests.IdentifierRequest
-import pages.PlrReferencePage
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -30,10 +28,13 @@ import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
+import controllers.routes
+import pages.PlrReferencePage
+import pages.agent.AgentClientPillar2ReferencePage
 
 import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,19 +60,19 @@ class EnrolmentIdentifierAction @Inject() (
       ) {
         case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ _ if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
           authAsAgent(request, internalId)
-        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials =>
-          authAsOrg(request, internalId, enrolments, credentials)
+        case Some(internalId) ~ _ ~ Some(Organisation) ~ Some(User) ~ _ =>
+          authAsOrg(request, internalId)
         case Some(_) ~ _ ~ Some(Organisation) ~ Some(Assistant) ~ _ =>
-          logger.info("EnrolmentAuthIdentifierAction - Organisation: Assistant login attempt")
+          logger.info(s"EnrolmentAuthIdentifierAction - Organisation: Assistant login attempt")
           Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
         case Some(_) ~ _ ~ Some(Individual) ~ _ ~ _ =>
-          logger.info("EnrolmentAuthIdentifierAction - Individual login attempt")
+          logger.info(s"EnrolmentAuthIdentifierAction - Individual login attempt")
           Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
         case Some(_) ~ _ ~ Some(Agent) ~ _ ~ _ =>
-          logger.info("EnrolmentAuthIdentifierAction - Unauthorised Agent login attempt")
+          logger.info(s"EnrolmentAuthIdentifierAction - Unauthorised Agent login attempt")
           Future.successful(Left(Redirect(routes.UnauthorisedAgentAffinityController.onPageLoad)))
         case _ =>
-          logger.warn("EnrolmentAuthIdentifierAction - Unable to retrieve internal id or affinity group")
+          logger.warn(s"EnrolmentAuthIdentifierAction - Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>
@@ -83,6 +84,45 @@ class EnrolmentIdentifierAction @Inject() (
   override def parser:                     BodyParser[AnyContent] = bodyParser
   override protected def executionContext: ExecutionContext       = ec
 
+  def authAsOrg[A](
+    request:    Request[A],
+    internalId: String
+  ): Future[Either[Result, IdentifierRequest[A]]] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
+      maybeUserAnswers.flatMap(_.get(PlrReferencePage)) match {
+        case Some(pillar2Id) =>
+          authorised(VerifyOrgUserPredicate(pillar2Id))
+            .retrieve(
+              Retrievals.internalId and Retrievals.allEnrolments
+                and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
+            ) {
+              case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ _ =>
+                Future.successful(
+                  Right(
+                    IdentifierRequest(
+                      request,
+                      internalId,
+                      enrolments = enrolments.enrolments
+                    )
+                  )
+                )
+              case _ =>
+                logger.warn(s"EnrolmentAuthIdentifierAction - authAsOrg - Unable to retrieve internal id or affinity group")
+                Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
+            } recover {
+            case _: NoActiveSession =>
+              Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
+            case _: AuthorisationException =>
+              Left(Redirect(routes.UnauthorisedController.onPageLoad))
+          }
+        case _ =>
+          logger.warn(s"EnrolmentAuthIdentifierAction - Unable to retrieve plrReference from session")
+          Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
+      }
+    }
+  }
+
   def authAsAgent[A](
     request:    Request[A],
     internalId: String
@@ -91,8 +131,8 @@ class EnrolmentIdentifierAction @Inject() (
     sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
       maybeUserAnswers
         .flatMap(_.get(PlrReferencePage)) match {
-        case Some(backEndClientPillar2Id) =>
-          authorised(VerifyAgentClientPredicate(backEndClientPillar2Id))
+        case Some(pillar2Id) =>
+          authorised(VerifyAgentClientPredicate(pillar2Id))
             .retrieve(
               Retrievals.internalId and Retrievals.allEnrolments
                 and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
@@ -107,8 +147,7 @@ class EnrolmentIdentifierAction @Inject() (
                       request,
                       internalId,
                       enrolments = enrolments.enrolments,
-                      isAgent = true,
-                      clientPillar2Id = Some(backEndClientPillar2Id)
+                      isAgent = true
                     )
                   )
                 )
@@ -137,37 +176,11 @@ class EnrolmentIdentifierAction @Inject() (
               Left(Redirect(routes.AgentController.onPageLoadError))
           }
         case _ =>
-          logger.info("EnrolmentAuthIdentifierAction - authAsAgent - Insufficient enrolment for Agent")
+          logger.info(s"EnrolmentAuthIdentifierAction - authAsAgent - Insufficient enrolment for Agent")
           Future.successful(Left(Redirect(routes.AgentController.onPageLoadUnauthorised)))
       }
     }
   }
-
-
-  def authAsOrg[A](
-                    request:     Request[A],
-                    internalId:  String,
-                    enrolments:  Enrolments,
-                    credentials: Option[Credentials]
-                  ): Future[Either[Result, IdentifierRequest[A]]] =
-    sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
-      maybeUserAnswers
-        .flatMap(_.get(PlrReferencePage)) match {
-        case Some(_) =>
-          Future.successful(
-            Right(
-              IdentifierRequest(
-                request,
-                internalId,
-                enrolments = enrolments.enrolments
-              )
-            )
-          )
-        case _ =>
-          logger.warn("EnrolmentAuthIdentifierAction - Unable to retrieve plrReference from database ")
-          Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
-      }
-    }
 
 }
 
@@ -183,4 +196,9 @@ object EnrolmentIdentifierAction {
     AuthProviders(GovernmentGateway) and Enrolment(HMRC_PILLAR2_ORG_KEY)
       .withIdentifier(ENROLMENT_IDENTIFIER, clientPillar2Id)
       .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
+
+  val VerifyOrgUserPredicate: String => Predicate = (pillar2Id: String) =>
+    AuthProviders(GovernmentGateway) and Enrolment(HMRC_PILLAR2_ORG_KEY)
+      .withIdentifier(ENROLMENT_IDENTIFIER, pillar2Id)
+
 }
