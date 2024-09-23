@@ -17,7 +17,8 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.subscription.SubscriptionData
+import models.InternalIssueError
+import models.subscription.{SubscriptionData, SubscriptionLocalData, SubscriptionSuccess}
 import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -35,12 +36,27 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
     http
       .GET[HttpResponse](subscriptionUrl)
-      .map {
+      .flatMap {
         case response if response.status == 200 =>
-          Some(Json.parse(response.body).as[SubscriptionData])
+          Future.successful(Some(Json.parse(response.body).as[SubscriptionSuccess].success))
+        case notFoundResponse if notFoundResponse.status == 404 => Future.successful(None)
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
-          None
+          Future.failed(InternalIssueError)
       }
   }
+
+  def getSubscriptionCache(
+    userId:      String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
+    http
+      .GET[HttpResponse](s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
+      .map {
+        case response if response.status == 200 =>
+          Some(Json.parse(response.body).as[SubscriptionLocalData])
+        case e =>
+          logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
+          None
+      }
+
 }
