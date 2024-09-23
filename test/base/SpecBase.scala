@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
-import helpers.{AllMocks, SubscriptionLocalDataFixture, ViewInstances}
+import helpers.{AllMocks, ViewInstances}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -62,7 +62,6 @@ trait SpecBase
     with ViewInstances
     with IntegrationPatience
     with GuiceOneAppPerSuite
-    with SubscriptionLocalDataFixture
     with WireMockServerHandler {
 
   val userAnswersId: String = "id"
@@ -79,11 +78,6 @@ trait SpecBase
       Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", Some("pillar2-auth"))
     )
   )
-
-  val pillar2OrganisationEnrolment: Enrolments = Enrolments(
-    Set(Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", None))
-  )
-
   def emptyUserAnswers:        UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:        ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:        HeaderCarrier     = HeaderCarrier()
@@ -145,7 +139,6 @@ trait SpecBase
         bind[Enrolments].toInstance(Enrolments(enrolments)),
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[IdentifierAction].qualifiedWith("EnrolmentIdentifier").to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
 

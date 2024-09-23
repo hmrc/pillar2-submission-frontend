@@ -16,7 +16,6 @@
 
 package models
 
-import pages.QuestionPage
 import play.api.libs.json._
 import queries.{Gettable, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -47,12 +46,6 @@ final case class UserAnswers(
       page.cleanup(Some(value), updatedAnswers)
     }
   }
-
-  def setOrException[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): UserAnswers =
-    set(page, value) match {
-      case Success(ua) => ua
-      case Failure(ex) => throw ex
-    }
 
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 

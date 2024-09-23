@@ -18,6 +18,7 @@ package services
 
 import base.SpecBase
 import connectors._
+import models.subscription._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
@@ -34,6 +35,17 @@ class SubscriptionServiceSpec extends SpecBase {
 
   val id           = "testId"
   val plrReference = "testPlrRef"
+
+  val subscriptionData: SubscriptionData = SubscriptionData(
+    formBundleNumber = "form bundle",
+    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
+    upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
+    primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
+    secondaryContactDetails = None,
+    filingMemberDetails = None,
+    accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
+    accountStatus = Some(AccountStatus(false))
+  )
 
   "SubscriptionService" must {
 
