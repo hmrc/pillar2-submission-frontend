@@ -54,8 +54,10 @@ class AuthenticatedIdentifierAction @Inject() (
 
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup and Retrievals.credentialRole) {
+
         case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
           Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
+
         case _ ~ _ ~ Some(Organisation) ~ Some(Assistant) =>
           Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
         case _ ~ _ ~ Some(Individual) ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))

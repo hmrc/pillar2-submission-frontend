@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import form.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
+import models.subscription._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -50,6 +51,17 @@ class AgentControllerSpec extends SpecBase {
       Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None),
       Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
     )
+  )
+
+  val subscriptionData = SubscriptionData(
+    formBundleNumber = "form bundle",
+    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
+    upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
+    primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
+    secondaryContactDetails = None,
+    filingMemberDetails = None,
+    accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
+    accountStatus = Some(AccountStatus(false))
   )
 
   private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
