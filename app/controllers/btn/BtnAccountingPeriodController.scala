@@ -71,9 +71,7 @@ class BtnAccountingPeriodController @Inject() (
     request.maybeSubscriptionLocalData
       .flatMap(_.get(SubMneOrDomesticPage))
       .map { answer =>
-        if (answer == MneOrDomestic.Uk)
-          Future.successful(Redirect(controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(mode)))
-        else Future.successful(Redirect(controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode)))
+        Future.successful(Redirect(controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode, answer.toString)))
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
 

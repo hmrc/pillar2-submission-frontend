@@ -26,7 +26,7 @@ import viewmodels.implicits._
 
 object BtnEntitiesBothInUKAndOutsideSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, inTheUK: String)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(EntitiesBothInUKAndOutsidePage).map { answer =>
       val value = if (answer) "site.yes" else "site.no"
 
@@ -34,7 +34,7 @@ object BtnEntitiesBothInUKAndOutsideSummary {
         key = "entitiesBothInUKAndOutside.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(CheckMode, inTheUK).url)
             .withVisuallyHiddenText(messages("entitiesBothInUKAndOutside.change.hidden"))
         )
       )

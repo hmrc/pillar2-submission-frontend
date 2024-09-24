@@ -167,12 +167,13 @@ btn.btnAccountingPeriod.endAccountDate = End date of accounting period
 btn.btnAccountingPeriod.link = Update your group’s current accounting period
 btn.btnAccountingPeriod.p2 =, before continuing, if it is different from this.
 
-btn.btnEntitiesBothInUKAndOutside.title = Does the group still have entities located in both the UK and outside the UK?
-btn.btnEntitiesBothInUKAndOutside.heading = Does the group still have entities located in both the UK and outside the UK?
+btn.btnEntitiesBothInUKAndOutside.title.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
+btn.btnEntitiesBothInUKAndOutside.title.uk = Does the group still have entities located only in the UK?
+btn.btnEntitiesBothInUKAndOutside.heading.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
+btn.btnEntitiesBothInUKAndOutside.heading.uk = Does the group still have entities located only in the UK?
 btn.btnEntitiesBothInUKAndOutside.checkYourAnswersLabel = Does the group still have entities located in both the UK and outside the UK?
 btn.btnEntitiesBothInUKAndOutside.error.required = Select yes if the group still has entities located in both the UK and outside the UK
 btn.btnEntitiesBothInUKAndOutside.change.hidden = Does the group still have entities located in both the UK and outside the UK?
-
 btnRevenues750In2AccountingPeriod.title = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 btnRevenues750In2AccountingPeriod.heading = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 btnRevenues750In2AccountingPeriod.checkYourAnswersLabel = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.

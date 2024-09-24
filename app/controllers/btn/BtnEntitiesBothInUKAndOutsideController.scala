@@ -19,7 +19,7 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.BtnEntitiesBothInUKAndOutsideFormProvider
-import models.Mode
+import models.{MneOrDomestic, Mode}
 import navigation.BtnNavigator
 import pages.EntitiesBothInUKAndOutsidePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,20 +47,20 @@ class BtnEntitiesBothInUKAndOutsideController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode, inTheUK: String): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(EntitiesBothInUKAndOutsidePage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
 
-    Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode, inTheUK))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode, inTheUK: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, inTheUK))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EntitiesBothInUKAndOutsidePage, value))

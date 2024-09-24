@@ -39,7 +39,7 @@ class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoS
   val formProvider = new BtnEntitiesBothInUKAndOutsideFormProvider()
   val form         = formProvider()
 
-  lazy val entitiesBothInUKAndOutsideRoute = controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(NormalMode).url
+  lazy val entitiesBothInUKAndOutsideRoute = controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(NormalMode, "uk").url
 
   "EntitiesBothInUKAndOutside Controller" when {
 
@@ -55,7 +55,7 @@ class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[BtnEntitiesBothInUKAndOutsideView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, "uk")(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -73,7 +73,7 @@ class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, "uk")(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -118,7 +118,7 @@ class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "uk")(request, appConfig(application), messages(application)).toString
       }
     }
 
