@@ -42,7 +42,7 @@ class BtnNavigatorSpec extends SpecBase {
 
       "go from  EntitiesBothInUKAndOutsidePage period page to BtnRevenues750InNext2AccountingPeriods page " in {
         navigator.nextPage(EntitiesBothInUKAndOutsidePage, NormalMode, emptyUserAnswers.setOrException(EntitiesBothInUKAndOutsidePage, false)) mustBe
-          controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
+          controllers.routes.UnderConstructionController.onPageLoad
       }
 
       "go from  BtnRevenues750In2AccountingPeriodPage period page to UnderConstruction  page " in {
@@ -51,7 +51,7 @@ class BtnNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(BtnRevenues750In2AccountingPeriodPage, true)
         ) mustBe
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
       }
 
       "go from  BtnRevenues750In2AccountingPeriodPage period page to UnderConstruction page " in {
