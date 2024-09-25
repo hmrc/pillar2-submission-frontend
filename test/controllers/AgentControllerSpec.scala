@@ -53,17 +53,6 @@ class AgentControllerSpec extends SpecBase {
     )
   )
 
-  val subscriptionData = SubscriptionData(
-    formBundleNumber = "form bundle",
-    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
-    upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-    primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-    secondaryContactDetails = None,
-    filingMemberDetails = None,
-    accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
-    accountStatus = Some(AccountStatus(false))
-  )
-
   private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
 
   "Enter And Submit Client Pillar 2 Id" must {

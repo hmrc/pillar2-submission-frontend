@@ -383,7 +383,8 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-
+      val userAnswer = emptyUserAnswers
+        .setOrException(PlrReferencePage, PlrReference)
       "has pillar2 enrolment" must {
         "return the credentials we require" in {
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
@@ -392,7 +393,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
                 Some(id) ~ pillar2OrganisationEnrolment ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
               )
             )
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -427,7 +428,6 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
           }
         }
       }
-
 
     }
 

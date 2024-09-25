@@ -68,6 +68,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
     "getSubscriptionCache" should {
       val emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
+        plrReference = plrReference,
         subMneOrDomestic = MneOrDomestic.Uk,
         subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
         subPrimaryContactName = "",
