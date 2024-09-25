@@ -23,8 +23,8 @@ import play.api.data.Form
 
 class BtnEntitiesBothInUKAndOutsideFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(inTheUK: String): Form[Boolean] =
     Form(
-      "value" -> boolean("btn.btnEntitiesBothInUKAndOutside.error.required")
+      "value" -> boolean("btn.btnEntitiesBothInUKAndOutside.error.required." + inTheUK)
     )
 }

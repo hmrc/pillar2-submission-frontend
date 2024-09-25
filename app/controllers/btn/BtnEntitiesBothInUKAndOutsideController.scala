@@ -45,9 +45,8 @@ class BtnEntitiesBothInUKAndOutsideController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode, inTheUK: String): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val form = formProvider(inTheUK)
     val preparedForm = request.userAnswers.get(EntitiesBothInUKAndOutsidePage) match {
       case None        => form
       case Some(value) => form.fill(value)
@@ -57,6 +56,7 @@ class BtnEntitiesBothInUKAndOutsideController @Inject() (
   }
 
   def onSubmit(mode: Mode, inTheUK: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val form = formProvider(inTheUK)
     form
       .bindFromRequest()
       .fold(

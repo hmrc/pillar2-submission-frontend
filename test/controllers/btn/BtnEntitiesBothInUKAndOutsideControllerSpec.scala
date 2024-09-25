@@ -37,7 +37,7 @@ class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoS
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new BtnEntitiesBothInUKAndOutsideFormProvider()
-  val form         = formProvider()
+  val form         = formProvider("uk")
 
   lazy val entitiesBothInUKAndOutsideRoute = controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(NormalMode, "uk").url
 

@@ -172,7 +172,9 @@ btn.btnEntitiesBothInUKAndOutside.title.uk = Does the group still have entities 
 btn.btnEntitiesBothInUKAndOutside.heading.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
 btn.btnEntitiesBothInUKAndOutside.heading.uk = Does the group still have entities located only in the UK?
 btn.btnEntitiesBothInUKAndOutside.checkYourAnswersLabel = Does the group still have entities located in both the UK and outside the UK?
-btn.btnEntitiesBothInUKAndOutside.error.required = Select yes if the group still has entities located in both the UK and outside the UK
+btn.btnEntitiesBothInUKAndOutside.error.required.ukAndOther = Select yes if the group still has entities located in both the UK and outside the UK
+btn.btnEntitiesBothInUKAndOutside.error.required.uk = Select yes if the group still has entities located only in the UK
+
 btn.btnEntitiesBothInUKAndOutside.change.hidden = Does the group still have entities located in both the UK and outside the UK?
 btnRevenues750In2AccountingPeriod.title = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 btnRevenues750In2AccountingPeriod.heading = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
