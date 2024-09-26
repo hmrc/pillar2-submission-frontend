@@ -51,7 +51,7 @@ class BtnNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(BtnRevenues750In2AccountingPeriodPage, true)
         ) mustBe
-          controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
+          controllers.routes.UnderConstructionController.onPageLoad
       }
 
       "go from  BtnRevenues750In2AccountingPeriodPage period page to UnderConstruction page " in {
@@ -60,7 +60,7 @@ class BtnNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(BtnRevenues750In2AccountingPeriodPage, false)
         ) mustBe
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
       }
 
       "go from  BtnRevenues750InNext2AccountingPeriodsPage period page to UnderConstruction  page " in {

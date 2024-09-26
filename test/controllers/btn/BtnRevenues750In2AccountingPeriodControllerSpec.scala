@@ -158,7 +158,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
       }
     }
 
