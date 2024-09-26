@@ -56,9 +56,9 @@ class BtnNavigator @Inject() {
       .get(BtnRevenues750In2AccountingPeriodPage)
       .map { provided =>
         if (provided) {
-          controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
-        } else {
           controllers.routes.UnderConstructionController.onPageLoad
+        } else {
+          controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

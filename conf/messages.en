@@ -166,7 +166,7 @@ btn.btnAccountingPeriod.startAccountDate = Start date of accounting period
 btn.btnAccountingPeriod.endAccountDate = End date of accounting period
 btn.btnAccountingPeriod.p2.before = If the date shown is incorrect,
 btn.btnAccountingPeriod.link = Update your group’s current accounting period
-btn.btnAccountingPeriod.p2 =, before continuing.
+btn.btnAccountingPeriod.p2 =  before continuing.
 
 btn.btnEntitiesBothInUKAndOutside.title.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
 btn.btnEntitiesBothInUKAndOutside.title.uk = Does the group still have entities located only in the UK?
