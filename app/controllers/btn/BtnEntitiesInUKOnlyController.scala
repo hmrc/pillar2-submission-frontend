@@ -18,7 +18,7 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.BtnEntitiesBothInUKOnlyFormProvider
+import forms.BtnEntitiesInUKOnlyFormProvider
 import models.Mode
 import navigation.BtnNavigator
 import pages.EntitiesBothInUKAndOutsidePage
@@ -26,7 +26,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.btn.BtnEntitiesBothInUKOnlyView
+import views.html.btn.BtnEntitiesInUKOnlyView
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,9 +37,9 @@ class BtnEntitiesInUKOnlyController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
-  formProvider:                           BtnEntitiesBothInUKOnlyFormProvider,
+  formProvider:                           BtnEntitiesInUKOnlyFormProvider,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   BtnEntitiesBothInUKOnlyView
+  view:                                   BtnEntitiesInUKOnlyView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

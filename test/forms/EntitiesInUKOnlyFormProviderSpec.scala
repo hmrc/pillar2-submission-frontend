@@ -16,15 +16,30 @@
 
 package forms
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-import javax.inject.Inject
+class EntitiesInUKOnlyFormProviderSpec extends BooleanFieldBehaviours {
 
-class BtnEntitiesBothInUKOnlyFormProvider @Inject() extends Mappings {
+  val requiredKey = "btn.btnEntitiesBothInUKAndOutside.error.required.uk"
+  val invalidKey  = "error.boolean"
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("btn.btnEntitiesBothInUKAndOutside.error.required.uk")
+  val form = new BtnEntitiesInUKOnlyFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
     )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }
