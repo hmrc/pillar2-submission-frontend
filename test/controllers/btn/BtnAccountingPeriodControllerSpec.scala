@@ -108,7 +108,7 @@ class BtnAccountingPeriodControllerSpec extends SpecBase {
         val request = FakeRequest(POST, controllers.btn.routes.BtnAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(NormalMode, "uk").url
+        redirectLocation(result).value mustEqual controllers.btn.routes.BtnEntitiesInUKOnlyController.onPageLoad(NormalMode).url
       }
     }
 
@@ -129,7 +129,7 @@ class BtnAccountingPeriodControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController
-          .onPageLoad(NormalMode, "ukAndOther")
+          .onPageLoad(NormalMode)
           .url
       }
     }

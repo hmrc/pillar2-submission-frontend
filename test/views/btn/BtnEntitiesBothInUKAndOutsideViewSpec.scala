@@ -26,16 +26,16 @@ import views.html.btn.BtnEntitiesBothInUKAndOutsideView
 class BtnEntitiesBothInUKAndOutsideViewSpec extends ViewSpecBase {
   val formProvider = new BtnRevenues750In2AccountingPeriodFormProvider
   val page: BtnEntitiesBothInUKAndOutsideView = inject[BtnEntitiesBothInUKAndOutsideView]
-  val view: Document                          = Jsoup.parse(page(formProvider(), NormalMode, "uk")(request, appConfig, messages).toString())
+  val view: Document                          = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Btn Entities Both In UK And Outside View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Does the group still have entities located only in the UK?")
+      view.getElementsByTag("title").text must include("Does the group still have entities located in both the UK and outside the UK?")
     }
 
     "have a h1 heading" in {
-      view.getElementsByTag("h1").text must include("Does the group still have entities located only in the UK?")
+      view.getElementsByTag("h1").text must include("Does the group still have entities located in both the UK and outside the UK?")
     }
 
     "have radio items" in {
