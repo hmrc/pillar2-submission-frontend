@@ -28,7 +28,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("btn.btnEntitiesBothInUKAndOutside.title.ukAndOther"))) {
+@layout(pageTitle = title(form, messages("btn.btnEntitiesBothInUKAndOutside.title.uk"))) {
 
     @formHelper(action = controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -39,7 +39,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("btn.btnEntitiesBothInUKAndOutside.heading.ukAndOther")).asPageHeading(Large)
+                legend = LegendViewModel(messages("btn.btnEntitiesBothInUKAndOutside.heading.uk")).asPageHeading(Large)
             )
         )
 

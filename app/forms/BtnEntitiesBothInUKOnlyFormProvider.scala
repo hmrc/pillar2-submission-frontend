@@ -16,15 +16,15 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class BtnEntitiesBothInUKAndOutsideFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
+
+class BtnEntitiesBothInUKOnlyFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("btn.btnEntitiesBothInUKAndOutside.error.required.ukAndOther")
+      "value" -> boolean("btn.btnEntitiesBothInUKAndOutside.error.required.uk")
     )
 }

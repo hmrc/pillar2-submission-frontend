@@ -45,10 +45,17 @@ POST        /below-threshold-notification/change-accounting-period              
 
 
 
-GET        /below-threshold-notification/domestic-or-multinational                       controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = NormalMode, inTheUK:String)
-POST       /below-threshold-notification/domestic-or-multinational                         controllers.btn.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = NormalMode, inTheUK:String)
-GET        /below-threshold-notification/change-domestic-or-multinational                   controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = CheckMode, inTheUK:String)
-POST       /below-threshold-notification/change-domestic-or-multinational                  controllers.btn.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = CheckMode, inTheUK:String)
+GET        /below-threshold-notification/domestic-or-multinational                       controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = NormalMode)
+POST       /below-threshold-notification/domestic-or-multinational                         controllers.btn.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = NormalMode)
+GET        /below-threshold-notification/change-domestic-or-multinational                   controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = CheckMode)
+POST       /below-threshold-notification/change-domestic-or-multinational                  controllers.btn.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = CheckMode)
+
+GET        /below-threshold-notification/domestic                      controllers.btn.BtnEntitiesInUKOnlyController.onPageLoad(mode: Mode = NormalMode)
+POST       /below-threshold-notification/domestic                         controllers.btn.BtnEntitiesInUKOnlyController.onSubmit(mode: Mode = NormalMode)
+GET        /below-threshold-notification/change-domestic                  controllers.btn.BtnEntitiesInUKOnlyController.onPageLoad(mode: Mode = CheckMode)
+POST       /below-threshold-notification/change-domestic                 controllers.btn.BtnEntitiesInUKOnlyController.onSubmit(mode: Mode = CheckMode)
+
+
 
 GET        /below-threshold-notification/annual-revenues                        controllers.btn.BtnRevenues750In2AccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
 POST       /below-threshold-notification/annual-revenues                        controllers.btn.BtnRevenues750In2AccountingPeriodController.onSubmit(mode: Mode = NormalMode)

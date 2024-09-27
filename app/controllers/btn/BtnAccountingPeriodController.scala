@@ -71,10 +71,13 @@ class BtnAccountingPeriodController @Inject() (
     request.maybeSubscriptionLocalData
       .flatMap(_.get(SubMneOrDomesticPage))
       .map { answer =>
-        Future.successful(Redirect(controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode, answer.toString)))
+        if (answer == MneOrDomestic.UkAndOther) {
+          Future.successful(Redirect(controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode)))
+        } else {
+          Future.successful(Redirect(controllers.btn.routes.BtnEntitiesInUKOnlyController.onPageLoad(mode)))
+        }
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
 
   }
-
 }

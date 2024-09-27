@@ -19,19 +19,18 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.BtnEntitiesBothInUKAndOutsideFormProvider
-import models.{MneOrDomestic, Mode}
+import models.Mode
 import navigation.BtnNavigator
 import pages.EntitiesBothInUKAndOutsidePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.btn.BtnEntitiesBothInUKAndOutsideView
-
+import views.html.btn.BtnEntitiesBothInUKOnlyView
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
-class BtnEntitiesBothInUKAndOutsideController @Inject() (
+class BtnEntitiesInUKOnlyController @Inject() (
   override val messagesApi:               MessagesApi,
   sessionRepository:                      SessionRepository,
   navigator:                              BtnNavigator,
@@ -40,7 +39,7 @@ class BtnEntitiesBothInUKAndOutsideController @Inject() (
   requireData:                            DataRequiredAction,
   formProvider:                           BtnEntitiesBothInUKAndOutsideFormProvider,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   BtnEntitiesBothInUKAndOutsideView
+  view:                                   BtnEntitiesBothInUKOnlyView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
