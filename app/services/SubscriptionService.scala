@@ -37,4 +37,12 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
+  def getSubscriptionCache(userId: String)(implicit hc: HeaderCarrier): Future[SubscriptionLocalData] =
+    subscriptionConnector.getSubscriptionCache(userId).flatMap {
+      case Some(readSubscriptionResponse) =>
+        Future.successful(readSubscriptionResponse)
+      case _ =>
+        Future.failed(InternalIssueError)
+    }
+
 }

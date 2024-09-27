@@ -19,8 +19,9 @@ package generators
 import java.time.{Instant, LocalDate, ZoneOffset}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
-import org.scalacheck.{Gen, Shrink}
+import org.scalacheck.{Arbitrary, Gen, Shrink}
 import wolfendale.scalacheck.regexp.RegexpGen
+import models.subscription.AccountingPeriod
 
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
@@ -117,4 +118,14 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     regexGen
       .suchThat(s => s.trim.nonEmpty && s.length <= maxLength)
   }
+
+  implicit lazy val accountingPeriodArbitrary: Arbitrary[AccountingPeriod] =
+    Arbitrary {
+      for {
+        startDate <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        endDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        duetDate  <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+      } yield AccountingPeriod(startDate, endDate, Some(duetDate))
+    }
+
 }
