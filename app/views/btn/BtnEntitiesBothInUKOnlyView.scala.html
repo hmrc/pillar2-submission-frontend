@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("btn.btnEntitiesBothInUKAndOutside.title.uk"))) {
 
-    @formHelper(action = controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.btn.routes.BtnEntitiesInUKOnlyController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

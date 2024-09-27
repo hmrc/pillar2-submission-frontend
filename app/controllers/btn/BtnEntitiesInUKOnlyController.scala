@@ -18,7 +18,7 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.BtnEntitiesBothInUKAndOutsideFormProvider
+import forms.BtnEntitiesBothInUKOnlyFormProvider
 import models.Mode
 import navigation.BtnNavigator
 import pages.EntitiesBothInUKAndOutsidePage
@@ -37,7 +37,7 @@ class BtnEntitiesInUKOnlyController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
-  formProvider:                           BtnEntitiesBothInUKAndOutsideFormProvider,
+  formProvider:                           BtnEntitiesBothInUKOnlyFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BtnEntitiesBothInUKOnlyView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
