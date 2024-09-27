@@ -39,7 +39,7 @@
     @bulletList(items = List(
         Html(messages("btn.BtnBeforeStart.li1")),
         Html(messages("btn.BtnBeforeStart.li2")),
-    ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses=Some("govuk-!-margin-bottom-2"))
+    ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses=Some("govuk-!-margin-bottom-3"))
 
     @h2(messages("btn.BtnBeforeStart.header3"), size = "m")
     @p(messages("btn.BtnBeforeStart.p3"))
@@ -49,7 +49,7 @@
         Html(messages("btn.BtnBeforeStart.li4")),
         Html(messages("btn.BtnBeforeStart.li5")),
         Html(messages("btn.BtnBeforeStart.li6")),
-    ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses=Some("govuk-!-margin-bottom-2"))
+    ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses=Some("govuk-!-margin-bottom-3"))
 
     @govukButton(
         ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BtnAccountingPeriodController.onPageLoad(mode).url)
