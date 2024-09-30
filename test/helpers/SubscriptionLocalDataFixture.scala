@@ -16,6 +16,7 @@
 
 package helpers
 
+import models.{MneOrDomestic, NonUKAddress}
 import models.subscription._
 
 import java.time.LocalDate
@@ -35,4 +36,37 @@ trait SubscriptionLocalDataFixture {
     accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
     accountStatus = Some(AccountStatus(false))
   )
+
+  val someSubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
+    subMneOrDomestic = MneOrDomestic.Uk,
+    subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
+    subPrimaryContactName = "John",
+    subPrimaryEmail = "john@email.com",
+    subPrimaryPhonePreference = true,
+    subPrimaryCapturePhone = Some("123"),
+    subAddSecondaryContact = true,
+    subSecondaryContactName = Some("Doe"),
+    subSecondaryEmail = Some("doe@email.com"),
+    subSecondaryCapturePhone = Some("123"),
+    subSecondaryPhonePreference = Some(true),
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB")
+  )
+
+  val someSubscriptionLocalDataUkOther: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
+    subMneOrDomestic = MneOrDomestic.UkAndOther,
+    subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
+    subPrimaryContactName = "John",
+    subPrimaryEmail = "john@email.com",
+    subPrimaryPhonePreference = true,
+    subPrimaryCapturePhone = Some("123"),
+    subAddSecondaryContact = true,
+    subSecondaryContactName = Some("Doe"),
+    subSecondaryEmail = Some("doe@email.com"),
+    subSecondaryCapturePhone = Some("123"),
+    subSecondaryPhonePreference = Some(true),
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB")
+  )
+
 }

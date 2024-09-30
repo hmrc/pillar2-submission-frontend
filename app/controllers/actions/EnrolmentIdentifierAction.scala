@@ -130,7 +130,7 @@ class EnrolmentIdentifierAction @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
       maybeUserAnswers
-        .flatMap(_.get(AgentClientPillar2ReferencePage)) match {
+        .flatMap(_.get(PlrReferencePage)) match {
         case Some(pillar2Id) =>
           authorised(VerifyAgentClientPredicate(pillar2Id))
             .retrieve(

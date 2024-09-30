@@ -157,4 +157,47 @@ uktr.UkTaxReturnStart.p6.link = Choose a supplier to submit your UKTR from this 
 uktr.UkTaxReturnStart.inactive.subheading = Important
 uktr.UkTaxReturnStart.inactive.p1 = Your account has a Below Threshold Notification (BTN) and is inactive. Submit a UK tax return (UKTR) to re-activate your account.
 
+btn.BtnBeforeStart.title = Below Threshold Notification
+btn.BtnBeforeStart.header = Below Threshold Notification
+btn.BtnBeforeStart.p1 = A Below-Threshold Notification removes your group’s obligation to submit a UKTR for the current accounting period and all future ones.
+btn.BtnBeforeStart.header2 = Who can submit a Below-Threshold Notification
+btn.BtnBeforeStart.p2 = You can submit a Below-Threshold Notification if the group:
+btn.BtnBeforeStart.li1 = does not have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
+btn.BtnBeforeStart.li2 = is not expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
+btn.BtnBeforeStart.header3 = Before you start
+btn.BtnBeforeStart.p3 = To submit a Below-Threshold Notification you will need to tell us:
 
+btn.BtnBeforeStart.li3 = the start and end date of the group’s accounting period
+btn.BtnBeforeStart.li4 = whether the group has entities located in the UK
+btn.BtnBeforeStart.li5 = whether the group’s consolidated annual revenues have been €750 million or more in at least 2 of the previous 4 accounting periods
+btn.BtnBeforeStart.li6 = whether the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
+
+btn.btnAccountingPeriod.title = Submit a Below-Threshold Notification for your group’s current accounting period
+btn.btnAccountingPeriod.header = Submit a Below-Threshold Notification for your group’s current accounting period
+btn.btnAccountingPeriod.p1 = The Below-Threshold Notification you submit will remove your group’s obligation to submit a UKTR for this current accounting period and all future ones.
+btn.btnAccountingPeriod.startAccountDate = Start date of accounting period
+btn.btnAccountingPeriod.endAccountDate = End date of accounting period
+btn.btnAccountingPeriod.p2.before = If the date shown is incorrect,
+btn.btnAccountingPeriod.link = Update your group’s current accounting period
+btn.btnAccountingPeriod.p2 =  before continuing.
+
+btn.btnEntitiesBothInUKAndOutside.title.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
+btn.btnEntitiesBothInUKAndOutside.title.uk = Does the group still have entities located only in the UK?
+btn.btnEntitiesBothInUKAndOutside.heading.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
+btn.btnEntitiesBothInUKAndOutside.heading.uk = Does the group still have entities located only in the UK?
+btn.btnEntitiesBothInUKAndOutside.checkYourAnswersLabel = Does the group still have entities located in both the UK and outside the UK?
+btn.btnEntitiesBothInUKAndOutside.error.required.ukAndOther = Select yes if the group still has entities located in both the UK and outside the UK
+btn.btnEntitiesBothInUKAndOutside.error.required.uk = Select yes if the group still has entities located only in the UK
+
+btn.btnEntitiesBothInUKAndOutside.change.hidden = Does the group still have entities located in both the UK and outside the UK?
+btnRevenues750In2AccountingPeriod.title = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+btnRevenues750In2AccountingPeriod.heading = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+btnRevenues750In2AccountingPeriod.checkYourAnswersLabel = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
+btnRevenues750In2AccountingPeriod.error.required = Select yes if the group has consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
+btnRevenues750In2AccountingPeriod.change.hidden = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
+
+btnRevenues750InNext2AccountingPeriods.title = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+btnRevenues750InNext2AccountingPeriods.heading = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+btnRevenues750InNext2AccountingPeriods.checkYourAnswersLabel = btnRevenues750InNext2AccountingPeriods
+btnRevenues750InNext2AccountingPeriods.error.required = Select yes if the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
+btnRevenues750InNext2AccountingPeriods.change.hidden = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?

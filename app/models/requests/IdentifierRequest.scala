@@ -19,5 +19,10 @@ package models.requests
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.Enrolment
 
-final case class IdentifierRequest[A](request: Request[A], userId: String, enrolments: Set[Enrolment] = Set.empty, isAgent: Boolean = false)
-    extends WrappedRequest[A](request)
+final case class IdentifierRequest[A](
+  request:         Request[A],
+  userId:          String,
+  enrolments:      Set[Enrolment] = Set.empty,
+  clientPillar2Id: Option[String] = None,
+  isAgent:         Boolean = false
+) extends WrappedRequest[A](request)

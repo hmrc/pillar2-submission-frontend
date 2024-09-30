@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-import play.api.libs.json.{Json, OFormat}
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case class NonUKAddress(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: String,
-  addressLine4: Option[String],
-  postalCode:   Option[String],
-  countryCode:  String
-)
-object NonUKAddress {
-  implicit val format: OFormat[NonUKAddress] = Json.format[NonUKAddress]
+import javax.inject.Inject
+
+class BtnEntitiesInUKOnlyFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("btn.btnEntitiesBothInUKAndOutside.error.required.uk")
+    )
 }

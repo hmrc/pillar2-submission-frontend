@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json.{Json, OFormat}
+class BtnRevenues750In2AccountingPeriodPageSpec extends PageBehaviours {
 
-case class NonUKAddress(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: String,
-  addressLine4: Option[String],
-  postalCode:   Option[String],
-  countryCode:  String
-)
-object NonUKAddress {
-  implicit val format: OFormat[NonUKAddress] = Json.format[NonUKAddress]
+  "BtnRevenues750In2AccountingPeriodPage" - {
+
+    beRetrievable[Boolean](BtnRevenues750In2AccountingPeriodPage)
+
+    beSettable[Boolean](BtnRevenues750In2AccountingPeriodPage)
+
+    beRemovable[Boolean](BtnRevenues750In2AccountingPeriodPage)
+  }
 }

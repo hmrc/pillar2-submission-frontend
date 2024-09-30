@@ -16,8 +16,8 @@
 
 package config
 
-import com.google.inject.{AbstractModule, Provides}
 import com.google.inject.name.{Named, Names}
+import com.google.inject.{AbstractModule, Provides}
 import controllers.actions._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

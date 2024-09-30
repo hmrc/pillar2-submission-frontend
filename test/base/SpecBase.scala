@@ -23,6 +23,7 @@ import controllers.actions._
 import helpers.{AllMocks, SubscriptionLocalDataFixture, ViewInstances}
 import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
+import models.subscription.SubscriptionLocalData
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec

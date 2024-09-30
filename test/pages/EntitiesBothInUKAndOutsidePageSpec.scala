@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json.{Json, OFormat}
+class EntitiesBothInUKAndOutsidePageSpec extends PageBehaviours {
 
-case class NonUKAddress(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: String,
-  addressLine4: Option[String],
-  postalCode:   Option[String],
-  countryCode:  String
-)
-object NonUKAddress {
-  implicit val format: OFormat[NonUKAddress] = Json.format[NonUKAddress]
+  "EntitiesBothInUKAndOutsidePage" - {
+
+    beRetrievable[Boolean](EntitiesBothInUKAndOutsidePage)
+
+    beSettable[Boolean](EntitiesBothInUKAndOutsidePage)
+
+    beRemovable[Boolean](EntitiesBothInUKAndOutsidePage)
+  }
 }

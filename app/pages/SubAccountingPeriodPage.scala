@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json.{Json, OFormat}
+import models.subscription.AccountingPeriod
+import play.api.libs.json.JsPath
 
-case class NonUKAddress(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: String,
-  addressLine4: Option[String],
-  postalCode:   Option[String],
-  countryCode:  String
-)
-object NonUKAddress {
-  implicit val format: OFormat[NonUKAddress] = Json.format[NonUKAddress]
+case object SubAccountingPeriodPage extends QuestionPage[AccountingPeriod] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "subAccountingPeriod"
 }
