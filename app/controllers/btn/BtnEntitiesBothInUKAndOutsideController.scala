@@ -19,14 +19,15 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.BtnEntitiesBothInUKAndOutsideFormProvider
-import models.{MneOrDomestic, Mode}
+import models.Mode
 import navigation.BtnNavigator
-import pages.EntitiesBothInUKAndOutsidePage
+import pages.{EntitiesBothInUKAndOutsidePage, SubMneOrDomesticPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BtnEntitiesBothInUKAndOutsideView
+import views.html.btn.BtnAmendDetailsView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,9 +39,11 @@ class BtnEntitiesBothInUKAndOutsideController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
+  getSubscriptionData:                    SubscriptionDataRetrievalAction,
   formProvider:                           BtnEntitiesBothInUKAndOutsideFormProvider,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   BtnEntitiesBothInUKAndOutsideView
+  view:                                   BtnEntitiesBothInUKAndOutsideView,
+  viewAmend:                              BtnAmendDetailsView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -67,5 +70,12 @@ class BtnEntitiesBothInUKAndOutsideController @Inject() (
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(EntitiesBothInUKAndOutsidePage, mode, updatedAnswers))
       )
+  }
+
+  def onPageLoadAmendGroupDetails(): Action[AnyContent] = (identify andThen getSubscriptionData) { implicit request =>
+    request.maybeSubscriptionLocalData
+      .flatMap(_.get(SubMneOrDomesticPage))
+      .map(mneOrDomestic => Ok(viewAmend(mneOrDomestic)))
+      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 }

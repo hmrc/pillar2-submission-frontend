@@ -1,69 +1,68 @@
 # microservice specific routes
 
-->          /hmrc-frontend                               hmrcfrontend.Routes
+->          /hmrc-frontend                                                                       hmrcfrontend.Routes
 
-GET         /                                            controllers.IndexController.onPageLoad
-GET         /banner                                      controllers.IndexController.onPageLoadBanner
+GET         /                                                                                    controllers.IndexController.onPageLoad
+GET         /banner                                                                              controllers.IndexController.onPageLoadBanner
 
-GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                                                                        controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
+GET         /language/:lang                                                                      controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET         /refresh-session                             controllers.KeepAliveController.keepAlive
+GET         /refresh-session                                                                     controllers.KeepAliveController.keepAlive
 
-GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /there-is-a-problem                                                                  controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
+GET         /check-your-answers                                                                  controllers.CheckYourAnswersController.onPageLoad
 
-GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
-GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey
-GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
+GET         /account/sign-out-survey                                                             controllers.auth.AuthController.signOut
+GET         /account/sign-out                                                                    controllers.auth.AuthController.signOutNoSurvey
+GET         /account/signed-out                                                                  controllers.auth.SignedOutController.onPageLoad
 
-GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
-GET         /unauthorised/standard-user                  controllers.UnauthorisedWrongRoleController.onPageLoad
-GET         /unauthorised/individual                     controllers.UnauthorisedIndividualAffinityController.onPageLoad
-GET         /unauthorised/agent                          controllers.UnauthorisedAgentAffinityController.onPageLoad
-GET         /under-construction                          controllers.UnderConstructionController.onPageLoad
+GET         /unauthorised                                                                        controllers.UnauthorisedController.onPageLoad
+GET         /unauthorised/standard-user                                                          controllers.UnauthorisedWrongRoleController.onPageLoad
+GET         /unauthorised/individual                                                             controllers.UnauthorisedIndividualAffinityController.onPageLoad
+GET         /unauthorised/agent                                                                  controllers.UnauthorisedAgentAffinityController.onPageLoad
+GET         /under-construction                                                                  controllers.UnderConstructionController.onPageLoad
 
-GET         /asa/input-pillar-2-id                       controllers.AgentController.onPageLoadClientPillarId
-POST        /asa/input-pillar-2-id                       controllers.AgentController.onSubmitClientPillarId
-GET         /asa/confirm                                 controllers.AgentController.onPageLoadConfirmClientDetails
-POST        /asa/confirm                                 controllers.AgentController.onSubmitConfirmClientDetails(pillar2Id: String)
-GET         /asa/error/no-match                          controllers.AgentController.onPageLoadNoClientMatch
-GET         /asa/error/system                            controllers.AgentController.onPageLoadError
-GET         /asa/error/not-authorised                    controllers.AgentController.onPageLoadUnauthorised
-GET         /asa/error/individual                        controllers.AgentController.onPageLoadIndividualError
-GET         /asa/error/organisation                      controllers.AgentController.onPageLoadOrganisationError
-GET         /asa/home                                    controllers.ASAStubController.onPageLoad
+GET         /asa/input-pillar-2-id                                                               controllers.AgentController.onPageLoadClientPillarId
+POST        /asa/input-pillar-2-id                                                               controllers.AgentController.onSubmitClientPillarId
+GET         /asa/confirm                                                                         controllers.AgentController.onPageLoadConfirmClientDetails
+POST        /asa/confirm                                                                         controllers.AgentController.onSubmitConfirmClientDetails(pillar2Id: String)
+GET         /asa/error/no-match                                                                  controllers.AgentController.onPageLoadNoClientMatch
+GET         /asa/error/system                                                                    controllers.AgentController.onPageLoadError
+GET         /asa/error/not-authorised                                                            controllers.AgentController.onPageLoadUnauthorised
+GET         /asa/error/individual                                                                controllers.AgentController.onPageLoadIndividualError
+GET         /asa/error/organisation                                                              controllers.AgentController.onPageLoadOrganisationError
+GET         /asa/home                                                                            controllers.ASAStubController.onPageLoad
 
 GET         /uk-tax-return                               controllers.uktr.UkTaxReturnStartController.onPageLoad
-GET         /below-threshold-notification/start                                                      controllers.btn.BtnBeforeStartController.onPageLoad(mode: Mode = NormalMode)
+GET         /below-threshold-notification/start                                                  controllers.btn.BtnBeforeStartController.onPageLoad(mode: Mode = NormalMode)
 
-GET         /below-threshold-notification/accounting-period                        controllers.btn.BtnAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
-POST        /below-threshold-notification/accounting-period                        controllers.btn.BtnAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
-GET         /below-threshold-notification/change-accounting-period                  controllers.btn.BtnAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
-POST        /below-threshold-notification/change-accounting-period                 controllers.btn.BtnAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
-
-
-
-GET        /below-threshold-notification/domestic-or-multinational                       controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = NormalMode)
-POST       /below-threshold-notification/domestic-or-multinational                         controllers.btn.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = NormalMode)
-GET        /below-threshold-notification/change-domestic-or-multinational                   controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = CheckMode)
-POST       /below-threshold-notification/change-domestic-or-multinational                  controllers.btn.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = CheckMode)
-
-GET        /below-threshold-notification/domestic                      controllers.btn.BtnEntitiesInUKOnlyController.onPageLoad(mode: Mode = NormalMode)
-POST       /below-threshold-notification/domestic                         controllers.btn.BtnEntitiesInUKOnlyController.onSubmit(mode: Mode = NormalMode)
-GET        /below-threshold-notification/change-domestic                  controllers.btn.BtnEntitiesInUKOnlyController.onPageLoad(mode: Mode = CheckMode)
-POST       /below-threshold-notification/change-domestic                 controllers.btn.BtnEntitiesInUKOnlyController.onSubmit(mode: Mode = CheckMode)
+GET         /below-threshold-notification/accounting-period                                      controllers.btn.BtnAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
+POST        /below-threshold-notification/accounting-period                                      controllers.btn.BtnAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
+GET         /below-threshold-notification/change-accounting-period                               controllers.btn.BtnAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST        /below-threshold-notification/change-accounting-period                               controllers.btn.BtnAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
 
 
+GET         /below-threshold-notification/domestic-or-multinational                              controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = NormalMode)
+POST        /below-threshold-notification/domestic-or-multinational                              controllers.btn.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = NormalMode)
+GET         /below-threshold-notification/change-domestic-or-multinational                       controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = CheckMode)
+POST        /below-threshold-notification/change-domestic-or-multinational                       controllers.btn.BtnEntitiesBothInUKAndOutsideController.onSubmit(mode: Mode = CheckMode)
+GET         /below-threshold-notification/submit/questions/knock-back/amend-group-details        controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails()
 
-GET        /below-threshold-notification/annual-revenues                        controllers.btn.BtnRevenues750In2AccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
-POST       /below-threshold-notification/annual-revenues                        controllers.btn.BtnRevenues750In2AccountingPeriodController.onSubmit(mode: Mode = NormalMode)
-GET        /below-threshold-notification/change-annual-revenues                  controllers.btn.BtnRevenues750In2AccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
-POST       /below-threshold-notification/change-annual-revenues                  controllers.btn.BtnRevenues750In2AccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+GET         /below-threshold-notification/domestic                                               controllers.btn.BtnEntitiesInUKOnlyController.onPageLoad(mode: Mode = NormalMode)
+POST        /below-threshold-notification/domestic                                               controllers.btn.BtnEntitiesInUKOnlyController.onSubmit(mode: Mode = NormalMode)
+GET         /below-threshold-notification/change-domestic                                        controllers.btn.BtnEntitiesInUKOnlyController.onPageLoad(mode: Mode = CheckMode)
+POST        /below-threshold-notification/change-domestic                                        controllers.btn.BtnEntitiesInUKOnlyController.onSubmit(mode: Mode = CheckMode)
 
-GET        /below-threshold-notification/future-annual-revenues                        controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode: Mode = NormalMode)
-POST       /below-threshold-notification/future-annual-revenues                        controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode: Mode = NormalMode)
-GET        /below-threshold-notification/change-future-annual-revenues                  controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode: Mode = CheckMode)
-POST       /below-threshold-notification/change-future-annual-revenues                  controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode: Mode = CheckMode)
+
+GET         /below-threshold-notification/annual-revenues                                        controllers.btn.BtnRevenues750In2AccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
+POST        /below-threshold-notification/annual-revenues                                        controllers.btn.BtnRevenues750In2AccountingPeriodController.onSubmit(mode: Mode = NormalMode)
+GET         /below-threshold-notification/change-annual-revenues                                 controllers.btn.BtnRevenues750In2AccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST        /below-threshold-notification/change-annual-revenues                                 controllers.btn.BtnRevenues750In2AccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+
+GET         /below-threshold-notification/future-annual-revenues                                 controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode: Mode = NormalMode)
+POST        /below-threshold-notification/future-annual-revenues                                 controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode: Mode = NormalMode)
+GET         /below-threshold-notification/change-future-annual-revenues                          controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode: Mode = CheckMode)
+POST        /below-threshold-notification/change-future-annual-revenues                          controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode: Mode = CheckMode)
