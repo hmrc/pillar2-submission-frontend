@@ -74,8 +74,7 @@ class BtnEntitiesBothInUKAndOutsideController @Inject() (
 
   def onPageLoadAmendGroupDetails(): Action[AnyContent] = (identify andThen getSubscriptionData) { implicit request =>
     request.maybeSubscriptionLocalData
-      .flatMap(_.get(SubMneOrDomesticPage))
-      .map(mneOrDomestic => Ok(viewAmend(mneOrDomestic)))
+      .map(subData => Ok(viewAmend(subData.subMneOrDomestic)))
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 }
