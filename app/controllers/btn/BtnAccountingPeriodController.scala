@@ -32,6 +32,7 @@ import viewmodels.implicits._
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 import views.html.btn.BtnAccountingPeriodView
+
 class BtnAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   getData:                                SubscriptionDataRetrievalAction,
