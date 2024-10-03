@@ -35,17 +35,18 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
-  val loginUrl:         String = configuration.get[String]("urls.login")
-  val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  val signOutUrl:       String = configuration.get[String]("urls.signOut")
-  val asaHomePageUrl:   String = configuration.get[String]("urls.asaHomePage")
+  val loginUrl:                   String = configuration.get[String]("urls.login")
+  val loginContinueUrl:           String = configuration.get[String]("urls.loginContinue")
+  val signOutUrl:                 String = configuration.get[String]("urls.signOut")
+  val asaHomePageUrl:             String = configuration.get[String]("urls.asaHomePage")
+  val changeAccountingPeriodUrl:  String = configuration.get[String]("urls.changeAccountingPeriod")
+  val ukTaxReturnSupplierListUrl: String = configuration.get[String]("urls.ukTaxReturnSupplierList")
 
   val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
 
   val enrolmentKey:                  String = configuration.get[String](s"enrolment.key")
   val enrolmentIdentifier:           String = configuration.get[String](s"enrolment.identifier")
   val startPagePillar2SubmissionUrl: String = configuration.get[String]("urls.startPagePillar2Submission")
-  val changeAccountingPeriodUrl:     String = configuration.get[String]("urls.changeAccountingPeriod")
   lazy val enrolmentStoreProxyUrl: String =
     s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration
       .get[String]("microservice.services.enrolment-store-proxy.startUrl")}"

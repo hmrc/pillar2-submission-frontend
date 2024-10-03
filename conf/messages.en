@@ -61,7 +61,8 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
-
+unauthorised.guidance = You need to {0} to access this page.
+unauthorised.guidance.link = register to report Pillar 2 top-up taxes
 
 unauthorised.individual.heading = Sorry, you’re unable to use this service
 unauthorised.individual.message = You’ve signed in with an individual account. Only users with an organisation account can register to use this service.
@@ -143,6 +144,18 @@ asa.agent.heading = ASA Home page for Pillar 2 top-up taxes screen
 asa.agent.p1 = This screen is  home page in development and local for ASA, but  for QA, staging  and production, ASA has it own pages.
 ###############################################
 
+uktr.UkTaxReturnStart.title = UK Tax Return (UKTR)
+uktr.UkTaxReturnStart.header = UK Tax Return (UKTR)
+uktr.UkTaxReturnStart.p1 = A UKTR fulfills your obligation to submit Pillar 2 top-up taxes for your current accounting period. You can report both Domestic Top-up Tax and Multinational Top-up Tax liabilities.
+uktr.UkTaxReturnStart.p2 = If your group only has entities located in the UK, your return will include Domestic Top-up Tax.
+uktr.UkTaxReturnStart.p3 = If your group has entities located both inside and outside the UK, your return will include both Domestic Top-up Tax and Multinational Top-up Tax.
+uktr.UkTaxReturnStart.subheading = How to submit a UKTR
+uktr.UkTaxReturnStart.p4 = You must submit a UKTR via a third party software provider. Before you submit your UKTR,
+uktr.UkTaxReturnStart.p4.link = ensure your group’s details are updated
+uktr.UkTaxReturnStart.p5 = HMRC cannot recommend or endorse any one service over another and will not be responsible for any loss, damage, cost or expense in connection with using the software.
+uktr.UkTaxReturnStart.p6.link = Choose a supplier to submit your UKTR from this list
+uktr.UkTaxReturnStart.inactive.subheading = Important
+uktr.UkTaxReturnStart.inactive.p1 = Your account has a Below Threshold Notification (BTN) and is inactive. Submit a UK tax return (UKTR) to re-activate your account.
 
 btn.BtnBeforeStart.title = Below Threshold Notification
 btn.BtnBeforeStart.header = Below Threshold Notification

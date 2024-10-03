@@ -28,9 +28,9 @@ class DataRequiredActionImpl @Inject() (implicit val executionContext: Execution
   override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
     request.userAnswers match {
       case None =>
-        Future.successful(Right(DataRequest(request.request, request.userId, UserAnswers(request.userId))))
+        Future.successful(Right(DataRequest(request.request, request.userId, UserAnswers(request.userId), request.enrolments)))
       case Some(data) =>
-        Future.successful(Right(DataRequest(request.request, request.userId, data)))
+        Future.successful(Right(DataRequest(request.request, request.userId, data, request.enrolments)))
     }
 }
 

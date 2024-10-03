@@ -385,6 +385,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         .build()
       val userAnswer = emptyUserAnswers
         .setOrException(PlrReferencePage, PlrReference)
+
       "has pillar2 enrolment" must {
         "return the credentials we require" in {
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
@@ -429,6 +430,28 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         }
       }
 
+      "has no pillar2 enrolment, has no plrReference in session " must {
+        "redirect to the unauthorised page" in {
+          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+            .thenReturn(
+              Future.successful(
+                Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+              )
+            )
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+          running(application) {
+            val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+            val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+            val authAction  = new EnrolmentIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
+            status(result) mustBe SEE_OTHER
+            redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
+          }
+        }
+      }
+
     }
 
     "the user hasn't logged in - no active session on 1st authorised call" must {
@@ -465,6 +488,34 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
       }
     }
 
+    "the user's session has expired - no active session on 2nd authorised call" must {
+      "redirect the user to log in " in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(PlrReferencePage, PlrReference)
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+          .build()
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ pillar2OrganisationEnrolment ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            ),
+            Future.failed(BearerTokenExpired())
+          )
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+          val authAction  = new EnrolmentIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
+          val controller  = new Harness(authAction)
+          val result      = controller.onPageLoad()(FakeRequest())
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value must startWith(appConfig.loginUrl)
+        }
+      }
+    }
+
     "the user is logged in but unable to retrieve internal id or affinity group" must {
       "redirect to the unauthorised page" in {
         val application = applicationBuilder(userAnswers = None)
@@ -472,6 +523,34 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
           .build()
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
           .thenReturn(Future.successful(None ~ pillar2AgentEnrolment ~ None ~ None ~ None))
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+          val authAction  = new EnrolmentIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
+          val controller  = new Harness(authAction)
+          val result      = controller.onPageLoad()(FakeRequest())
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
+        }
+      }
+    }
+
+    "the user is logged in but unable to retrieve internal id or affinity group on 2nd authorised call" must {
+      "redirect to the unauthorised page" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(PlrReferencePage, PlrReference)
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+          .build()
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ pillar2OrganisationEnrolment ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            ),
+            Future.successful(None ~ pillar2AgentEnrolment ~ None ~ None ~ None)
+          )
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -494,6 +573,34 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
           .thenReturn(
             Future.failed(InsufficientEnrolments())
           )
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+          val authAction  = new EnrolmentIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
+          val controller  = new Harness(authAction)
+          val result      = controller.onPageLoad()(FakeRequest())
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
+        }
+      }
+    }
+
+    "AuthorisationException is returned from the 2nd authorised call" must {
+      "redirect to the unauthorised page" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(PlrReferencePage, PlrReference)
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+          .build()
+        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ pillar2OrganisationEnrolment ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            ),
+            Future.failed(InsufficientEnrolments())
+          )
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]

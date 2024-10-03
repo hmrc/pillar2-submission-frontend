@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
 import form.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
-import models.subscription._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

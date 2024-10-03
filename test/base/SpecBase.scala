@@ -80,6 +80,11 @@ trait SpecBase
       Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", Some("pillar2-auth"))
     )
   )
+
+  val pillar2OrganisationEnrolment: Enrolments = Enrolments(
+    Set(Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", None))
+  )
+
   def emptyUserAnswers:        UserAnswers       = UserAnswers(userAnswersId)
   implicit lazy val ec:        ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:        HeaderCarrier     = HeaderCarrier()
