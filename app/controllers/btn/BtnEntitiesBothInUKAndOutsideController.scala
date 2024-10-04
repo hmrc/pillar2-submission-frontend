@@ -19,7 +19,7 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.BtnEntitiesBothInUKAndOutsideFormProvider
-import models.{MneOrDomestic, Mode}
+import models.Mode
 import navigation.BtnNavigator
 import pages.EntitiesBothInUKAndOutsidePage
 import play.api.i18n.{I18nSupport, MessagesApi}

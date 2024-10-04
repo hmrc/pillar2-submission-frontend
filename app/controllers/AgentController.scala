@@ -16,9 +16,10 @@
 
 package controllers
 
+import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions.AgentIdentifierAction.VerifyAgentClientPredicate
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
+import controllers.actions._
 import form.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import pages.agent.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
@@ -28,10 +29,10 @@ import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.agent._
-import cats.implicits._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.data.Form
 
 class AgentController @Inject() (
   val controllerComponents:    MessagesControllerComponents,
@@ -55,7 +56,7 @@ class AgentController @Inject() (
 
   import identify._
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoadClientPillarId: Action[AnyContent] =
     (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData).async { implicit request =>
@@ -101,9 +102,8 @@ class AgentController @Inject() (
     }
 
   def onSubmitConfirmClientDetails(pillar2Id: String): Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentIdentify(VerifyAgentClientPredicate(pillar2Id)) andThen getData andThen requireData).async {
-      implicit request =>
-        Future successful Redirect(routes.UnderConstructionController.onPageLoad)
+    (featureAction.asaAccessAction andThen agentIdentify(VerifyAgentClientPredicate(pillar2Id)) andThen getData andThen requireData).async { _ =>
+      Future successful Redirect(routes.UnderConstructionController.onPageLoad)
     }
 
   def onPageLoadNoClientMatch: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {

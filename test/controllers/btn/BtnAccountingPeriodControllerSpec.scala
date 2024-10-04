@@ -25,7 +25,8 @@ import org.mockito.Mockito.when
 import pages.{PlrReferencePage, SubAccountingPeriodPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
+import play.api.test.Helpers._
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -37,15 +38,11 @@ import views.html.btn.BtnAccountingPeriodView
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.inject.bind
-import play.api.mvc.Call
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
 class BtnAccountingPeriodControllerSpec extends SpecBase {
 
   "UK Tax Return Start Controller" when {
 
-    val enrolments: Set[Enrolment] = Set(
+    Set(
       Enrolment(
         key = "HMRC-PILLAR2-ORG",
         identifiers = Seq(

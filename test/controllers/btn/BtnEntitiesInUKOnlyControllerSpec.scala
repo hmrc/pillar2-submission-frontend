@@ -17,7 +17,7 @@
 package controllers.btn
 
 import base.SpecBase
-import forms.{BtnEntitiesBothInUKAndOutsideFormProvider, BtnEntitiesInUKOnlyFormProvider}
+import forms.BtnEntitiesInUKOnlyFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,15 +31,16 @@ import repositories.SessionRepository
 import views.html.btn.BtnEntitiesInUKOnlyView
 
 import scala.concurrent.Future
+import play.api.data.Form
 
 class BtnEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new BtnEntitiesInUKOnlyFormProvider()
-  val form         = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val entitiesInUKOnlyRoute = controllers.btn.routes.BtnEntitiesInUKOnlyController.onPageLoad(NormalMode).url
+  lazy val entitiesInUKOnlyRoute: String = controllers.btn.routes.BtnEntitiesInUKOnlyController.onPageLoad(NormalMode).url
 
   "Entities In UK Only Controller" when {
 
