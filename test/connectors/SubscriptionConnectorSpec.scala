@@ -107,8 +107,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 }
 
 object SubscriptionConnectorSpec {
-  val apiUrl = "/report-pillar2-top-up-taxes"
-  private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
+  val apiUrl                       = "/report-pillar2-top-up-taxes"
   private val getSubscription      = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
   private val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/read-subscription"
   private val id                   = "testId"

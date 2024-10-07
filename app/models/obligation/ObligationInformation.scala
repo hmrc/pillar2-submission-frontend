@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.obligation
 
-sealed trait ApiError extends Throwable
-case object InternalIssueError extends ApiError
-case object ObligationNotFoundError extends ApiError
+import play.api.libs.json.{Json, OFormat}
+
+import java.time.LocalDate
+
+final case class ObligationInformation(
+  obligationType:           ObligationType,
+  status:                   ObligationStatus,
+  accountingPeriodFromDate: LocalDate,
+  accountingPeriodToDate:   LocalDate,
+  dueDate:                  LocalDate
+)
+
+object ObligationInformation {
+  implicit val format: OFormat[ObligationInformation] = Json.format[ObligationInformation]
+}

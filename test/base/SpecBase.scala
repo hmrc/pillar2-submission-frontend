@@ -24,6 +24,7 @@ import helpers.{AllMocks, SubscriptionLocalDataFixture, ViewInstances}
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import models.subscription.{AccountingPeriod, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}
+import org.scalacheck.Gen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -69,6 +70,8 @@ trait SpecBase
 
   val userAnswersId: String = "id"
   val PlrReference:  String = "XMPLR0123456789"
+
+  val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 
   type AgentRetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
 

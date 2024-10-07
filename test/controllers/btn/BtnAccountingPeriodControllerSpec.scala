@@ -19,6 +19,7 @@ package controllers.btn
 import base.SpecBase
 import connectors.SubscriptionConnector
 import models.NormalMode
+import models.obligation.ObligationStatus.{Fulfilled, Open}
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -27,12 +28,13 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import services.ObligationService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-import views.html.btn.BtnAccountingPeriodView
+import views.html.btn.{BtnAccountingPeriodReturnSubmittedView, BtnAccountingPeriodView}
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +47,7 @@ class BtnAccountingPeriodControllerSpec extends SpecBase {
     val dates        = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
     val dateHelper   = new ViewHelpers()
 
-    "must return OK and the correct view if PlrReference in session" in {
+    "must return OK and the correct view if PlrReference in session and obligation is not fufilled" in {
       val list = SummaryListViewModel(
         rows = Seq(
           SummaryListRowViewModel(
@@ -60,14 +62,19 @@ class BtnAccountingPeriodControllerSpec extends SpecBase {
       )
       val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
 
+      val application = applicationBuilder(Some(ua))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[ObligationService].toInstance(mockObligationService)
+        )
+        .build()
+
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
-      val application = applicationBuilder(subscriptionLocalData = Some(ua))
-        .overrides(
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-        )
-        .build()
+      when(mockObligationService.handleObligation(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(Open)))
+
       running(application) {
         val request = FakeRequest(GET, controllers.btn.routes.BtnAccountingPeriodController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
@@ -75,6 +82,31 @@ class BtnAccountingPeriodControllerSpec extends SpecBase {
         status(result) mustEqual OK
         val content = contentAsString(result)
         content mustEqual view(list, NormalMode, appConfig.changeAccountingPeriodUrl)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to return submitted page when obligation is fufilled" in {
+      val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
+
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[ObligationService].toInstance(mockObligationService)
+        )
+        .build()
+
+      when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+
+      when(mockObligationService.handleObligation(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(Fulfilled)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.btn.routes.BtnAccountingPeriodController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.btn.routes.BtnAccountingPeriodController.onPageLoadReturnSubmitted.url
       }
     }
 
@@ -118,5 +150,38 @@ class BtnAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
+    "must return OK and the correct view for return submitted page" in {
+      val list = SummaryListViewModel(
+        rows = Seq(
+          SummaryListRowViewModel(
+            "btn.returnSubmitted.startAccountDate",
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(LocalDate.now))))
+          ),
+          SummaryListRowViewModel(
+            "btn.returnSubmitted.endAccountDate",
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(LocalDate.now.plusYears(1)))))
+          )
+        )
+      )
+      val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
+
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.btn.routes.BtnAccountingPeriodController.onPageLoadReturnSubmitted.url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[BtnAccountingPeriodReturnSubmittedView]
+        status(result) mustEqual OK
+        val content = contentAsString(result)
+        content mustEqual view(list)(request, appConfig(application), messages(application)).toString
+      }
+    }
   }
 }
