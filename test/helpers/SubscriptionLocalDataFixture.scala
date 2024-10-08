@@ -16,8 +16,8 @@
 
 package helpers
 
-import models.{MneOrDomestic, NonUKAddress}
 import models.subscription._
+import models.{MneOrDomestic, NonUKAddress}
 
 import java.time.LocalDate
 
@@ -50,7 +50,8 @@ trait SubscriptionLocalDataFixture {
     subSecondaryEmail = Some("doe@email.com"),
     subSecondaryCapturePhone = Some("123"),
     subSecondaryPhonePreference = Some(true),
-    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB")
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
+    accountStatus = Some(AccountStatus(false))
   )
 
   val someSubscriptionLocalDataUkOther: SubscriptionLocalData = SubscriptionLocalData(
@@ -66,7 +67,8 @@ trait SubscriptionLocalDataFixture {
     subSecondaryEmail = Some("doe@email.com"),
     subSecondaryCapturePhone = Some("123"),
     subSecondaryPhonePreference = Some(true),
-    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB")
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
+    accountStatus = Some(AccountStatus(false))
   )
 
 }
