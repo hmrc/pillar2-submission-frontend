@@ -80,7 +80,7 @@ class UkTaxReturnStartViewSpec extends ViewSpecBase {
 
     "have links" in {
       val link = view.getElementsByClass("govuk-body").get(3).getElementsByTag("a")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/manage-account/further-details/change-accounting-period")
+      link.attr("href") must include("/report-pillar2-top-up-taxes/manage-account/account-details/summary")
       link.text         must include("ensure your group’s details are updated")
       val link2 = view.getElementsByClass("govuk-body").get(5).getElementsByTag("a")
       link2.attr("href") must include("/guidance/report-pillar-2-top-up-taxes")
@@ -144,7 +144,7 @@ class UkTaxReturnStartViewSpec extends ViewSpecBase {
 
     "have links" in {
       val link = view.getElementsByClass("govuk-body").get(3).getElementsByTag("a")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/manage-account/further-details/change-accounting-period")
+      link.attr("href") must include("/report-pillar2-top-up-taxes/manage-account/account-details/summary")
       link.text         must include("ensure your group’s details are updated")
       val link2 = view.getElementsByClass("govuk-body").get(5).getElementsByTag("a")
       link2.attr("href") must include("/guidance/report-pillar-2-top-up-taxes")
