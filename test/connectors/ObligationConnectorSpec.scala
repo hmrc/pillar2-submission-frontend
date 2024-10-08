@@ -45,8 +45,8 @@ class ObligationConnectorSpec extends SpecBase with WireMockServerHandler {
   "get obligation" should {
 
     "return obligation information when the backend has returned 200 OK with data" in {
-      stubGet(s"$readSubscriptionPath/$plrReference/$dateFrom/$dateTo", OK, obligationInformationJson.toString())
-      val result: Option[ObligationInformation] = connector.getObligation(plrReference, dateFrom, dateTo).futureValue
+      stubGet(s"$ReadSubscriptionPath/$PlrReference/$dateFrom/$dateTo", OK, obligationInformationJson.toString())
+      val result: Option[ObligationInformation] = connector.getObligation(PlrReference, dateFrom, dateTo).futureValue
 
       result mustBe defined
       result mustBe Some(obligationInformation)
@@ -54,22 +54,22 @@ class ObligationConnectorSpec extends SpecBase with WireMockServerHandler {
     }
 
     "return no information error when the backend has returned a 404 status" in {
-      stubGet(s"$readSubscriptionPath/$plrReference/$dateFrom/$dateTo", NOT_FOUND, unsuccessfulNotFoundJson)
-      val result = connector.getObligation(plrReference, dateFrom, dateTo).futureValue
+      stubGet(s"$ReadSubscriptionPath/$PlrReference/$dateFrom/$dateTo", NOT_FOUND, unsuccessfulNotFoundJson)
+      val result = connector.getObligation(PlrReference, dateFrom, dateTo).futureValue
       result mustBe None
     }
 
     "return None when the backend has returned a response else than 200 or 404 status" in {
-      stubGet(s"$readSubscriptionPath/$plrReference/$dateFrom/$dateTo", errorCodes.sample.value, unsuccessfulResponseJson)
-      val result = connector.getObligation(plrReference, dateFrom, dateTo)
+      stubGet(s"$ReadSubscriptionPath/$PlrReference/$dateFrom/$dateTo", errorCodes.sample.value, unsuccessfulResponseJson)
+      val result = connector.getObligation(PlrReference, dateFrom, dateTo)
       result.failed.futureValue mustBe InternalIssueError
     }
   }
 }
 
 object ObligationConnectorSpec {
-  val plrReference         = "XEPLR0000000000"
-  val readSubscriptionPath = "/report-pillar2-top-up-taxes/get-obligation"
+  val PlrReference         = "XEPLR0000000000"
+  val ReadSubscriptionPath = "/report-pillar2-top-up-taxes/get-obligation"
   val obligationInformation = ObligationInformation(
     obligationType = UKTR,
     status = Fulfilled,

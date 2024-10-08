@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.SubscriptionConnector
 import models.NormalMode
 import models.obligation.ObligationStatus.{Fulfilled, Open}
-import models.subscription.AccountingPeriod
+import models.subscription.{AccountStatus, AccountingPeriod}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{PlrReferencePage, SubAccountingPeriodPage}
@@ -47,7 +47,7 @@ class BtnAccountingPeriodControllerSpec extends SpecBase {
     val dates        = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
     val dateHelper   = new ViewHelpers()
 
-    "must return OK and the correct view if PlrReference in session and obligation is not fufilled" in {
+    "must return OK and the correct view if PlrReference in session and obligation is not fufilled and account status is false" in {
       val list = SummaryListViewModel(
         rows = Seq(
           SummaryListRowViewModel(
@@ -62,7 +62,7 @@ class BtnAccountingPeriodControllerSpec extends SpecBase {
       )
       val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
 
-      val application = applicationBuilder(Some(ua))
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[ObligationService].toInstance(mockObligationService)
@@ -85,7 +85,7 @@ class BtnAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to return submitted page when obligation is fufilled" in {
+    "must redirect to return submitted page when obligation is fufilled and account status is false" in {
       val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
 
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
@@ -107,6 +107,33 @@ class BtnAccountingPeriodControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.btn.routes.BtnAccountingPeriodController.onPageLoadReturnSubmitted.url
+      }
+    }
+
+    "must redirect to error page when account status inactive flag is true" in {
+      val ua = emptySubscriptionLocalData
+        .copy(accountStatus = Some(AccountStatus(true)))
+        .setOrException(SubAccountingPeriodPage, dates)
+        .setOrException(PlrReferencePage, plrReference)
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[ObligationService].toInstance(mockObligationService)
+        )
+        .build()
+
+      when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(someSubscriptionLocalData.copy(accountStatus = Some(AccountStatus(true))))))
+
+      when(mockObligationService.handleObligation(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(Fulfilled)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.btn.routes.BtnAccountingPeriodController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
       }
     }
 

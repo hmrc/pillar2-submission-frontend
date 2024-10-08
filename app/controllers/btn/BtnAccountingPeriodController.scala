@@ -36,7 +36,6 @@ import views.html.btn.BtnAccountingPeriodView
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class BtnAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   getData:                                SubscriptionDataRetrievalAction,
@@ -53,13 +52,13 @@ class BtnAccountingPeriodController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
     val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
+    val accountStatus             = request.subscriptionLocalData.accountStatus.map(_.inactive).getOrElse(true)
 
     obligationService
       .handleObligation(request.subscriptionLocalData.plrReference, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
       .map {
-        case Left(_)          => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
-        case Right(Fulfilled) => Redirect(controllers.btn.routes.BtnAccountingPeriodController.onPageLoadReturnSubmitted)
-        case Right(Open) =>
+        case Right(Fulfilled) if !accountStatus => Redirect(controllers.btn.routes.BtnAccountingPeriodController.onPageLoadReturnSubmitted)
+        case Right(Open) if !accountStatus =>
           val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
           val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
           val list = SummaryListViewModel(
@@ -75,6 +74,7 @@ class BtnAccountingPeriodController @Inject() (
             )
           )
           Ok(view(list, mode, changeAccountingPeriodUrl))
+        case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
       }
   }
 

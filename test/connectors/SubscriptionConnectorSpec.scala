@@ -19,9 +19,8 @@ package connectors
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.SubscriptionConnectorSpec._
-import models.{InternalIssueError, MneOrDomestic, NonUKAddress}
 import models.subscription._
-import org.scalacheck.Gen
+import models.{InternalIssueError, MneOrDomestic, NonUKAddress}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
@@ -80,7 +79,8 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         subSecondaryEmail = None,
         subSecondaryCapturePhone = None,
         subSecondaryPhonePreference = Some(false),
-        subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
+        subRegisteredAddress = NonUKAddress("", None, "", None, None, ""),
+        accountStatus = Some(AccountStatus(false))
       )
 
       "return Some(json) when the backend has returned 200 OK with data" in {

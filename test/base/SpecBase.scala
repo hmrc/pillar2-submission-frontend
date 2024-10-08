@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import helpers.{AllMocks, SubscriptionLocalDataFixture, ViewInstances}
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
-import models.subscription.{AccountingPeriod, SubscriptionLocalData}
+import models.subscription.{AccountStatus, AccountingPeriod, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}
 import org.scalacheck.Gen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -104,7 +104,8 @@ trait SpecBase
     subSecondaryCapturePhone = None,
     subSecondaryPhonePreference = Some(false),
     subRegisteredAddress = NonUKAddress("", None, "", None, None, ""),
-    plrReference = PlrReference
+    plrReference = PlrReference,
+    accountStatus = Some(AccountStatus(false))
   )
 
   implicit lazy val ec:        ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
