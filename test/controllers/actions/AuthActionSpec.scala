@@ -34,6 +34,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.mvc.{Action, AnyContent}
 
 class AuthActionSpec extends SpecBase {
 
@@ -52,7 +53,7 @@ class AuthActionSpec extends SpecBase {
   val id: String = UUID.randomUUID().toString
 
   class Harness(authAction: IdentifierAction) {
-    def onPageLoad() = authAction(_ => Results.Ok)
+    def onPageLoad(): Action[AnyContent] = authAction(_ => Results.Ok)
   }
 
   "Auth Action" when {

@@ -19,8 +19,8 @@ package connectors
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.SubscriptionConnectorSpec._
-import models.{InternalIssueError, MneOrDomestic, NonUKAddress}
 import models.subscription._
+import models.{InternalIssueError, MneOrDomestic, NonUKAddress}
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder

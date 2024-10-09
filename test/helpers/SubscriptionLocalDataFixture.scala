@@ -16,8 +16,8 @@
 
 package helpers
 
-import models.{MneOrDomestic, NonUKAddress}
 import models.subscription._
+import models.{MneOrDomestic, NonUKAddress}
 
 import java.time.LocalDate
 

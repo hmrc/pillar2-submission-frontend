@@ -17,8 +17,10 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import controllers.actions.EnrolmentIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, VerifyAgentClientPredicate, VerifyOrgUserPredicate, defaultPredicate}
+import controllers.actions.EnrolmentIdentifierAction._
+import controllers.routes
 import models.requests.IdentifierRequest
+import pages.PlrReferencePage
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -32,9 +34,6 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
-import controllers.routes
-import pages.PlrReferencePage
-import pages.agent.AgentClientPillar2ReferencePage
 
 import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

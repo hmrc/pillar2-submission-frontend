@@ -31,15 +31,16 @@ import repositories.SessionRepository
 import views.html.btn.BtnRevenues750InNext2AccountingPeriodsView
 
 import scala.concurrent.Future
+import play.api.data.Form
 
 class BtnRevenues750InNext2AccountingPeriodsControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new BtnRevenues750InNext2AccountingPeriodsFormProvider()
-  val form         = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val btnRevenues750InNext2AccountingPeriodsRoute =
+  lazy val btnRevenues750InNext2AccountingPeriodsRoute: String =
     controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode).url
 
   "BtnRevenues750InNext2AccountingPeriods Controller" when {

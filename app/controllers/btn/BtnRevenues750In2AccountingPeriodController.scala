@@ -30,6 +30,7 @@ import views.html.btn.BtnRevenues750In2AccountingPeriodView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.data.Form
 
 class BtnRevenues750In2AccountingPeriodController @Inject() (
   override val messagesApi:               MessagesApi,
@@ -45,7 +46,7 @@ class BtnRevenues750In2AccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(BtnRevenues750In2AccountingPeriodPage) match {

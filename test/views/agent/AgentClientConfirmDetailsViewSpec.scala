@@ -20,14 +20,15 @@ import controllers.routes
 import org.jsoup.Jsoup
 import utils.ViewSpecBase
 import views.html.agent.AgentClientConfirmDetailsView
+import org.jsoup.nodes.Document
 
 class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
 
-  val page = inject[AgentClientConfirmDetailsView]
+  val page: AgentClientConfirmDetailsView = inject[AgentClientConfirmDetailsView]
 
   private val clientUpe = "Some Corp Inc"
   private val pillar2Id = "XMPLR0123456789"
-  val view              = Jsoup.parse(page(clientUpe, pillar2Id)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(clientUpe, pillar2Id)(request, appConfig, messages).toString())
 
   "Agent Client Confirm Details View" should {
 

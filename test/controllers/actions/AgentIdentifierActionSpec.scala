@@ -24,7 +24,7 @@ import controllers.routes
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
-import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class AgentIdentifierActionSpec extends SpecBase {
 
   class Harness(authAction: AgentIdentifierAction, predicate: Predicate = defaultAgentPredicate) {
-    def onPageLoad(): Action[AnyContent] = authAction.agentIdentify(predicate)(implicit request => Results.Ok)
+    def onPageLoad(): Action[AnyContent] = authAction.agentIdentify(predicate)(_ => Results.Ok)
   }
 
   "Agent Identifier Action" when {

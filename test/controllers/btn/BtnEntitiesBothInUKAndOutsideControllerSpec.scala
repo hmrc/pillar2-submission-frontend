@@ -31,15 +31,16 @@ import repositories.SessionRepository
 import views.html.btn.BtnEntitiesBothInUKAndOutsideView
 
 import scala.concurrent.Future
+import play.api.data.Form
 
 class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new BtnEntitiesBothInUKAndOutsideFormProvider()
-  val form         = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val entitiesBothInUKAndOutsideRoute = controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(NormalMode).url
+  lazy val entitiesBothInUKAndOutsideRoute: String = controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(NormalMode).url
 
   "EntitiesBothInUKAndOutside Controller" when {
 

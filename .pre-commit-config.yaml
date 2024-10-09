@@ -1,0 +1,12 @@
+repos:
+  - repo: https://github.com/erskaggs/jira-pre-commit
+    rev: v1.0.4 
+    hooks:
+      - id: jira-pre-commit
+        stages: [commit-msg]
+  -   repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.1.0
+      hooks:
+        -   id: check-yaml
+        -   id: end-of-file-fixer
+        -   id: trailing-whitespace
