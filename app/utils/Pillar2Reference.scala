@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package utils
 
-@(message1: Option[String] = None,
-        linkMessage: String,
-        message2: Option[String] = None,
-        linkUrl: String,
-        classes: String = "govuk-body",
-        linkClass: String = "govuk-link",
-        linkRel: String = "",
-        target: String = "_self",
-        linkFullStop: Boolean = false
-)
+import uk.gov.hmrc.auth.core.Enrolment
 
-<p class="@classes"> @message1.map{message => @Html(message) }  <a class="@linkClass" href="@linkUrl" rel="@linkRel" target="@target">@linkMessage</a>@{if(linkFullStop)(".")} @message2.map{message =>@Html(message)}</p>
+object Pillar2Reference {
+  def getPillar2ID(enrolments: Option[Set[Enrolment]], key: String, identifier: String): Option[String] = enrolments.flatMap { enrolments =>
+    enrolments
+      .find(_.key.equalsIgnoreCase(key))
+      .flatMap(_.identifiers.find(_.key.equalsIgnoreCase(identifier)))
+      .map(_.value)
+  }
+
+}
