@@ -18,7 +18,7 @@ package controllers.btn
 
 import base.SpecBase
 import forms.BtnEntitiesBothInUKAndOutsideFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{MneOrDomestic, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -28,7 +28,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.btn.BtnEntitiesBothInUKAndOutsideView
+import views.html.btn.{BtnAmendDetailsView, BtnEntitiesBothInUKAndOutsideView}
 
 import scala.concurrent.Future
 
@@ -119,6 +119,36 @@ class BtnEntitiesBothInUKAndOutsideControllerSpec extends SpecBase with MockitoS
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for amend group details page" in {
+
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails().url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[BtnAmendDetailsView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(MneOrDomestic.Uk)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "redirect to journey recovery if MNE details are not present amend group details page" in {
+
+      val application = applicationBuilder(subscriptionLocalData = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

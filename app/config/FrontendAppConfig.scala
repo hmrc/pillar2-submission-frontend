@@ -39,17 +39,18 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val loginContinueUrl:           String = configuration.get[String]("urls.loginContinue")
   val signOutUrl:                 String = configuration.get[String]("urls.signOut")
   val asaHomePageUrl:             String = configuration.get[String]("urls.asaHomePage")
-  val changeAccountingPeriodUrl:  String = configuration.get[String]("urls.changeAccountingPeriod")
   val ukTaxReturnSupplierListUrl: String = configuration.get[String]("urls.ukTaxReturnSupplierList")
 
-  val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
-
-  val enrolmentKey:                  String = configuration.get[String](s"enrolment.key")
-  val enrolmentIdentifier:           String = configuration.get[String](s"enrolment.identifier")
+  val pillar2BaseUrl:                String = servicesConfig.baseUrl("pillar2")
   val startPagePillar2SubmissionUrl: String = configuration.get[String]("urls.startPagePillar2Submission")
+  val changeAccountingPeriodUrl:     String = configuration.get[String]("urls.changeAccountingPeriod")
+  val pillar2FrontendUrl:            String = configuration.get[String]("urls.pillar2FrontendUrl")
   lazy val enrolmentStoreProxyUrl: String =
     s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration
       .get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
+
+  val enrolmentKey:        String = configuration.get[String](s"enrolment.key")
+  val enrolmentIdentifier: String = configuration.get[String](s"enrolment.identifier")
 
   val taxEnrolmentsUrl1: String = s"${configuration.get[Service]("microservice.services.tax-enrolments").baseUrl}${configuration
     .get[String]("microservice.services.tax-enrolments.url1")}"
