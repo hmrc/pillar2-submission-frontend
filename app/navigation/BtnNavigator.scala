@@ -47,7 +47,7 @@ class BtnNavigator @Inject() {
         if (provided) {
           controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode)
         } else {
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails()
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

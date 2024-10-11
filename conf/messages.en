@@ -188,8 +188,18 @@ btn.btnEntitiesBothInUKAndOutside.heading.uk = Does the group still have entitie
 btn.btnEntitiesBothInUKAndOutside.checkYourAnswersLabel = Does the group still have entities located in both the UK and outside the UK?
 btn.btnEntitiesBothInUKAndOutside.error.required.ukAndOther = Select yes if the group still has entities located in both the UK and outside the UK
 btn.btnEntitiesBothInUKAndOutside.error.required.uk = Select yes if the group still has entities located only in the UK
-
 btn.btnEntitiesBothInUKAndOutside.change.hidden = Does the group still have entities located in both the UK and outside the UK?
+btn.btnEntitiesBothInUKAndOutside.amend.title = Based on your answer, you need to amend your details
+btn.btnEntitiesBothInUKAndOutside.amend.heading = Based on your answer, you need to amend your details
+btn.btnEntitiesBothInUKAndOutside.amend.p1.ukAndOther = You previously reported that the group had entities located in both the
+btn.btnEntitiesBothInUKAndOutside.amend.p1.ukAndOther.bold = UK and other outside the UK.
+btn.btnEntitiesBothInUKAndOutside.amend.p1.ukOnly = You previously reported that the group had entities located
+btn.btnEntitiesBothInUKAndOutside.amend.p1.ukOnly.bold = only in the UK.
+btn.btnEntitiesBothInUKAndOutside.amend.p2 = If this has changed, you must
+btn.btnEntitiesBothInUKAndOutside.amend.p2.link = amend your group’s details
+btn.btnEntitiesBothInUKAndOutside.amend.p2.end = to update the location of your entities before submitting a BTN.
+
+
 btnRevenues750In2AccountingPeriod.title = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 btnRevenues750In2AccountingPeriod.heading = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 btnRevenues750In2AccountingPeriod.checkYourAnswersLabel = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
@@ -201,3 +211,4 @@ btnRevenues750InNext2AccountingPeriods.heading = Is the group expected to make c
 btnRevenues750InNext2AccountingPeriods.checkYourAnswersLabel = btnRevenues750InNext2AccountingPeriods
 btnRevenues750InNext2AccountingPeriods.error.required = Select yes if the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
 btnRevenues750InNext2AccountingPeriods.change.hidden = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+

@@ -35,14 +35,14 @@ class BtnNavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
 
-      "go from  EntitiesBothInUKAndOutsidePage period page to BtnRevenues750In2AccountingPeriod page " in {
+      "go from EntitiesBothInUKAndOutsidePage period page to BtnRevenues750In2AccountingPeriod page " in {
         navigator.nextPage(EntitiesBothInUKAndOutsidePage, NormalMode, emptyUserAnswers.setOrException(EntitiesBothInUKAndOutsidePage, true)) mustBe
           controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode)
       }
 
-      "go from  EntitiesBothInUKAndOutsidePage period page to BtnRevenues750InNext2AccountingPeriods page " in {
+      "go from EntitiesBothInUKAndOutsidePage period page to amend group details page when answer is No" in {
         navigator.nextPage(EntitiesBothInUKAndOutsidePage, NormalMode, emptyUserAnswers.setOrException(EntitiesBothInUKAndOutsidePage, false)) mustBe
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails()
       }
 
       "go from  BtnRevenues750In2AccountingPeriodPage period page to UnderConstruction  page " in {

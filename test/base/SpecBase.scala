@@ -21,8 +21,9 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
 import helpers.{AllMocks, SubscriptionLocalDataFixture, ViewInstances}
-import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
+import models.subscription.{AccountingPeriod, SubscriptionLocalData}
+import models.{MneOrDomestic, NonUKAddress, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -41,6 +42,7 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 trait SpecBase
@@ -84,7 +86,24 @@ trait SpecBase
     Set(Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", None))
   )
 
-  def emptyUserAnswers:        UserAnswers       = UserAnswers(userAnswersId)
+  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+
+  def emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
+    subMneOrDomestic = MneOrDomestic.Uk,
+    subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
+    subPrimaryContactName = "",
+    subPrimaryEmail = "",
+    subPrimaryPhonePreference = false,
+    subPrimaryCapturePhone = None,
+    subAddSecondaryContact = false,
+    subSecondaryContactName = None,
+    subSecondaryEmail = None,
+    subSecondaryCapturePhone = None,
+    subSecondaryPhonePreference = Some(false),
+    subRegisteredAddress = NonUKAddress("", None, "", None, None, ""),
+    plrReference = PlrReference
+  )
+
   implicit lazy val ec:        ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:        HeaderCarrier     = HeaderCarrier()
   implicit lazy val appConfig: FrontendAppConfig = new FrontendAppConfig(configuration, servicesConfig)
@@ -127,9 +146,10 @@ trait SpecBase
   }
 
   protected def applicationBuilder(
-    userAnswers:    Option[UserAnswers] = None,
-    enrolments:     Set[Enrolment] = Set.empty,
-    additionalData: Map[String, Any] = Map.empty
+    userAnswers:           Option[UserAnswers] = None,
+    enrolments:            Set[Enrolment] = Set.empty,
+    additionalData:        Map[String, Any] = Map.empty,
+    subscriptionLocalData: Option[SubscriptionLocalData] = None
   ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
@@ -137,7 +157,8 @@ trait SpecBase
           Map(
             "metrics.enabled"         -> "false",
             "auditing.enabled"        -> false,
-            "features.grsStubEnabled" -> true
+            "features.grsStubEnabled" -> true,
+            "play.filters.disabled"   -> List("play.filters.csrf.CSRFFilter", "play.filters.csp.CSPFilter")
           ) ++ additionalData
         )
       )
@@ -146,7 +167,8 @@ trait SpecBase
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[IdentifierAction].qualifiedWith("EnrolmentIdentifier").to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
+        bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData))
       )
 
   protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
