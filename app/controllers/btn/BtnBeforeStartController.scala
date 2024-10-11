@@ -17,10 +17,8 @@
 package controllers.btn
 
 import cats.data.OptionT
-import cats.data.OptionT.liftF
 import cats.implicits.catsStdInstancesForFuture
 import config.FrontendAppConfig
-import connectors.SubscriptionConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{Mode, UserAnswers}
 import pages.PlrReferencePage
@@ -31,7 +29,7 @@ import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BtnBeforeStartView
 
-import javax.inject.{Inject, Named}
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 

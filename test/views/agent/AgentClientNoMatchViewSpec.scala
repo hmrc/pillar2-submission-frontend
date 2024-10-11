@@ -18,14 +18,15 @@ package views.agent
 
 import controllers.routes
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import utils.ViewSpecBase
 import views.html.agent.AgentClientNoMatch
 
 class AgentClientNoMatchViewSpec extends ViewSpecBase {
 
-  val page = inject[AgentClientNoMatch]
+  val page: AgentClientNoMatch = inject[AgentClientNoMatch]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Agent Client No Match View" should {
 

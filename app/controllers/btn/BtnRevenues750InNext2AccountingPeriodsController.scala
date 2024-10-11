@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.BtnRevenues750InNext2AccountingPeriodsFormProvider
 import models.Mode
-import navigation.{BtnNavigator, Navigator}
+import navigation.BtnNavigator
 import pages.BtnRevenues750InNext2AccountingPeriodsPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -45,7 +46,7 @@ class BtnRevenues750InNext2AccountingPeriodsController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(BtnRevenues750InNext2AccountingPeriodsPage) match {

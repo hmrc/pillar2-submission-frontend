@@ -15,8 +15,6 @@
  */
 
 package viewmodels.checkAnswers
-
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.BtnRevenues750In2AccountingPeriodPage
 import play.api.i18n.Messages

@@ -23,6 +23,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.BtnRevenues750InNext2AccountingPeriodsPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -34,12 +35,12 @@ import scala.concurrent.Future
 
 class BtnRevenues750InNext2AccountingPeriodsControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new BtnRevenues750InNext2AccountingPeriodsFormProvider()
-  val form         = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val btnRevenues750InNext2AccountingPeriodsRoute =
+  lazy val btnRevenues750InNext2AccountingPeriodsRoute: String =
     controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode).url
 
   "BtnRevenues750InNext2AccountingPeriods Controller" when {

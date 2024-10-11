@@ -24,13 +24,14 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.BtnRevenues750In2AccountingPeriodPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import views.html.btn.BtnRevenues750In2AccountingPeriodView
 
 import java.util.UUID
@@ -39,9 +40,10 @@ import scala.concurrent.Future
 class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new BtnRevenues750In2AccountingPeriodFormProvider()
-  val form         = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val btnRevenues750In2AccountingPeriodRoute = controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode).url
+  lazy val btnRevenues750In2AccountingPeriodRoute: String =
+    controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode).url
 
   private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 

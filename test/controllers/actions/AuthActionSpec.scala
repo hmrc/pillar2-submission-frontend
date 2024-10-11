@@ -23,6 +23,7 @@ import controllers.actions.TestAuthRetrievals.Ops
 import controllers.routes
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.mvc.{Action, AnyContent}
 import play.api.mvc.{BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -52,7 +53,7 @@ class AuthActionSpec extends SpecBase {
   val id: String = UUID.randomUUID().toString
 
   class Harness(authAction: IdentifierAction) {
-    def onPageLoad() = authAction(_ => Results.Ok)
+    def onPageLoad(): Action[AnyContent] = authAction(_ => Results.Ok)
   }
 
   "Auth Action" when {

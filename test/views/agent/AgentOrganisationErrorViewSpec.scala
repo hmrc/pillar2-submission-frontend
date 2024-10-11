@@ -17,14 +17,15 @@
 package views.agent
 
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import utils.ViewSpecBase
 import views.html.agent.AgentOrganisationErrorView
 
 class AgentOrganisationErrorViewSpec extends ViewSpecBase {
 
-  val page = inject[AgentOrganisationErrorView]
+  val page: AgentOrganisationErrorView = inject[AgentOrganisationErrorView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Agent Organisation Error View" should {
 

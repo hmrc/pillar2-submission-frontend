@@ -22,12 +22,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.btn.BtnAccountingPeriodView
 
 class BtnAccountingPeriodViewSpec extends ViewSpecBase {
-  val list = SummaryListViewModel(
+  val list: SummaryList = SummaryListViewModel(
     rows = Seq(
       SummaryListRowViewModel("btn.btnAccountingPeriod.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2024")))),
       SummaryListRowViewModel(
