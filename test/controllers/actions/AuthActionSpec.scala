@@ -23,6 +23,7 @@ import controllers.actions.TestAuthRetrievals.Ops
 import controllers.routes
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.mvc.{Action, AnyContent}
 import play.api.mvc.{BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,7 +35,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.mvc.{Action, AnyContent}
 
 class AuthActionSpec extends SpecBase {
 

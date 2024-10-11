@@ -23,6 +23,7 @@ import controllers.actions._
 import form.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import pages.agent.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -32,7 +33,6 @@ import views.html.agent._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.data.Form
 
 class AgentController @Inject() (
   val controllerComponents:    MessagesControllerComponents,

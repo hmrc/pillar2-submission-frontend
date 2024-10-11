@@ -18,9 +18,9 @@ package views.agent
 
 import form.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import utils.ViewSpecBase
 import views.html.agent.AgentClientPillarIdView
-import org.jsoup.nodes.Document
 
 class AgentClientPillarIdViewSpec extends ViewSpecBase {
 

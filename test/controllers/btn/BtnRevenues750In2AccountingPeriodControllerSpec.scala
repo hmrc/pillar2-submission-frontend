@@ -24,6 +24,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.BtnRevenues750In2AccountingPeriodPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,7 +36,6 @@ import views.html.btn.BtnRevenues750In2AccountingPeriodView
 
 import java.util.UUID
 import scala.concurrent.Future
-import play.api.data.Form
 
 class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with MockitoSugar {
 

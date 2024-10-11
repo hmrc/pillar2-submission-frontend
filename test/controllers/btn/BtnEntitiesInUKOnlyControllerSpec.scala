@@ -23,6 +23,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.EntitiesBothInUKAndOutsidePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -31,7 +32,6 @@ import repositories.SessionRepository
 import views.html.btn.BtnEntitiesInUKOnlyView
 
 import scala.concurrent.Future
-import play.api.data.Form
 
 class BtnEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
 

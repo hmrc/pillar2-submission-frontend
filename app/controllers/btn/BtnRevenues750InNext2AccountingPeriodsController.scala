@@ -22,6 +22,7 @@ import forms.BtnRevenues750InNext2AccountingPeriodsFormProvider
 import models.Mode
 import navigation.BtnNavigator
 import pages.BtnRevenues750InNext2AccountingPeriodsPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -30,7 +31,6 @@ import views.html.btn.BtnRevenues750InNext2AccountingPeriodsView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.data.Form
 
 class BtnRevenues750InNext2AccountingPeriodsController @Inject() (
   override val messagesApi:               MessagesApi,

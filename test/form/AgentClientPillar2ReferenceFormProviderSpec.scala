@@ -18,9 +18,9 @@ package form
 
 import forms.behaviours.BooleanFieldBehaviours
 import generators.Generators
+import play.api.data.Form
 import play.api.data.FormError
 import utils.{Constants, Validation}
-import play.api.data.Form
 
 class AgentClientPillar2ReferenceFormProviderSpec extends BooleanFieldBehaviours with Generators {
 

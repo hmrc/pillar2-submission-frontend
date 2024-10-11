@@ -18,9 +18,9 @@ package views.agent
 
 import controllers.routes
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import utils.ViewSpecBase
 import views.html.agent.AgentClientNoMatch
-import org.jsoup.nodes.Document
 
 class AgentClientNoMatchViewSpec extends ViewSpecBase {
 

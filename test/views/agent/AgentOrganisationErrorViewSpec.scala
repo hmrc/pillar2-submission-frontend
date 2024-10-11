@@ -17,9 +17,9 @@
 package views.agent
 
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import utils.ViewSpecBase
 import views.html.agent.AgentOrganisationErrorView
-import org.jsoup.nodes.Document
 
 class AgentOrganisationErrorViewSpec extends ViewSpecBase {
 
