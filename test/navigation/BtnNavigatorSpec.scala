@@ -63,16 +63,16 @@ class BtnNavigatorSpec extends SpecBase {
           controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
       }
 
-      "go from  BtnRevenues750InNext2AccountingPeriodsPage period page to UnderConstruction  page " in {
+      "go from BtnRevenues750InNext2AccountingPeriodsPage to UkTaxReturnStart page when the answer is true" in {
         navigator.nextPage(
           BtnRevenues750InNext2AccountingPeriodsPage,
           NormalMode,
           emptyUserAnswers.setOrException(BtnRevenues750InNext2AccountingPeriodsPage, true)
         ) mustBe
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.uktr.routes.UkTaxReturnStartController.onPageLoad
       }
 
-      "go from  BtnRevenues750InNext2AccountingPeriodsPage period page to UnderConstruction page " in {
+      "go from BtnRevenues750InNext2AccountingPeriodsPage to UnderConstruction page when the answer is false" in {
         navigator.nextPage(
           BtnRevenues750InNext2AccountingPeriodsPage,
           NormalMode,
