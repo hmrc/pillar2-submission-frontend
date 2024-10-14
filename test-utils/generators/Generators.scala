@@ -16,12 +16,13 @@
 
 package generators
 
-import java.time.{Instant, LocalDate, ZoneOffset}
+import models.subscription.AccountingPeriod
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Arbitrary, Gen, Shrink}
 import wolfendale.scalacheck.regexp.RegexpGen
-import models.subscription.AccountingPeriod
+
+import java.time.{Instant, LocalDate, ZoneOffset}
 
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 

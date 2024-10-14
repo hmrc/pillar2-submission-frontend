@@ -15,10 +15,7 @@
  */
 
 package pages
-
-import models.MneOrDomestic
 import models.subscription.AccountingPeriod
-import org.scalacheck.ScalacheckShapeless.derivedArbitrary
 
 class SubAccountingPeriodPageSpec extends PageBehaviours {
 

@@ -25,7 +25,7 @@ import pages.PlrReferencePage
 import pages.agent.AgentClientPillar2ReferencePage
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
+import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}

@@ -18,15 +18,16 @@ package views.agent
 
 import form.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import utils.ViewSpecBase
 import views.html.agent.AgentClientPillarIdView
 
 class AgentClientPillarIdViewSpec extends ViewSpecBase {
 
   val formProvider = new AgentClientPillar2ReferenceFormProvider
-  val page         = inject[AgentClientPillarIdView]
+  val page: AgentClientPillarIdView = inject[AgentClientPillarIdView]
 
-  val view = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
 
   "Agent Client PillarId View" should {
 

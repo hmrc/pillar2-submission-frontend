@@ -31,12 +31,12 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Play.materializer
-import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
+import play.api.http._
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
-import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
+import play.api.test._
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~

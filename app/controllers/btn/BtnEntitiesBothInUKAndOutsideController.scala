@@ -21,13 +21,13 @@ import controllers.actions._
 import forms.BtnEntitiesBothInUKAndOutsideFormProvider
 import models.Mode
 import navigation.BtnNavigator
-import pages.{EntitiesBothInUKAndOutsidePage, SubMneOrDomesticPage}
+import pages.EntitiesBothInUKAndOutsidePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.btn.BtnEntitiesBothInUKAndOutsideView
 import views.html.btn.BtnAmendDetailsView
+import views.html.btn.BtnEntitiesBothInUKAndOutsideView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}

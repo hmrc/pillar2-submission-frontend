@@ -31,7 +31,6 @@ import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.btn.{BtnAccountingPeriodReturnSubmittedView, BtnAccountingPeriodView}
-import views.html.btn.BtnAccountingPeriodView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
