@@ -100,7 +100,7 @@ class BtnRevenues750InNext2AccountingPeriodsControllerSpec extends SpecBase with
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.uktr.routes.UkTaxReturnStartController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.btn.routes.BtnSubmitUKTRController.onPageLoad.url
       }
     }
 

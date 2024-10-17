@@ -62,12 +62,13 @@ class BtnNavigator @Inject() {
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
   private def btnRevenues750InNext2AccountingPeriods(userAnswers: UserAnswers): Call =
     userAnswers
       .get(BtnRevenues750InNext2AccountingPeriodsPage)
       .map { provided =>
         if (provided) {
-          controllers.uktr.routes.UkTaxReturnStartController.onPageLoad
+          controllers.btn.routes.BtnSubmitUKTRController.onPageLoad
         } else {
           controllers.routes.UnderConstructionController.onPageLoad
         }
