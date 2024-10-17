@@ -17,18 +17,20 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import models.obligation.ObligationStatus.{Fulfilled, Open}
 import models.{MneOrDomestic, Mode}
-import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
+import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
+import services.ObligationService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-import views.html.btn.BtnAccountingPeriodView
+import views.html.btn.{BtnAccountingPeriodReturnSubmittedView, BtnAccountingPeriodView}
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,36 +38,43 @@ import scala.concurrent.{ExecutionContext, Future}
 class BtnAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  obligationService:                      ObligationService,
+  dateHelper:                             ViewHelpers,
   view:                                   BtnAccountingPeriodView,
+  viewReturnSubmitted:                    BtnAccountingPeriodReturnSubmittedView,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) { implicit request =>
-    val dateHelper                = new ViewHelpers()
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
-    request.maybeSubscriptionLocalData
-      .flatMap(_.get(SubAccountingPeriodPage))
-      .map { answer =>
-        val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer.startDate))
-        val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(answer.endDate))
-        val list = SummaryListViewModel(
-          rows = Seq(
-            SummaryListRowViewModel(
-              "btn.btnAccountingPeriod.startAccountDate",
-              value = ValueViewModel(HtmlContent(startDate))
-            ),
-            SummaryListRowViewModel(
-              "btn.btnAccountingPeriod.endAccountDate",
-              value = ValueViewModel(HtmlContent(endDate))
+    val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
+    val accountStatus             = request.subscriptionLocalData.accountStatus.map(_.inactive).getOrElse(true)
+
+    obligationService
+      .handleObligation(request.subscriptionLocalData.plrReference, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
+      .map {
+        case Right(Fulfilled) if !accountStatus => Redirect(controllers.btn.routes.BtnAccountingPeriodController.onPageLoadReturnSubmitted)
+        case Right(Open) if !accountStatus =>
+          val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
+          val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
+          val list = SummaryListViewModel(
+            rows = Seq(
+              SummaryListRowViewModel(
+                "btn.btnAccountingPeriod.startAccountDate",
+                value = ValueViewModel(HtmlContent(startDate))
+              ),
+              SummaryListRowViewModel(
+                "btn.btnAccountingPeriod.endAccountDate",
+                value = ValueViewModel(HtmlContent(endDate))
+              )
             )
           )
-        )
-        Ok(view(list, mode, changeAccountingPeriodUrl))
+          Ok(view(list, mode, changeAccountingPeriodUrl))
+        case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
       }
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None)))
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async { implicit request =>
@@ -79,6 +88,24 @@ class BtnAccountingPeriodController @Inject() (
         }
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
+  }
 
+  def onPageLoadReturnSubmitted: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.startDate))
+    val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.endDate))
+    val list = SummaryListViewModel(
+      rows = Seq(
+        SummaryListRowViewModel(
+          "btn.returnSubmitted.startAccountDate",
+          value = ValueViewModel(HtmlContent(startDate))
+        ),
+        SummaryListRowViewModel(
+          "btn.returnSubmitted.endAccountDate",
+          value = ValueViewModel(HtmlContent(endDate))
+        )
+      )
+    )
+
+    Ok(viewReturnSubmitted(list))
   }
 }

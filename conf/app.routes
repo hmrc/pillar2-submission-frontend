@@ -43,6 +43,7 @@ GET         /below-threshold-notification/accounting-period                     
 POST        /below-threshold-notification/accounting-period                       controllers.btn.BtnAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
 GET         /below-threshold-notification/change-accounting-period                controllers.btn.BtnAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
 POST        /below-threshold-notification/change-accounting-period                controllers.btn.BtnAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+GET         /below-threshold-notification/return-submitted                        controllers.btn.BtnAccountingPeriodController.onPageLoadReturnSubmitted
 
 
 GET         /below-threshold-notification/domestic-or-multinational               controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = NormalMode)
