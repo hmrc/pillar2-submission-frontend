@@ -70,7 +70,7 @@ class ObligationConnectorSpec extends SpecBase with WireMockServerHandler {
 object ObligationConnectorSpec {
   val PlrReference         = "XEPLR0000000000"
   val ReadSubscriptionPath = "/report-pillar2-top-up-taxes/get-obligation"
-  val obligationInformation = ObligationInformation(
+  val obligationInformation: ObligationInformation = ObligationInformation(
     obligationType = UKTR,
     status = Fulfilled,
     accountingPeriodFromDate = LocalDate.now.minusYears(1),

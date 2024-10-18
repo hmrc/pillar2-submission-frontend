@@ -23,10 +23,11 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-import views.html.btn.{BtnAccountingPeriodReturnSubmittedView, BtnAccountingPeriodView}
+import views.html.btn.BtnAccountingPeriodReturnSubmittedView
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
 class BtnAccountingPeriodReturnSubmittedViewSpec extends ViewSpecBase {
-  val list = SummaryListViewModel(
+  val list: SummaryList = SummaryListViewModel(
     rows = Seq(
       SummaryListRowViewModel("btn.returnSubmitted.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2024")))),
       SummaryListRowViewModel(
