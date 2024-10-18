@@ -11,7 +11,6 @@ ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
-
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
@@ -43,8 +42,8 @@ lazy val microservice = (project in file("."))
     ScoverageKeys.coverageMinimumStmtTotal := 78,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
-    Compile / scalafmtOnCompile      := true,
-    Test / scalafmtOnCompile         := true,
+    Compile / scalafmtOnCompile := true,
+    Test / scalafmtOnCompile := true,
     scalacOptions ++= Seq(
       "-feature",
       "-rootdir",
@@ -57,19 +56,22 @@ lazy val microservice = (project in file("."))
     // concatenate js
     Concat.groups := Seq(
       "javascripts/application.js" ->
-        group(Seq(
-          "javascripts/app.js"
-        ))
+        group(
+          Seq(
+            "javascripts/app.js"
+          )
+        )
     ),
     pipelineStages := Seq(digest),
     Assets / pipelineStages := Seq(concat)
   )
 
+addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
+
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork := true,
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
 )
-
 
 lazy val it = project
   .enablePlugins(PlayScala)
