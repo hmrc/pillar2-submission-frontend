@@ -67,6 +67,7 @@ lazy val microservice = (project in file("."))
   )
 
 addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
+addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
 
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork := true,
