@@ -18,3 +18,4 @@ package models
 
 sealed trait ApiError extends Throwable
 case object InternalIssueError extends ApiError
+case object ObligationNotFoundError extends ApiError

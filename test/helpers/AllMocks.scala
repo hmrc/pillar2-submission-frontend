@@ -17,14 +17,14 @@
 package helpers
 
 import config.FrontendAppConfig
-import connectors.SubscriptionConnector
+import connectors.{ObligationConnector, SubscriptionConnector}
 import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction}
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import repositories.SessionRepository
-import services.SubscriptionService
+import services.{ObligationService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -45,6 +45,8 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
   val mockSubscriptionService:   SubscriptionService   = mock[SubscriptionService]
   val mockAgentIdentifierAction: AgentIdentifierAction = mock[AgentIdentifierAction]
+  val mockObligationConnector:   ObligationConnector   = mock[ObligationConnector]
+  val mockObligationService:     ObligationService     = mock[ObligationService]
 
   override protected def beforeEach(): Unit =
     Seq(

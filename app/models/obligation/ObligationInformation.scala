@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package forms
+package models.obligation
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.Inject
+import java.time.LocalDate
 
-class BtnRevenues750In2AccountingPeriodFormProvider @Inject() extends Mappings {
+final case class ObligationInformation(
+  obligationType:           ObligationType,
+  status:                   ObligationStatus,
+  accountingPeriodFromDate: LocalDate,
+  accountingPeriodToDate:   LocalDate,
+  dueDate:                  LocalDate
+)
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("btnRevenues750In2AccountingPeriod.error.required")
-    )
+object ObligationInformation {
+  implicit val format: OFormat[ObligationInformation] = Json.format[ObligationInformation]
 }

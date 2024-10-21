@@ -19,14 +19,14 @@ package controllers.uktr
 import cats.data.OptionT.{fromOption, liftF}
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.agent.AgentClientPillar2ReferencePage
 import pages.PlrReferencePage
+import pages.agent.AgentClientPillar2ReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.uktr.UkTaxReturnStartView
-import services.SubscriptionService
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
