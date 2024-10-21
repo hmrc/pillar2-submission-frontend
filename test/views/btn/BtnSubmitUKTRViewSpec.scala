@@ -17,9 +17,9 @@
 package views.btn
 
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import utils.ViewSpecBase
 import views.html.btn.BtnSubmitUKTRView
-import org.jsoup.nodes.Document
 
 class BtnSubmitUKTRViewSpec extends ViewSpecBase {
 
