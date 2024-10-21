@@ -19,12 +19,13 @@ package views.btn
 import org.jsoup.Jsoup
 import utils.ViewSpecBase
 import views.html.btn.BtnSubmitUKTRView
+import org.jsoup.nodes.Document
 
 class BtnSubmitUKTRViewSpec extends ViewSpecBase {
 
-  val page = inject[BtnSubmitUKTRView]
+  val page: BtnSubmitUKTRView = inject[BtnSubmitUKTRView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "BtnSubmitUKTR View" should {
 
