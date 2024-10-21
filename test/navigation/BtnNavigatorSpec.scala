@@ -51,7 +51,7 @@ class BtnNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(BtnRevenues750In2AccountingPeriodPage, true)
         ) mustBe
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoadThresholdMet
       }
 
       "go from  BtnRevenues750In2AccountingPeriodPage period page to UnderConstruction page " in {

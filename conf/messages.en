@@ -157,6 +157,12 @@ uktr.UkTaxReturnStart.p6.link = Choose a supplier to submit your UKTR from this 
 uktr.UkTaxReturnStart.inactive.subheading = Important
 uktr.UkTaxReturnStart.inactive.p1 = Your account has a Below Threshold Notification (BTN) and is inactive. Submit a UK tax return (UKTR) to re-activate your account.
 
+###############################################
+#
+# Below Threshold Notification
+#
+###############################################
+
 btn.BtnBeforeStart.title = Below Threshold Notification
 btn.BtnBeforeStart.header = Below Threshold Notification
 btn.BtnBeforeStart.p1 = A Below-Threshold Notification removes your group’s obligation to submit a UKTR for the current accounting period and all future ones.
@@ -205,7 +211,6 @@ btn.btnEntitiesBothInUKAndOutside.amend.p2 = If this has changed, you must
 btn.btnEntitiesBothInUKAndOutside.amend.p2.link = amend your group’s details
 btn.btnEntitiesBothInUKAndOutside.amend.p2.end = to update the location of your entities before submitting a BTN.
 
-
 btnRevenues750In2AccountingPeriod.title = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 btnRevenues750In2AccountingPeriod.heading = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 btnRevenues750In2AccountingPeriod.checkYourAnswersLabel = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
@@ -218,3 +223,10 @@ btnRevenues750InNext2AccountingPeriods.checkYourAnswersLabel = btnRevenues750InN
 btnRevenues750InNext2AccountingPeriods.error.required = Select yes if the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
 btnRevenues750InNext2AccountingPeriods.change.hidden = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
 
+btn.thresholdMet.title = Based on your answer, your group must submit a UK Tax Return
+btn.thresholdMet.heading = Based on your answer, your group must submit a UK Tax Return
+btn.thresholdMet.p1 = Based on your answer, you cannot submit a Below-Threshold Notification as your group has made consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
+btn.thresholdMet.p2 = Your group must still submit a UK Tax Return.
+btn.thresholdMet.link = Find out more about submitting a UKTR
+
+###############################################

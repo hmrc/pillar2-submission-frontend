@@ -32,7 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import views.html.btn.BtnRevenues750In2AccountingPeriodView
+import views.html.btn.{BtnRevenues750In2AccountingPeriodView, BtnThresholdMetView}
 
 import java.util.UUID
 import scala.concurrent.Future
@@ -44,6 +44,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
 
   lazy val btnRevenues750In2AccountingPeriodRoute: String =
     controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode).url
+  lazy val thresholdMetRoute: String = controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoadThresholdMet.url
 
   private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
@@ -160,7 +161,7 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual thresholdMetRoute
       }
     }
 
@@ -181,6 +182,29 @@ class BtnRevenues750In2AccountingPeriodControllerSpec extends SpecBase with Mock
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET threshold met" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, thresholdMetRoute)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[BtnThresholdMetView]
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
 
