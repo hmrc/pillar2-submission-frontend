@@ -218,3 +218,8 @@ btnRevenues750InNext2AccountingPeriods.checkYourAnswersLabel = btnRevenues750InN
 btnRevenues750InNext2AccountingPeriods.error.required = Select yes if the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
 btnRevenues750InNext2AccountingPeriods.change.hidden = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
 
+btn.btnSubmitUKTR.title = Based on your answer, your group must submit a UK Tax Return
+btn.btnSubmitUKTR.heading = Based on your answer, your group must submit a UK Tax Return
+btn.btnSubmitUKTR.p1 = Based on your answer, you cannot submit a Below-Threshold Notification as the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods.
+btn.btnSubmitUKTR.p2 = You can submit a nil return UK Tax Return if your group is not due to pay any Domestic Top-up Tax for their current accounting period.
+btn.btnSubmitUKTR.link = Find out more about submitting a late or new UK Tax Return

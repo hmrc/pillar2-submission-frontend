@@ -67,3 +67,5 @@ GET         /below-threshold-notification/future-annual-revenues                
 POST        /below-threshold-notification/future-annual-revenues                  controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode: Mode = NormalMode)
 GET         /below-threshold-notification/change-future-annual-revenues           controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode: Mode = CheckMode)
 POST        /below-threshold-notification/change-future-annual-revenues           controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode: Mode = CheckMode)
+
+GET         /below-threshold-notification/nil-return                              controllers.btn.BtnSubmitUKTRController.onPageLoad
