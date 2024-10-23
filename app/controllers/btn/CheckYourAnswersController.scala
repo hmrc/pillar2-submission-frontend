@@ -14,35 +14,45 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.btn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions._
+import models.UserAnswers
 import play.api.Logging
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.html.CheckYourAnswersView
+import views.html.btn.CheckYourAnswersView
 
 class CheckYourAnswersController @Inject() (
-  override val messagesApi: MessagesApi,
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     CheckYourAnswersView
+  view:                     CheckYourAnswersView,
+  val controllerComponents: MessagesControllerComponents
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val list = SummaryListViewModel(
-      rows = Seq.empty
-    )
+    implicit val userAnswers: UserAnswers = request.userAnswers
 
-    Ok(view(list))
+    Ok(view(summaryList))
   }
+
+  private def summaryList(implicit messages: Messages, userAnswers: UserAnswers): SummaryList =
+    SummaryListViewModel(
+      rows = Seq(
+        SubAccountingPeriodSummary.row(userAnswers),
+        BtnEntitiesBothInUKAndOutsideSummary.row(userAnswers),
+        BtnRevenues750In2AccountingPeriodSummary.row(userAnswers),
+        BtnRevenues750InNext2AccountingPeriodsSummary.row(userAnswers)
+      ).flatten
+    ).withCssClass("govuk-!-margin-bottom-9")
 }

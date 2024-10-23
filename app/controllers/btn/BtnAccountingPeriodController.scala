@@ -17,13 +17,15 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions._
 import models.obligation.ObligationStatus.{Fulfilled, Open}
+import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, Mode}
-import pages.SubMneOrDomesticPage
+import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
+import repositories.SessionRepository
 import services.ObligationService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -37,8 +39,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BtnAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
-  getData:                                SubscriptionDataRetrievalAction,
-  requireData:                            SubscriptionDataRequiredAction,
+  getData:                                DataRetrievalAction,
+  sessionRepository:                      SessionRepository,
+  getSubscriptionData:                    SubscriptionDataRetrievalAction,
+  requireData:                            DataRequiredAction,
+  requireSubscriptionData:                SubscriptionDataRequiredAction,
   obligationService:                      ObligationService,
   dateHelper:                             ViewHelpers,
   view:                                   BtnAccountingPeriodView,
@@ -48,36 +53,39 @@ class BtnAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
     val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
     val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
-    val accountStatus             = request.subscriptionLocalData.accountStatus.map(_.inactive).getOrElse(true)
+    setSubscriptionAccountingPeriod(subAccountingPeriod).apply(request).map(_ => ())
+    val accountStatus = request.subscriptionLocalData.accountStatus.forall(_.inactive)
+    val accountingDates = {
+      val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
+      val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
+
+      SummaryListViewModel(
+        rows = Seq(
+          SummaryListRowViewModel(
+            key = "btn.returnSubmitted.startAccountDate",
+            value = ValueViewModel(HtmlContent(startDate))
+          ),
+          SummaryListRowViewModel(
+            key = "btn.returnSubmitted.endAccountDate",
+            value = ValueViewModel(HtmlContent(endDate))
+          )
+        )
+      )
+    }
 
     obligationService
       .handleObligation(request.subscriptionLocalData.plrReference, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
       .map {
-        case Right(Fulfilled) if !accountStatus => Redirect(controllers.btn.routes.BtnAccountingPeriodController.onPageLoadReturnSubmitted)
-        case Right(Open) if !accountStatus =>
-          val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
-          val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
-          val list = SummaryListViewModel(
-            rows = Seq(
-              SummaryListRowViewModel(
-                "btn.btnAccountingPeriod.startAccountDate",
-                value = ValueViewModel(HtmlContent(startDate))
-              ),
-              SummaryListRowViewModel(
-                "btn.btnAccountingPeriod.endAccountDate",
-                value = ValueViewModel(HtmlContent(endDate))
-              )
-            )
-          )
-          Ok(view(list, mode, changeAccountingPeriodUrl))
-        case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+        case Right(Fulfilled) if !accountStatus => Ok(viewReturnSubmitted(accountingDates))
+        case Right(Open) if !accountStatus      => Ok(view(accountingDates, mode, changeAccountingPeriodUrl))
+        case _                                  => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData).async { implicit request =>
     request.maybeSubscriptionLocalData
       .flatMap(_.get(SubMneOrDomesticPage))
       .map { answer =>
@@ -90,22 +98,11 @@ class BtnAccountingPeriodController @Inject() (
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
   }
 
-  def onPageLoadReturnSubmitted: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.startDate))
-    val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.endDate))
-    val list = SummaryListViewModel(
-      rows = Seq(
-        SummaryListRowViewModel(
-          "btn.returnSubmitted.startAccountDate",
-          value = ValueViewModel(HtmlContent(startDate))
-        ),
-        SummaryListRowViewModel(
-          "btn.returnSubmitted.endAccountDate",
-          value = ValueViewModel(HtmlContent(endDate))
-        )
-      )
-    )
-
-    Ok(viewReturnSubmitted(list))
-  }
+  private def setSubscriptionAccountingPeriod(accountingPeriod: AccountingPeriod): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { implicit request =>
+      for {
+        updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAccountingPeriodPage, accountingPeriod))
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield NoContent
+    }
 }

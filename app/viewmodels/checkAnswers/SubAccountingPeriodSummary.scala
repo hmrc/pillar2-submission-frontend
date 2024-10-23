@@ -15,25 +15,33 @@
  */
 
 package viewmodels.checkAnswers
-import models.{CheckMode, UserAnswers}
-import pages.EntitiesBothInUKAndOutsidePage
+
+import models.UserAnswers
+import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object BtnEntitiesBothInUKAndOutsideSummary {
+object SubAccountingPeriodSummary {
+
+  private val viewHelpers = new ViewHelpers()
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(EntitiesBothInUKAndOutsidePage).map { answer =>
-      val value = if (answer) "site.yes" else "site.no"
+    answers.get(SubAccountingPeriodPage).map { answer =>
+      val startDate = viewHelpers.formatDateGDS(answer.startDate)
+      val endDate   = viewHelpers.formatDateGDS(answer.endDate)
 
       SummaryListRowViewModel(
-        key = "entitiesBothInUKAndOutside.checkYourAnswersLabel",
-        value = ValueViewModel(value),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("entitiesBothInUKAndOutside.change.hidden"))
+        key = "btn.btnAccountingPeriod.checkYourAnswersLabel",
+        value = ValueViewModel(
+          content = HtmlContent(
+            s"""${messages("btn.btnAccountingPeriod.checkYourAnswersLabel.startDate")} $startDate<br>
+                 |${messages("btn.btnAccountingPeriod.checkYourAnswersLabel.endDate")} $endDate
+                 |""".stripMargin
+          )
         )
       )
     }

@@ -28,7 +28,7 @@ import services.{ObligationService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import views.html.CheckYourAnswersView
+import views.html.btn.CheckYourAnswersView
 
 //TODO: Add all mocking instants in here.
 trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>

@@ -1,0 +1,52 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{Button, SummaryList, Text}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukButton, GovukSummaryList}
+@import views.ViewUtils.titleNoForm
+@import views.html.components.gds.{Heading, ParagraphBody, SectionHeader}
+
+@this(
+    layout: templates.Layout,
+    govukSummaryList: GovukSummaryList,
+    govukButton: GovukButton,
+    formHelper: FormWithCSRF,
+    sectionHeader: SectionHeader,
+    heading: Heading,
+    paragraph: ParagraphBody,
+)
+@(list: SummaryList)(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+ @formHelper(action = controllers.btn.routes.CheckYourAnswersController.onPageLoad) {
+ @heading(messages("btn.cya.heading"), classes = "govuk-heading-l")
+
+ @govukSummaryList(list)
+
+ @heading(messages("btn.cya.p1"), classes = "govuk-heading-s", tier = "h3")
+ @paragraph(messages("btn.cya.p2"))
+
+ @govukButton(Button(
+  element = Some("button"),
+  content = Text(messages("site.confirm-and-submit")),
+  preventDoubleClick = Some(true),
+  attributes = Map("id" -> "submit"),
+  classes = "govuk-!-display-none-print")
+ )
+
+ }
+}
