@@ -19,40 +19,57 @@ package controllers.btn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
-import models.UserAnswers
+import pages.{BtnRevenues750In2AccountingPeriodPage, BtnRevenues750InNext2AccountingPeriodsPage, EntitiesBothInUKAndOutsidePage}
 import play.api.Logging
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.btn.CheckYourAnswersView
 
+import scala.concurrent.ExecutionContext
+
 class CheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
+  sessionRepository:        SessionRepository,
   view:                     CheckYourAnswersView,
   val controllerComponents: MessagesControllerComponents
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    implicit val userAnswers: UserAnswers = request.userAnswers
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    sessionRepository.get(request.userId).map { maybeUserAnswers =>
+      (for {
+        userAnswers                   <- maybeUserAnswers
+        entitiesInOutPage             <- userAnswers.get(EntitiesBothInUKAndOutsidePage)
+        revenuePreviousTwoPeriodsPage <- userAnswers.get(BtnRevenues750In2AccountingPeriodPage)
+        revenueNextTwoPeriodsPage     <- userAnswers.get(BtnRevenues750InNext2AccountingPeriodsPage)
+      } yield (entitiesInOutPage, revenuePreviousTwoPeriodsPage, revenueNextTwoPeriodsPage) match {
+        case (true, false, false) =>
+          val summaryList = SummaryListViewModel(
+            rows = Seq(
+              SubAccountingPeriodSummary.row(userAnswers),
+              BtnEntitiesBothInUKAndOutsideSummary.row(userAnswers),
+              BtnRevenues750In2AccountingPeriodSummary.row(userAnswers),
+              BtnRevenues750InNext2AccountingPeriodsSummary.row(userAnswers)
+            ).flatten
+          ).withCssClass("govuk-!-margin-bottom-9")
 
-    Ok(view(summaryList))
+          Ok(view(summaryList))
+
+        case _ => Redirect(controllers.routes.IndexController.onPageLoad)
+
+      }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
   }
 
-  private def summaryList(implicit messages: Messages, userAnswers: UserAnswers): SummaryList =
-    SummaryListViewModel(
-      rows = Seq(
-        SubAccountingPeriodSummary.row(userAnswers),
-        BtnEntitiesBothInUKAndOutsideSummary.row(userAnswers),
-        BtnRevenues750In2AccountingPeriodSummary.row(userAnswers),
-        BtnRevenues750InNext2AccountingPeriodsSummary.row(userAnswers)
-      ).flatten
-    ).withCssClass("govuk-!-margin-bottom-9")
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData) {
+    Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+  }
 }

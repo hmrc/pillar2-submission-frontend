@@ -58,7 +58,7 @@ class BtnAccountingPeriodController @Inject() (
     val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
     setSubscriptionAccountingPeriod(subAccountingPeriod).apply(request).map(_ => ())
     val accountStatus = request.subscriptionLocalData.accountStatus.forall(_.inactive)
-    val accountingDates = {
+    val accountingPeriods = {
       val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
       val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
 
@@ -79,8 +79,8 @@ class BtnAccountingPeriodController @Inject() (
     obligationService
       .handleObligation(request.subscriptionLocalData.plrReference, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
       .map {
-        case Right(Fulfilled) if !accountStatus => Ok(viewReturnSubmitted(accountingDates))
-        case Right(Open) if !accountStatus      => Ok(view(accountingDates, mode, changeAccountingPeriodUrl))
+        case Right(Fulfilled) if !accountStatus => Ok(viewReturnSubmitted(accountingPeriods))
+        case Right(Open) if !accountStatus      => Ok(view(accountingPeriods, mode, changeAccountingPeriodUrl))
         case _                                  => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
       }
   }

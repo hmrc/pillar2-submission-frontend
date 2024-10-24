@@ -33,7 +33,7 @@ object BtnEntitiesBothInUKAndOutsideSummary {
         value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("entitiesBothInUKAndOutside.change.hidden"))
+            .withVisuallyHiddenText(messages("btn.btnEntitiesBothInUKAndOutside.change.hidden"))
         )
       )
     }

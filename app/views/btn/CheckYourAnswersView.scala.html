@@ -32,7 +32,7 @@
 @(list: SummaryList)(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
- @formHelper(action = controllers.btn.routes.CheckYourAnswersController.onPageLoad) {
+ @formHelper(action = controllers.btn.routes.CheckYourAnswersController.onSubmit) {
  @heading(messages("btn.cya.heading"), classes = "govuk-heading-l")
 
  @govukSummaryList(list)
