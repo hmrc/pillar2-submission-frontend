@@ -185,8 +185,8 @@ btn.btnAccountingPeriod.p2.before = If the date shown is incorrect,
 btn.btnAccountingPeriod.link = Update your group’s current accounting period
 btn.btnAccountingPeriod.p2 =  before continuing.
 btn.btnAccountingPeriod.checkYourAnswersLabel = Group’s accounting period
-btn.btnAccountingPeriod.checkYourAnswersLabel.startDate = Start date:
-btn.btnAccountingPeriod.checkYourAnswersLabel.endDate = End date:
+btn.btnAccountingPeriod.checkYourAnswersPrefix.startDate = Start date:
+btn.btnAccountingPeriod.checkYourAnswersPrefix.endDate = End date:
 
 btn.returnSubmitted.title = Your group has already submitted a UK Tax Return for this accounting period
 btn.returnSubmitted.heading = Your group has already submitted a UK Tax Return for this accounting period

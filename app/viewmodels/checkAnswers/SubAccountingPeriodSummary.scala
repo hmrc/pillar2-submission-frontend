@@ -38,8 +38,8 @@ object SubAccountingPeriodSummary {
         key = "btn.btnAccountingPeriod.checkYourAnswersLabel",
         value = ValueViewModel(
           content = HtmlContent(
-            s"""${messages("btn.btnAccountingPeriod.checkYourAnswersLabel.startDate")} $startDate<br>
-                 |${messages("btn.btnAccountingPeriod.checkYourAnswersLabel.endDate")} $endDate
+            s"""${messages("btn.btnAccountingPeriod.checkYourAnswersPrefix.startDate")} $startDate<br>
+                 |${messages("btn.btnAccountingPeriod.checkYourAnswersPrefix.endDate")} $endDate
                  |""".stripMargin
           )
         )
