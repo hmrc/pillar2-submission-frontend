@@ -62,6 +62,7 @@ GET         /below-threshold-notification/annual-revenues                       
 POST        /below-threshold-notification/annual-revenues                         controllers.btn.BtnRevenues750In2AccountingPeriodController.onSubmit(mode: Mode = NormalMode)
 GET         /below-threshold-notification/change-annual-revenues                  controllers.btn.BtnRevenues750In2AccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
 POST        /below-threshold-notification/change-annual-revenues                  controllers.btn.BtnRevenues750In2AccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+GET         /below-threshold-notification/threshold-met                           controllers.btn.BtnRevenues750In2AccountingPeriodController.onPageLoadThresholdMet
 
 GET         /below-threshold-notification/future-annual-revenues                  controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode: Mode = NormalMode)
 POST        /below-threshold-notification/future-annual-revenues                  controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode: Mode = NormalMode)

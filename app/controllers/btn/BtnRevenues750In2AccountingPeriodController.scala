@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.btn.BtnRevenues750In2AccountingPeriodView
+import views.html.btn.{BtnRevenues750In2AccountingPeriodView, BtnThresholdMetView}
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +41,8 @@ class BtnRevenues750In2AccountingPeriodController @Inject() (
   requireData:                            DataRequiredAction,
   formProvider:                           BtnRevenues750In2AccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   BtnRevenues750In2AccountingPeriodView
+  view:                                   BtnRevenues750In2AccountingPeriodView,
+  thresholdMetView:                       BtnThresholdMetView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -68,5 +69,9 @@ class BtnRevenues750In2AccountingPeriodController @Inject() (
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(BtnRevenues750In2AccountingPeriodPage, mode, updatedAnswers))
       )
+  }
+
+  def onPageLoadThresholdMet: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    Ok(thresholdMetView())
   }
 }

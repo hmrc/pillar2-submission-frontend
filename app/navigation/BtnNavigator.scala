@@ -16,7 +16,6 @@
 
 package navigation
 
-import controllers.routes
 import models._
 import pages._
 import play.api.mvc.Call
@@ -37,7 +36,7 @@ class BtnNavigator @Inject() {
     case EntitiesBothInUKAndOutsidePage             => entitiesBothInUKAndOutside
     case BtnRevenues750In2AccountingPeriodPage      => btnRevenues750In2AccountingPeriod
     case BtnRevenues750InNext2AccountingPeriodsPage => btnRevenues750InNext2AccountingPeriods
-    case _                                          => _ => routes.IndexController.onPageLoad
+    case _                                          => _ => controllers.routes.IndexController.onPageLoad
   }
 
   private def entitiesBothInUKAndOutside(userAnswers: UserAnswers): Call =
@@ -50,19 +49,19 @@ class BtnNavigator @Inject() {
           controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails()
         }
       }
-      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
 
   private def btnRevenues750In2AccountingPeriod(userAnswers: UserAnswers): Call =
     userAnswers
       .get(BtnRevenues750In2AccountingPeriodPage)
       .map { provided =>
         if (provided) {
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoadThresholdMet
         } else {
           controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
         }
       }
-      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
 
   private def btnRevenues750InNext2AccountingPeriods(userAnswers: UserAnswers): Call =
     userAnswers
@@ -74,11 +73,11 @@ class BtnNavigator @Inject() {
           controllers.routes.UnderConstructionController.onPageLoad
         }
       }
-      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case EntitiesBothInUKAndOutsidePage => _ => controllers.routes.UnderConstructionController.onPageLoad
-    case _                              => _ => routes.IndexController.onPageLoad
+    case _                              => _ => controllers.routes.IndexController.onPageLoad
   }
 
 }
