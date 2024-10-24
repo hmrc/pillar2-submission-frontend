@@ -70,7 +70,7 @@ class BtnNavigator @Inject() {
         if (provided) {
           controllers.btn.routes.BtnSubmitUKTRController.onPageLoad
         } else {
-          controllers.routes.UnderConstructionController.onPageLoad
+          controllers.btn.routes.CheckYourAnswersController.onPageLoad
         }
       }
       .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())

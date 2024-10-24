@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
-import helpers.{AllMocks, SubscriptionLocalDataFixture, ViewInstances}
+import helpers._
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import models.subscription.{AccountStatus, AccountingPeriod, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}
@@ -66,6 +66,7 @@ trait SpecBase
     with IntegrationPatience
     with GuiceOneAppPerSuite
     with SubscriptionLocalDataFixture
+    with TestDataFixture
     with WireMockServerHandler {
 
   val userAnswersId: String = "id"

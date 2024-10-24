@@ -72,12 +72,12 @@ class BtnNavigatorSpec extends SpecBase {
           controllers.btn.routes.BtnSubmitUKTRController.onPageLoad
       }
 
-      "go from BtnRevenues750InNext2AccountingPeriodsPage to UnderConstruction page when the answer is false" in {
+      "go from BtnRevenues750InNext2AccountingPeriodsPage to CYA page when the answer is false" in {
         navigator.nextPage(
           BtnRevenues750InNext2AccountingPeriodsPage,
           NormalMode,
           emptyUserAnswers.setOrException(BtnRevenues750InNext2AccountingPeriodsPage, false)
-        ) mustBe controllers.routes.UnderConstructionController.onPageLoad
+        ) mustBe controllers.btn.routes.CheckYourAnswersController.onPageLoad
       }
 
     }
