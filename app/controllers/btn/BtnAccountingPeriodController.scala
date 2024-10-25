@@ -19,9 +19,8 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions._
 import models.obligation.ObligationStatus.{Fulfilled, Open}
-import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, Mode}
-import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
+import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -56,8 +55,7 @@ class BtnAccountingPeriodController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
     val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
     val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
-    setSubscriptionAccountingPeriod(subAccountingPeriod).apply(request).map(_ => ())
-    val accountStatus = request.subscriptionLocalData.accountStatus.forall(_.inactive)
+    val accountStatus             = request.subscriptionLocalData.accountStatus.forall(_.inactive)
     val accountingPeriods = {
       val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
       val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
@@ -97,12 +95,4 @@ class BtnAccountingPeriodController @Inject() (
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
   }
-
-  private def setSubscriptionAccountingPeriod(accountingPeriod: AccountingPeriod): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
-      for {
-        updatedAnswers <- Future.fromTry(request.userAnswers.set(SubAccountingPeriodPage, accountingPeriod))
-        _              <- sessionRepository.set(updatedAnswers)
-      } yield NoContent
-    }
 }

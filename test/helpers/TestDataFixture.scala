@@ -17,26 +17,23 @@
 package helpers
 
 import models.UserAnswers
-import models.subscription.AccountingPeriod
 import pages._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
-import java.time.LocalDate
-
-trait TestDataFixture {
+trait TestDataFixture extends SubscriptionLocalDataFixture {
 
   lazy val validBtnCyaUa: UserAnswers = UserAnswers("id")
-    .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 24)))
+    .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(EntitiesBothInUKAndOutsidePage, true)
     .setOrException(BtnRevenues750In2AccountingPeriodPage, false)
     .setOrException(BtnRevenues750InNext2AccountingPeriodsPage, false)
 
-  def summaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(
+  def btnCyaSummaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(
     rows = Seq(
-      SubAccountingPeriodSummary.row(validBtnCyaUa),
+      SubAccountingPeriodSummary.row(accountingPeriod),
       BtnEntitiesBothInUKAndOutsideSummary.row(validBtnCyaUa),
       BtnRevenues750In2AccountingPeriodSummary.row(validBtnCyaUa),
       BtnRevenues750InNext2AccountingPeriodsSummary.row(validBtnCyaUa)

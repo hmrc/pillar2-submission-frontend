@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import helpers._
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
-import models.subscription.{AccountStatus, AccountingPeriod, SubscriptionLocalData}
+import models.subscription.{AccountStatus, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}
 import org.scalacheck.Gen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -43,7 +43,6 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 
-import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 trait SpecBase
@@ -65,7 +64,6 @@ trait SpecBase
     with ViewInstances
     with IntegrationPatience
     with GuiceOneAppPerSuite
-    with SubscriptionLocalDataFixture
     with TestDataFixture
     with WireMockServerHandler {
 
@@ -94,7 +92,7 @@ trait SpecBase
 
   def emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
     subMneOrDomestic = MneOrDomestic.Uk,
-    subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
+    subAccountingPeriod = accountingPeriod,
     subPrimaryContactName = "",
     subPrimaryEmail = "",
     subPrimaryPhonePreference = false,

@@ -34,8 +34,8 @@ import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
+  getData:                  SubscriptionDataRetrievalAction,
+  requireData:              SubscriptionDataRequiredAction,
   sessionRepository:        SessionRepository,
   view:                     CheckYourAnswersView,
   val controllerComponents: MessagesControllerComponents
@@ -55,7 +55,7 @@ class CheckYourAnswersController @Inject() (
         case (true, false, false) =>
           val summaryList = SummaryListViewModel(
             rows = Seq(
-              SubAccountingPeriodSummary.row(userAnswers),
+              SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod),
               BtnEntitiesBothInUKAndOutsideSummary.row(userAnswers),
               BtnRevenues750In2AccountingPeriodSummary.row(userAnswers),
               BtnRevenues750InNext2AccountingPeriodsSummary.row(userAnswers)

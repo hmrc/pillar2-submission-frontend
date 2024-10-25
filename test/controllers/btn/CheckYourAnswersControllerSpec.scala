@@ -56,7 +56,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val result = route(application, request()).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(summaryList)(request(), appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(btnCyaSummaryList)(request(), appConfig(application), messages(application)).toString
       }
 
       "must redirect to IndexController on disqualifying answers" in {

@@ -24,7 +24,7 @@ import views.html.btn.CheckYourAnswersView
 class CheckYourAnswersViewSpec extends ViewSpecBase {
 
   val page: CheckYourAnswersView = inject[CheckYourAnswersView]
-  val view: Document             = Jsoup.parse(page(summaryList)(request, appConfig, realMessagesApi.preferred(request)).toString())
+  val view: Document             = Jsoup.parse(page(btnCyaSummaryList)(request, appConfig, realMessagesApi.preferred(request)).toString())
 
   "CheckYourAnswersView" must {
 
