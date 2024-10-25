@@ -19,6 +19,7 @@ package controllers.btn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.routes._
 import pages.{BtnRevenues750In2AccountingPeriodPage, BtnRevenues750InNext2AccountingPeriodsPage, EntitiesBothInUKAndOutsidePage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -63,13 +64,13 @@ class CheckYourAnswersController @Inject() (
 
           Ok(view(summaryList))
 
-        case _ => Redirect(controllers.routes.IndexController.onPageLoad)
+        case _ => Redirect(IndexController.onPageLoad)
 
-      }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }).getOrElse(Redirect(JourneyRecoveryController.onPageLoad()))
     }
   }
 
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData) {
-    Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    Redirect(UnderConstructionController.onPageLoad)
   }
 }

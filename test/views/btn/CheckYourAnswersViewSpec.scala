@@ -29,7 +29,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
   "CheckYourAnswersView" must {
 
     "have a title" in {
-      view.getElementsByTag("title").text mustEqual "Check Your Answers - Report Pillar 2 top-up taxes - GOV.UK GOV.UK"
+      view.getElementsByTag("title").get(0).text mustEqual "Check Your Answers - Report Pillar 2 top-up taxes - GOV.UK"
     }
 
     "have a H1 heading" in {

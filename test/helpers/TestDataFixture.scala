@@ -29,7 +29,7 @@ import java.time.LocalDate
 trait TestDataFixture {
 
   lazy val validBtnCyaUa: UserAnswers = UserAnswers("id")
-    .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)))
+    .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 24)))
     .setOrException(EntitiesBothInUKAndOutsidePage, true)
     .setOrException(BtnRevenues750In2AccountingPeriodPage, false)
     .setOrException(BtnRevenues750InNext2AccountingPeriodsPage, false)

@@ -16,6 +16,8 @@
 
 package navigation
 
+import controllers.btn.routes._
+import controllers.routes._
 import models._
 import pages._
 import play.api.mvc.Call
@@ -25,59 +27,44 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class BtnNavigator @Inject() {
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
-    case NormalMode =>
-      normalRoutes(page)(userAnswers)
-    case CheckMode =>
-      checkRouteMap(page)(userAnswers)
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = page match {
+    case booleanPage: QuestionPage[Boolean]
+        if Seq(
+          EntitiesBothInUKAndOutsidePage,
+          BtnRevenues750In2AccountingPeriodPage,
+          BtnRevenues750InNext2AccountingPeriodsPage
+        ).contains(booleanPage) =>
+      yesNoNavigator(booleanPage, mode, userAnswers)
+    case _ => IndexController.onPageLoad
   }
 
-  private val normalRoutes: Page => UserAnswers => Call = {
-    case EntitiesBothInUKAndOutsidePage             => entitiesBothInUKAndOutside
-    case BtnRevenues750In2AccountingPeriodPage      => btnRevenues750In2AccountingPeriod
-    case BtnRevenues750InNext2AccountingPeriodsPage => btnRevenues750InNext2AccountingPeriods
-    case _                                          => _ => controllers.routes.IndexController.onPageLoad
+  def yesNoNavigator(page: QuestionPage[Boolean], mode: Mode, userAnswers: UserAnswers): Call = {
+    val (yesRoute, noRoute) = page match {
+      case EntitiesBothInUKAndOutsidePage =>
+        (
+          BtnRevenues750In2AccountingPeriodController.onPageLoad(mode),
+          BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails()
+        )
+      case BtnRevenues750In2AccountingPeriodPage =>
+        (
+          BtnRevenues750In2AccountingPeriodController.onPageLoadThresholdMet,
+          BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode)
+        )
+      case BtnRevenues750InNext2AccountingPeriodsPage =>
+        (
+          BtnSubmitUKTRController.onPageLoad,
+          CheckYourAnswersController.onPageLoad
+        )
+      case _ =>
+        (
+          IndexController.onPageLoad,
+          IndexController.onPageLoad
+        )
+    }
+
+    userAnswers
+      .get(page)
+      .map(provided => if (provided) yesRoute else noRoute)
+      .getOrElse(JourneyRecoveryController.onPageLoad())
   }
-
-  private def entitiesBothInUKAndOutside(userAnswers: UserAnswers): Call =
-    userAnswers
-      .get(EntitiesBothInUKAndOutsidePage)
-      .map { provided =>
-        if (provided) {
-          controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoad(NormalMode)
-        } else {
-          controllers.btn.routes.BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails()
-        }
-      }
-      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
-
-  private def btnRevenues750In2AccountingPeriod(userAnswers: UserAnswers): Call =
-    userAnswers
-      .get(BtnRevenues750In2AccountingPeriodPage)
-      .map { provided =>
-        if (provided) {
-          controllers.btn.routes.BtnRevenues750In2AccountingPeriodController.onPageLoadThresholdMet
-        } else {
-          controllers.btn.routes.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(NormalMode)
-        }
-      }
-      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
-
-  private def btnRevenues750InNext2AccountingPeriods(userAnswers: UserAnswers): Call =
-    userAnswers
-      .get(BtnRevenues750InNext2AccountingPeriodsPage)
-      .map { provided =>
-        if (provided) {
-          controllers.btn.routes.BtnSubmitUKTRController.onPageLoad
-        } else {
-          controllers.btn.routes.CheckYourAnswersController.onPageLoad
-        }
-      }
-      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
-
-  private val checkRouteMap: Page => UserAnswers => Call = {
-    case EntitiesBothInUKAndOutsidePage => _ => controllers.routes.UnderConstructionController.onPageLoad
-    case _                              => _ => controllers.routes.IndexController.onPageLoad
-  }
-
 }
