@@ -28,38 +28,18 @@ import javax.inject.{Inject, Singleton}
 class BtnNavigator @Inject() {
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = page match {
-    case booleanPage: QuestionPage[Boolean]
-        if Seq(
-          EntitiesBothInUKAndOutsidePage,
-          BtnRevenues750In2AccountingPeriodPage,
-          BtnRevenues750InNext2AccountingPeriodsPage
-        ).contains(booleanPage) =>
-      yesNoNavigator(booleanPage, mode, userAnswers)
+    case booleanPage: QuestionPage[Boolean] => booleanNavigator(booleanPage, mode, userAnswers)
     case _ => IndexController.onPageLoad
   }
 
-  def yesNoNavigator(page: QuestionPage[Boolean], mode: Mode, userAnswers: UserAnswers): Call = {
+  private def booleanNavigator(page: QuestionPage[Boolean], mode: Mode, userAnswers: UserAnswers): Call = {
     val (yesRoute, noRoute) = page match {
       case EntitiesBothInUKAndOutsidePage =>
-        (
-          BtnRevenues750In2AccountingPeriodController.onPageLoad(mode),
-          BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails()
-        )
+        (BtnRevenues750In2AccountingPeriodController.onPageLoad(mode), BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails())
       case BtnRevenues750In2AccountingPeriodPage =>
-        (
-          BtnRevenues750In2AccountingPeriodController.onPageLoadThresholdMet,
-          BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode)
-        )
-      case BtnRevenues750InNext2AccountingPeriodsPage =>
-        (
-          BtnSubmitUKTRController.onPageLoad,
-          CheckYourAnswersController.onPageLoad
-        )
-      case _ =>
-        (
-          IndexController.onPageLoad,
-          IndexController.onPageLoad
-        )
+        (BtnRevenues750In2AccountingPeriodController.onPageLoadThresholdMet, BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode))
+      case BtnRevenues750InNext2AccountingPeriodsPage => (BtnSubmitUKTRController.onPageLoad, CheckYourAnswersController.onPageLoad)
+      case _                                          => (IndexController.onPageLoad, IndexController.onPageLoad)
     }
 
     userAnswers
