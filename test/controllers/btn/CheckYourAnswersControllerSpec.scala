@@ -83,14 +83,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     ".onSubmit" should {
 
-      "must redirect to UnderConstructionController on submission" in {
+      "must redirect to Confirmation page on submission" in {
 
         val request = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.btn.routes.BtnConfirmationController.onPageLoad.url
       }
     }
   }

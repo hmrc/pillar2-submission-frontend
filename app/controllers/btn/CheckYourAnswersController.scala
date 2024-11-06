@@ -71,6 +71,6 @@ class CheckYourAnswersController @Inject() (
   }
 
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData) {
-    Redirect(UnderConstructionController.onPageLoad)
+    Redirect(controllers.btn.routes.BtnConfirmationController.onPageLoad)
   }
 }

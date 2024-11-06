@@ -48,7 +48,7 @@
 
     @h2(messages("btn.confirmation.subheading"))
     @p(messages("btn.confirmation.p2"))
-    @paragraphMessageWithLink(message1 = Some(messages("btn.confirmation.p3")), linkMessage = messages("btn.confirmation.p3.link"), linkUrl = controllers.uktr.routes.UkTaxReturnStartController.onPageLoad.url, linkFullStop = true)
-    @paragraphMessageWithLink(linkMessage = messages("btn.confirmation.p4.link"), linkUrl = appConfig.pillar2FrontendUrl)
+    @paragraphMessageWithLink(message1 = Some(messages("btn.confirmation.p3")), linkMessage = messages("btn.confirmation.p3.link"), linkUrl = controllers.uktr.routes.UkTaxReturnStartController.onPageLoad.url, linkFullStop = true, classes = "govuk-body govuk-!-display-none-print")
+    @paragraphMessageWithLink(linkMessage = messages("btn.confirmation.p4.link"), linkUrl = appConfig.pillar2FrontendUrl, classes = "govuk-body govuk-!-display-none-print")
 
 }
