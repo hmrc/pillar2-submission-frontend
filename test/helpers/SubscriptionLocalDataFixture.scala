@@ -24,7 +24,7 @@ import java.time.LocalDate
 trait SubscriptionLocalDataFixture {
   private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
   private val contactDetails           = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
-  private lazy val currentDate: LocalDate = LocalDate.now()
+  val accountingPeriod: AccountingPeriod = AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 24))
 
   val subscriptionData: SubscriptionData = SubscriptionData(
     formBundleNumber = "form bundle",
@@ -33,14 +33,14 @@ trait SubscriptionLocalDataFixture {
     primaryContactDetails = contactDetails,
     secondaryContactDetails = None,
     filingMemberDetails = None,
-    accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
+    accountingPeriod = accountingPeriod,
     accountStatus = Some(AccountStatus(false))
   )
 
   val someSubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
     plrReference = "Abc123",
     subMneOrDomestic = MneOrDomestic.Uk,
-    subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
+    subAccountingPeriod = accountingPeriod,
     subPrimaryContactName = "John",
     subPrimaryEmail = "john@email.com",
     subPrimaryPhonePreference = true,
@@ -57,7 +57,7 @@ trait SubscriptionLocalDataFixture {
   val someSubscriptionLocalDataUkOther: SubscriptionLocalData = SubscriptionLocalData(
     plrReference = "Abc123",
     subMneOrDomestic = MneOrDomestic.UkAndOther,
-    subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
+    subAccountingPeriod = accountingPeriod,
     subPrimaryContactName = "John",
     subPrimaryEmail = "john@email.com",
     subPrimaryPhonePreference = true,

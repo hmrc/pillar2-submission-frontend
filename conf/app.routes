@@ -13,8 +13,6 @@ GET         /refresh-session                                                    
 
 GET         /there-is-a-problem                                                   controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers                                                   controllers.CheckYourAnswersController.onPageLoad
-
 GET         /account/sign-out-survey                                              controllers.auth.AuthController.signOut
 GET         /account/sign-out                                                     controllers.auth.AuthController.signOutNoSurvey
 GET         /account/signed-out                                                   controllers.auth.SignedOutController.onPageLoad
@@ -43,7 +41,6 @@ GET         /below-threshold-notification/accounting-period                     
 POST        /below-threshold-notification/accounting-period                       controllers.btn.BtnAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
 GET         /below-threshold-notification/change-accounting-period                controllers.btn.BtnAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
 POST        /below-threshold-notification/change-accounting-period                controllers.btn.BtnAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
-GET         /below-threshold-notification/return-submitted                        controllers.btn.BtnAccountingPeriodController.onPageLoadReturnSubmitted
 
 
 GET         /below-threshold-notification/domestic-or-multinational               controllers.btn.BtnEntitiesBothInUKAndOutsideController.onPageLoad(mode: Mode = NormalMode)
@@ -70,3 +67,6 @@ GET         /below-threshold-notification/change-future-annual-revenues         
 POST        /below-threshold-notification/change-future-annual-revenues           controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode: Mode = CheckMode)
 
 GET         /below-threshold-notification/nil-return                              controllers.btn.BtnSubmitUKTRController.onPageLoad
+
+GET         /below-threshold-notification/submit                                  controllers.btn.CheckYourAnswersController.onPageLoad
+POST        /below-threshold-notification/submit                                  controllers.btn.CheckYourAnswersController.onSubmit
