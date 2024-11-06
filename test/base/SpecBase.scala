@@ -15,9 +15,6 @@
  */
 
 package base
-
-import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
 import helpers._
@@ -64,8 +61,7 @@ trait SpecBase
     with ViewInstances
     with IntegrationPatience
     with GuiceOneAppPerSuite
-    with TestDataFixture
-    with WireMockServerHandler {
+    with TestDataFixture {
 
   val userAnswersId: String = "id"
   val PlrReference:  String = "XMPLR0123456789"
@@ -173,45 +169,5 @@ trait SpecBase
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData))
       )
-
-  protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
-    server.stubFor(
-      post(urlEqualTo(s"$expectedEndpoint"))
-        .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-            .withBody(expectedBody)
-        )
-    )
-
-  protected def stubGet(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
-    server.stubFor(
-      get(urlEqualTo(s"$expectedEndpoint"))
-        .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-            .withBody(expectedBody)
-        )
-    )
-
-  protected def stubDelete(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
-    server.stubFor(
-      delete(urlEqualTo(s"$expectedEndpoint"))
-        .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-            .withBody(expectedBody)
-        )
-    )
-
-  protected def stubResponseForPutRequest(expectedEndpoint: String, expectedStatus: Int, responseBody: Option[String] = None): StubMapping =
-    server.stubFor(
-      put(urlEqualTo(expectedEndpoint))
-        .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-            .withBody(responseBody.getOrElse(""))
-        )
-    )
 
 }

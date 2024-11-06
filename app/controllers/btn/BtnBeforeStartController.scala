@@ -30,8 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BtnBeforeStartView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class BtnBeforeStartController @Inject() (
   val controllerComponents: MessagesControllerComponents,
@@ -41,7 +40,7 @@ class BtnBeforeStartController @Inject() (
   requireData:              DataRequiredAction,
   subscriptionService:      SubscriptionService,
   sessionRepository:        SessionRepository
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
