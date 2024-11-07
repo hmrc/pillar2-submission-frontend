@@ -17,7 +17,9 @@
 package base
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
 
 trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
@@ -39,4 +41,44 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
     super.afterAll()
     server.stop()
   }
+
+  protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
+    server.stubFor(
+      post(urlEqualTo(s"$expectedEndpoint"))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody)
+        )
+    )
+
+  protected def stubGet(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
+    server.stubFor(
+      get(urlEqualTo(s"$expectedEndpoint"))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody)
+        )
+    )
+
+  protected def stubDelete(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
+    server.stubFor(
+      delete(urlEqualTo(s"$expectedEndpoint"))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody)
+        )
+    )
+
+  protected def stubResponseForPutRequest(expectedEndpoint: String, expectedStatus: Int, responseBody: Option[String] = None): StubMapping =
+    server.stubFor(
+      put(urlEqualTo(expectedEndpoint))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(responseBody.getOrElse(""))
+        )
+    )
 }
