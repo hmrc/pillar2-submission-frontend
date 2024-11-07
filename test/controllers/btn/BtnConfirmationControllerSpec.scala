@@ -26,6 +26,7 @@ import play.api.test.Helpers._
 import services.FopService
 import views.html.btn.BtnConfirmationView
 
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
@@ -37,7 +38,8 @@ class BtnConfirmationControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None, subscriptionLocalData = Some(someSubscriptionLocalData)).build()
 
-      val date: String = someSubscriptionLocalData.subAccountingPeriod.startDate.format(DateTimeFormatter.ofPattern("d MMMM y"))
+      val currentDate: String = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM y"))
+      val date:        String = someSubscriptionLocalData.subAccountingPeriod.startDate.format(DateTimeFormatter.ofPattern("d MMMM y"))
 
       running(application) {
         val request = FakeRequest(GET, controllers.btn.routes.BtnConfirmationController.onPageLoad.url)
@@ -48,7 +50,7 @@ class BtnConfirmationControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(date, date)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(currentDate, date)(request, appConfig(application), messages(application)).toString
       }
     }
 
