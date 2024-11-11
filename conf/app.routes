@@ -70,3 +70,6 @@ GET         /below-threshold-notification/nil-return                            
 
 GET         /below-threshold-notification/submit                                  controllers.btn.CheckYourAnswersController.onPageLoad
 POST        /below-threshold-notification/submit                                  controllers.btn.CheckYourAnswersController.onSubmit
+
+GET         /below-threshold-notification/confirmation                            controllers.btn.BtnConfirmationController.onPageLoad
+GET         /below-threshold-notification/confirmation/download-pdf               controllers.btn.BtnConfirmationController.onDownloadConfirmation

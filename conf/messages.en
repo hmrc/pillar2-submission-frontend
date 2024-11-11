@@ -12,6 +12,8 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.print = Print this page
+site.pdf = Download as PDF
 
 date.day = Day
 date.month = Month
@@ -239,4 +241,13 @@ btn.thresholdMet.heading = Based on your answer, your group must submit a UK Tax
 btn.thresholdMet.p1 = Based on your answer, you cannot submit a Below-Threshold Notification as your group has made consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
 btn.thresholdMet.p2 = Your group must still submit a UK Tax Return.
 btn.thresholdMet.link = Find out more about submitting a UKTR
+
+btn.confirmation.title = Below-Threshold Notification successful
+btn.confirmation.heading = Below-Threshold Notification successful
+btn.confirmation.p1 = You have submitted a Below-Threshold Notification on {0}. This will be effective from {1}.
+btn.confirmation.subheading = What happens next
+btn.confirmation.p2 = HMRC has removed your group’s obligation to submit a UK Tax Return for this current accounting period and any future ones.
+btn.confirmation.p3 = If your group becomes liable for a UK Tax Return in the future, you must let HMRC know by submitting a UK Tax Return to remove the Below-Threshold Notification from your account. You can
+btn.confirmation.p3.link = find out more about submitting a UKTR
+btn.confirmation.p4.link = View account homepage
 ###############################################
