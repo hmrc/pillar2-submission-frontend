@@ -25,7 +25,6 @@
         hmrcStandardHeader: HmrcStandardHeader,
         hmrcStandardFooter: HmrcStandardFooter,
         hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
-        hmrcLanguageSelect: HmrcLanguageSelect,
         hmrcTimeoutDialog: HmrcTimeoutDialog,
         hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
         hmrcScripts: HmrcScripts,
@@ -58,14 +57,6 @@
 }
 
 @beforeContent = {
-
-@if(appConfig.languageTranslationEnabled) {
-    @hmrcLanguageSelect(LanguageSelect(
-        if (messages.lang.code == "cy") Cy else En,
-        (En, routes.LanguageSwitchController.switchToLanguage("en").url),
-        (Cy, routes.LanguageSwitchController.switchToLanguage("cy").url)
-    ))
-}
 
 @if(showBackLink) {
     @govukBackLink(BackLinkViewModel(href = "#").withAttribute(("data-module","hmrc-back-link")).withCssClass("js-visible").withCssClass("govuk-!-display-none-print"))
