@@ -20,9 +20,7 @@ import java.time.format.DateTimeFormatter
 
 object DateTimeFormats {
 
-  private val dateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-
-  def dateTimeFormat: DateTimeFormatter = dateTimeFormatter
+  val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   val dateTimeHintFormat: DateTimeFormatter =
     DateTimeFormatter.ofPattern("d M yyyy")

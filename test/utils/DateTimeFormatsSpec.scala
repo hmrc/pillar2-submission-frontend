@@ -18,7 +18,7 @@ package utils
 
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import utils.DateTimeFormats.dateTimeFormat
+import utils.DateTimeFormats.dateTimeFormatter
 
 import java.time.LocalDate
 
@@ -27,7 +27,7 @@ class DateTimeFormatsSpec extends AnyFreeSpec with Matchers {
   ".dateTimeFormat" - {
 
     "must format dates in English" in {
-      val formatter = dateTimeFormat
+      val formatter = dateTimeFormatter
       val result    = LocalDate.of(2023, 1, 1).format(formatter)
       result mustEqual "1 January 2023"
     }
