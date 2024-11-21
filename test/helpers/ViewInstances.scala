@@ -107,7 +107,6 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     hmrcStandardHeader,
     hmrcStandardFooter,
     hmrcTrackingConsent,
-    new HmrcLanguageSelect(),
     hmrcTimeoutDilogue,
     new HmrcReportTechnicalIssueHelper(new HmrcReportTechnicalIssue(), new ContactFrontendConfig(configuration)),
     hmrcScripts,
