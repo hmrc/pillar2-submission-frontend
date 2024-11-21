@@ -58,7 +58,7 @@ class UkTaxReturnStartControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Some(ua)))
       when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
       running(application) {
-        val request = FakeRequest(GET, controllers.uktr.routes.UkTaxReturnStartController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.uktr.routes.UkTaxReturnStartController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[UkTaxReturnStartView]
         status(result) mustEqual OK
@@ -76,7 +76,7 @@ class UkTaxReturnStartControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Some(ua)))
       when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
       running(application) {
-        val request = FakeRequest(GET, controllers.uktr.routes.UkTaxReturnStartController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.uktr.routes.UkTaxReturnStartController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[UkTaxReturnStartView]
         status(result) mustEqual OK
@@ -93,7 +93,7 @@ class UkTaxReturnStartControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Some(emptyUserAnswers)))
       when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
       running(application) {
-        val request = FakeRequest(GET, controllers.uktr.routes.UkTaxReturnStartController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.uktr.routes.UkTaxReturnStartController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(routes.JourneyRecoveryController.onPageLoad().url)

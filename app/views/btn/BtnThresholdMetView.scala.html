@@ -32,5 +32,5 @@
     @heading(messages("btn.thresholdMet.heading"), classes = "govuk-heading-l")
     @p(messages("btn.thresholdMet.p1"))
     @p(messages("btn.thresholdMet.p2"))
-    @paragraphMessageWithLink(linkMessage = messages("btn.thresholdMet.link"), linkUrl = controllers.uktr.routes.UkTaxReturnStartController.onPageLoad.url, linkFullStop = true)
+    @paragraphMessageWithLink(linkMessage = messages("btn.thresholdMet.link"), linkUrl = controllers.uktr.routes.UkTaxReturnStartController.onPageLoad().url, linkFullStop = true)
 }

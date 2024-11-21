@@ -30,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BtnBeforeStartView
 
 import javax.inject.Inject
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class BtnBeforeStartController @Inject() (
@@ -44,6 +45,7 @@ class BtnBeforeStartController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
+  @nowarn
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     for {
       mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))

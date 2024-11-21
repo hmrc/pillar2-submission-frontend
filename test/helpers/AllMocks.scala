@@ -30,6 +30,8 @@ import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import views.html.btn.CheckYourAnswersView
 
+import scala.annotation.nowarn
+
 //TODO: Add all mocking instants in here.
 trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
 
@@ -48,6 +50,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockObligationConnector:   ObligationConnector   = mock[ObligationConnector]
   val mockObligationService:     ObligationService     = mock[ObligationService]
 
+  @nowarn
   override protected def beforeEach(): Unit =
     Seq(
       mockAuditConnector,

@@ -11,8 +11,8 @@ GET         /refresh-session                                                    
 
 GET         /there-is-a-problem                                                   controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /account/sign-out-survey                                              controllers.auth.AuthController.signOut
-GET         /account/sign-out                                                     controllers.auth.AuthController.signOutNoSurvey
+GET         /account/sign-out-survey                                              controllers.auth.AuthController.signOut()
+GET         /account/sign-out                                                     controllers.auth.AuthController.signOutNoSurvey()
 GET         /account/signed-out                                                   controllers.auth.SignedOutController.onPageLoad
 
 GET         /unauthorised                                                         controllers.UnauthorisedController.onPageLoad
@@ -32,7 +32,7 @@ GET         /asa/error/individual                                               
 GET         /asa/error/organisation                                               controllers.AgentController.onPageLoadOrganisationError
 GET         /asa/home                                                             controllers.ASAStubController.onPageLoad
 
-GET         /uk-tax-return                                                        controllers.uktr.UkTaxReturnStartController.onPageLoad
+GET         /uk-tax-return                                                        controllers.uktr.UkTaxReturnStartController.onPageLoad()
 GET         /below-threshold-notification/start                                   controllers.btn.BtnBeforeStartController.onPageLoad(mode: Mode = NormalMode)
 
 GET         /below-threshold-notification/accounting-period                       controllers.btn.BtnAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
@@ -64,7 +64,7 @@ POST        /below-threshold-notification/future-annual-revenues                
 GET         /below-threshold-notification/change-future-annual-revenues           controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode: Mode = CheckMode)
 POST        /below-threshold-notification/change-future-annual-revenues           controllers.btn.BtnRevenues750InNext2AccountingPeriodsController.onSubmit(mode: Mode = CheckMode)
 
-GET         /below-threshold-notification/nil-return                              controllers.btn.BtnSubmitUKTRController.onPageLoad
+GET         /below-threshold-notification/nil-return                              controllers.btn.BtnSubmitUKTRController.onPageLoad()
 
 GET         /below-threshold-notification/submit                                  controllers.btn.CheckYourAnswersController.onPageLoad
 POST        /below-threshold-notification/submit                                  controllers.btn.CheckYourAnswersController.onSubmit

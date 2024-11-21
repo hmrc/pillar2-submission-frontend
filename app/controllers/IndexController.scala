@@ -52,6 +52,7 @@ class IndexController @Inject() (
           Future successful Redirect(routes.IndexController.onPageLoad)
         case Some(Agent) ~ _      => Future successful Redirect(appConfig.asaHomePageUrl)
         case Some(Individual) ~ _ => Future successful Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)
+        case _                    => Future successful Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
       .recover {
         case _: NoActiveSession =>
