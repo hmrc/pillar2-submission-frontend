@@ -69,7 +69,7 @@ class BtnNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(BtnRevenues750InNext2AccountingPeriodsPage, true)
         ) mustBe
-          controllers.btn.routes.BtnSubmitUKTRController.onPageLoad
+          controllers.btn.routes.BtnSubmitUKTRController.onPageLoad()
       }
 
       "go from BtnRevenues750InNext2AccountingPeriodsPage to CYA page when the answer is false" in {

@@ -37,7 +37,7 @@
     @paragraphBody(messages("btn.btnSubmitUKTR.p2"))
     @paragraph(link(
         text = messages("btn.btnSubmitUKTR.link"),
-        call = controllers.uktr.routes.UkTaxReturnStartController.onPageLoad,
+        call = controllers.uktr.routes.UkTaxReturnStartController.onPageLoad(),
         fullStop = false
     ))
 }

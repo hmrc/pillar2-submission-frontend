@@ -53,7 +53,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
 
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val request   = FakeRequest(GET, routes.AuthController.signOut.url)
+        val request   = FakeRequest(GET, routes.AuthController.signOut().url)
 
         val result = route(application, request).value
 
@@ -80,7 +80,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.failed(InsufficientEnrolments("failure")))
 
-        val request = FakeRequest(GET, routes.AuthController.signOut.url)
+        val request = FakeRequest(GET, routes.AuthController.signOut().url)
 
         val result = route(application, request).value
 
@@ -105,7 +105,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.failed(MissingBearerToken("some failure")))
 
-        val request = FakeRequest(GET, routes.AuthController.signOut.url)
+        val request = FakeRequest(GET, routes.AuthController.signOut().url)
 
         val result = route(application, request).value
 
@@ -140,7 +140,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
 
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val request   = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
+        val request   = FakeRequest(GET, routes.AuthController.signOutNoSurvey().url)
 
         val result = route(application, request).value
 
@@ -167,7 +167,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.failed(InsufficientEnrolments("failure")))
 
-        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
+        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey().url)
 
         val result = route(application, request).value
 
@@ -192,7 +192,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
           .thenReturn(Future.failed(MissingBearerToken("some failure")))
 
-        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
+        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey().url)
 
         val result = route(application, request).value
 

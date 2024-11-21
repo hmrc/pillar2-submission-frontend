@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 class BtnNavigator @Inject() {
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = page match {
-    case booleanPage: QuestionPage[Boolean] => booleanNavigator(booleanPage, mode, userAnswers)
+    case booleanPage: QuestionPage[Boolean] @unchecked => booleanNavigator(booleanPage, mode, userAnswers)
     case _ => IndexController.onPageLoad
   }
 
@@ -38,7 +38,7 @@ class BtnNavigator @Inject() {
         (BtnRevenues750In2AccountingPeriodController.onPageLoad(mode), BtnEntitiesBothInUKAndOutsideController.onPageLoadAmendGroupDetails())
       case BtnRevenues750In2AccountingPeriodPage =>
         (BtnRevenues750In2AccountingPeriodController.onPageLoadThresholdMet, BtnRevenues750InNext2AccountingPeriodsController.onPageLoad(mode))
-      case BtnRevenues750InNext2AccountingPeriodsPage => (BtnSubmitUKTRController.onPageLoad, CheckYourAnswersController.onPageLoad)
+      case BtnRevenues750InNext2AccountingPeriodsPage => (BtnSubmitUKTRController.onPageLoad(), CheckYourAnswersController.onPageLoad)
       case _                                          => (IndexController.onPageLoad, IndexController.onPageLoad)
     }
 

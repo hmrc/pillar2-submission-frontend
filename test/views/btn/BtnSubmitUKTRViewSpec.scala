@@ -44,7 +44,7 @@ class BtnSubmitUKTRViewSpec extends ViewSpecBase {
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.attr("href") must include(controllers.uktr.routes.UkTaxReturnStartController.onPageLoad.url)
+      link.attr("href") must include(controllers.uktr.routes.UkTaxReturnStartController.onPageLoad().url)
       link.text         must include(messages("btn.btnSubmitUKTR.link"))
     }
   }

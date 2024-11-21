@@ -19,7 +19,7 @@ package config
 import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import uk.gov.hmrc.http.StringContextOps
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
@@ -32,7 +32,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   private val contactFormServiceIdentifier = "pillar2-submission-frontend"
 
   def feedbackUrl(implicit request: RequestHeader): String =
-    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
+    url"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${host + request.uri}".toString
 
   val loginUrl:                   String = configuration.get[String]("urls.login")
   val loginContinueUrl:           String = configuration.get[String]("urls.loginContinue")

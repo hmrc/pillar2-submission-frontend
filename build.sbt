@@ -1,5 +1,5 @@
+import org.typelevel.scalacoptions.ScalacOptions
 import play.sbt.routes.RoutesKeys
-import sbt.Def
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
@@ -20,10 +20,7 @@ lazy val microservice = (project in file("."))
   .settings(ThisBuild / useSuperShell := false)
   .settings(
     name := appName,
-    RoutesKeys.routesImport ++= Seq(
-      "models._",
-      "uk.gov.hmrc.play.bootstrap.binders.RedirectUrl"
-    ),
+    RoutesKeys.routesImport ++= Seq("models._", "uk.gov.hmrc.play.bootstrap.binders.RedirectUrl"),
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
       "play.twirl.api.HtmlFormat._",
@@ -38,8 +35,8 @@ lazy val microservice = (project in file("."))
     ),
     PlayKeys.playDefaultPort := 10053,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
-      ".*Routes.*;.*viewmodels.govuk.*;",
-    ScoverageKeys.coverageMinimumStmtTotal := 89,
+      ".*Routes.*;.*viewmodels.govuk.*;.*config.*;.*utils.*;",
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     Compile / scalafmtOnCompile := true,
@@ -48,20 +45,13 @@ lazy val microservice = (project in file("."))
       "-feature",
       "-rootdir",
       baseDirectory.value.getCanonicalPath,
-      "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
+      "-Wconf:src=target/.*:s"
     ),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
     resolvers ++= Seq(Resolver.jcenterRepo),
     // concatenate js
-    Concat.groups := Seq(
-      "javascripts/application.js" ->
-        group(
-          Seq(
-            "javascripts/app.js"
-          )
-        )
-    ),
+    Concat.groups := Seq("javascripts/application.js" -> group(Seq("javascripts/app.js"))),
     pipelineStages := Seq(digest),
     Assets / pipelineStages := Seq(concat)
   )
@@ -69,13 +59,17 @@ lazy val microservice = (project in file("."))
 addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
 addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
 
+lazy val tpolecatTestExclusions = Seq(
+  tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnDeadCode)
+)
+
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork := true,
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
-)
+) ++ tpolecatTestExclusions
 
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
   .settings(DefaultBuildSettings.itSettings())
-  .settings(libraryDependencies ++= AppDependencies.it)
+  .settings(libraryDependencies ++= AppDependencies.it, tpolecatTestExclusions)

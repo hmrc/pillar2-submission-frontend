@@ -24,7 +24,6 @@ import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
-import repositories.SessionRepository
 import services.ObligationService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -38,10 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BtnAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
-  getData:                                DataRetrievalAction,
-  sessionRepository:                      SessionRepository,
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
-  requireData:                            DataRequiredAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
   obligationService:                      ObligationService,
   dateHelper:                             ViewHelpers,
