@@ -18,15 +18,16 @@ package controllers.btn
 
 import base.SpecBase
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.btn.BtnSubmitUKTRView
 
 class BtnSubmitUKTRControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = controllers.uktr.routes.UkTaxReturnStartController.onPageLoad
+  def onwardRoute: Call = controllers.uktr.routes.UkTaxReturnStartController.onPageLoad()
 
-  lazy val btnSubmitUKTRRoute = controllers.btn.routes.BtnSubmitUKTRController.onPageLoad.url
+  lazy val btnSubmitUKTRRoute: String = controllers.btn.routes.BtnSubmitUKTRController.onPageLoad().url
 
   "BtnSubmitUKTR Controller" when {
 

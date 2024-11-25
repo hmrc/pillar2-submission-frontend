@@ -40,6 +40,7 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 trait SpecBase
@@ -144,6 +145,7 @@ trait SpecBase
       Future(OptionalDataRequest(request.request, request.userId, Some(emptyUserAnswers)))(ec)
   }
 
+  @nowarn
   protected def applicationBuilder(
     userAnswers:           Option[UserAnswers] = None,
     enrolments:            Set[Enrolment] = Set.empty,
