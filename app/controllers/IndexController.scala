@@ -48,17 +48,14 @@ class IndexController @Inject() (
   def onPageLoadBanner: Action[AnyContent] = Action.async { implicit request =>
     authorised(AuthProviders(GovernmentGateway))
       .retrieve(Retrievals.affinityGroup and Retrievals.allEnrolments) {
-        case Some(Organisation) ~ _ =>
-          Future successful Redirect(routes.IndexController.onPageLoad)
-        case Some(Agent) ~ _      => Future successful Redirect(appConfig.asaHomePageUrl)
-        case Some(Individual) ~ _ => Future successful Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)
-        case _                    => Future successful Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        case Some(Organisation) ~ _ => Future successful Redirect(routes.IndexController.onPageLoad)
+        case Some(Agent) ~ _        => Future successful Redirect(appConfig.asaHomePageUrl)
+        case Some(Individual) ~ _   => Future successful Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)
+        case _                      => Future successful Redirect(routes.UnauthorisedController.onPageLoad)
       }
       .recover {
-        case _: NoActiveSession =>
-          Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
-        case _: AuthorisationException =>
-          Redirect(controllers.routes.UnauthorisedController.onPageLoad)
+        case _: NoActiveSession        => Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+        case _: AuthorisationException => Redirect(controllers.routes.UnauthorisedController.onPageLoad)
       }
   }
 }
