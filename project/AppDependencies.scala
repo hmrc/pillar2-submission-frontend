@@ -1,5 +1,4 @@
-import play.core.PlayVersion
-import sbt._
+import sbt.*
 
 object AppDependencies {
 
@@ -15,7 +14,7 @@ object AppDependencies {
     "uk.gov.hmrc"           %% "bootstrap-frontend-play-30" % bootstrapVersion,
     "uk.gov.hmrc.mongo"     %% "hmrc-mongo-play-30"         % hmrcMongoVersion,
     "org.typelevel"         %% "cats-core"                  % "2.12.0",
-    "org.apache.xmlgraphics" % "fop"                        % "2.7"
+    "org.apache.xmlgraphics" % "fop"                        % "2.10"
   )
 
   val test = Seq(
