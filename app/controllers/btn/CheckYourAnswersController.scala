@@ -20,17 +20,21 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes._
+import models.btn.BTNRequest
+import models.subscription.AccountingPeriod
 import pages.{BtnRevenues750In2AccountingPeriodPage, BtnRevenues750InNext2AccountingPeriodsPage, EntitiesBothInUKAndOutsidePage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.BTNService
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.btn.CheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
@@ -38,7 +42,8 @@ class CheckYourAnswersController @Inject() (
   requireData:              SubscriptionDataRequiredAction,
   sessionRepository:        SessionRepository,
   view:                     CheckYourAnswersView,
-  val controllerComponents: MessagesControllerComponents
+  val controllerComponents: MessagesControllerComponents,
+  btnService:               BTNService
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -70,7 +75,34 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData) {
-    Redirect(controllers.btn.routes.BtnConfirmationController.onPageLoad)
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val subAccountingPeriod: AccountingPeriod = request.subscriptionLocalData.subAccountingPeriod
+    val btnPayload = BTNRequest(
+      accountingPeriodFrom = subAccountingPeriod.startDate,
+      accountingPeriodTo = subAccountingPeriod.endDate
+    )
+
+    val btnServiceResult: Future[HttpResponse] =
+      btnService.submitBTN(btnPayload, request.subscriptionLocalData.plrReference)
+
+    btnServiceResult.map {
+      case httpResponse: HttpResponse =>
+        if (httpResponse.status == CREATED) {
+          logger.info(
+            s"BTN Request Submission was successful: httpResponse status= ${httpResponse.status}"
+              + " httpResponse.body=" + httpResponse.body
+          )
+          Redirect(controllers.btn.routes.BtnConfirmationController.onPageLoad)
+        } else {
+          logger.debug(
+            s"BTN Request failed with invalid httpResponse.status: ${httpResponse.status}"
+              + " httpResponse.body=" + httpResponse.body
+          )
+          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+        }
+      case exception =>
+        logger.debug(s"BTN Request failed with exception: $exception")
+        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 }
