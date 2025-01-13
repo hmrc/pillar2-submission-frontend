@@ -17,6 +17,7 @@
 package services
 
 import connectors._
+import models.InternalIssueError
 import models.btn.BTNRequest
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -31,5 +32,10 @@ class BTNService @Inject() (
     extends Logging {
 
   def submitBTN(btnRequest: BTNRequest, plrReference: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] =
-    btnConnector.submitBTN(btnRequest, plrReference)
+    btnConnector.submitBTN(btnRequest, plrReference).flatMap {
+      case httpResponse: HttpResponse =>
+        Future.successful(httpResponse)
+      case _ =>
+        Future.failed(InternalIssueError)
+    }
 }
