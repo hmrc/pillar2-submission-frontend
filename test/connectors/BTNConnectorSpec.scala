@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import models.btn.{BTNRequest, BTNRequestParameters}
+import models.InternalIssueError
+import models.btn.BTNRequest
+import org.scalatest.exceptions.TestFailedException
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.test.WireMockSupport
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
+import scala.concurrent.Future
 
-class BTNConnectorSpec extends SpecBase with WireMockServerHandler {
+class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServerHandler {
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(conf = "microservice.services.pillar2.port" -> server.port())
     .build()
@@ -41,51 +46,71 @@ class BTNConnectorSpec extends SpecBase with WireMockServerHandler {
     "formBundleNumber" -> "11223344556677",
     "chargeReference"  -> "XTC01234123412"
   )
+  val accountingPeriodFromDateMinus1Year: LocalDate  = LocalDate.now.minusYears(1)
+  val accountingPeriodToDateNow:          LocalDate  = LocalDate.now
+  val btnRequestDatesMinus1YearAndNow:    BTNRequest = BTNRequest(accountingPeriodFromDateMinus1Year, accountingPeriodToDateNow)
 
   "submit BTN connector " should {
-    "return 201 CREATED when the pillar-2 backend submitBTN  call has returned 201 CREATED." in {
+    "return 201 CREATED when the pillar-2 backend has returned status=201." in {
       val plrReferenceForValidResponse = "XEPLR0000000000"
-      val accountingPeriodFromDateMinus1Year: LocalDate = LocalDate.now.minusYears(1)
-      val accountingPeriodToDateNow = LocalDate.now
-      val btnRequestDatesMinus1YearAndNow: BTNRequest = BTNRequest(accountingPeriodFromDateMinus1Year, accountingPeriodToDateNow)
-
       stubResponse(submitBTNPath, CREATED, defaultSuccessfulBtnResponseBodyJsObject.toString())
-
       val result: HttpResponse = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest, plrReferenceForValidResponse).futureValue
       result.status mustBe CREATED
       result.json mustBe defaultSuccessfulBtnResponseBodyJsObject
+
+      //Check response body field-values:
+      val formBundleNumberValue: Option[String] = (result.json \ "formBundleNumber").asOpt[String]
+      val chargeReferenceValue:  Option[String] = (result.json \ "chargeReference").asOpt[String]
+      if (
+        (result.json \ "processingDate").isDefined
+        && formBundleNumberValue.contains("11223344556677")
+        && chargeReferenceValue.contains("XTC01234123412")
+      ) { // All OK
+      } else {
+        throw new AssertionError(s"submitBTN request failed for plrReference= $plrReferenceForValidResponse")
+      }
+    }
+    "raise an Exception when the expected response field-value-checking fails." in {
+      val plrReferenceForValidResponse = "XEPLR9999999999"
+      stubResponse(submitBTNPath, CREATED, defaultSuccessfulBtnResponseBodyJsObject.toString())
+      val result: HttpResponse = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest, plrReferenceForValidResponse).futureValue
+      result.status mustBe CREATED
+      result.json mustBe defaultSuccessfulBtnResponseBodyJsObject
+      //Check response body field-values:
+      val formBundleNumberValue: Option[String] = (result.json \ "formBundleNumber").asOpt[String]
+      val chargeReferenceValue:  Option[String] = (result.json \ "chargeReference").asOpt[String]
+
+      assertThrows[TestFailedException] {
+        if (
+          (result.json \ "processingDate").isDefined
+          && formBundleNumberValue.contains("INVALID-FORM-BUNDLE-NUMBER")
+          && chargeReferenceValue.contains("XTC01234123412")
+        ) { // All OK
+        } else {
+          throw new TestFailedException(s"submitBTN response field-value-checking failed for plrReference= $plrReferenceForValidResponse", 0)
+        }
+      }
+    }
+
+    "return InternalIssueError when the pillar-2 backend has returned status=400." in {
+      val plrReferenceForValidResponse = "XEPLR4000000000"
+      stubResponse(submitBTNPath, INTERNAL_SERVER_ERROR, defaultSuccessfulBtnResponseBodyJsObject.toString())
+      val result: Future[HttpResponse] = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest, plrReferenceForValidResponse)
+      result.failed.futureValue mustBe InternalIssueError
+    }
+
+    "return InternalIssueError when the pillar-2 backend has returned status=422." in {
+      val plrReferenceForValidResponse = "XEPLR4220000000"
+      stubResponse(submitBTNPath, INTERNAL_SERVER_ERROR, defaultSuccessfulBtnResponseBodyJsObject.toString())
+      val result: Future[HttpResponse] = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest, plrReferenceForValidResponse)
+      result.failed.futureValue mustBe InternalIssueError
+    }
+
+    "return InternalIssueError when the pillar-2 backend has returned status=500." in {
+      val plrReferenceForValidResponse = "XEPLR5000000000"
+      stubResponse(submitBTNPath, INTERNAL_SERVER_ERROR, defaultSuccessfulBtnResponseBodyJsObject.toString())
+      val result: Future[HttpResponse] = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest, plrReferenceForValidResponse)
+      result.failed.futureValue mustBe InternalIssueError
     }
   }
-}
-
-object BTNConnectorSpec {
-  val plrReference = "XEPLR0000000000"
-  val accountingPeriodFromDate: LocalDate = LocalDate.now.minusYears(1)
-  val accountingPeriodToDate = LocalDate.now
-  val btnRequest: BTNRequest = BTNRequest(accountingPeriodFromDate, accountingPeriodToDate)
-  val btnRequestParameters: BTNRequestParameters = BTNRequestParameters(
-    plrReference,
-    accountingPeriodFromDate,
-    accountingPeriodToDate
-  )
-  val btnValidRequest: BTNRequestParameters = BTNRequestParameters(
-    "XEPLR0000000000",
-    LocalDate.now.minusYears(1),
-    LocalDate.now
-  )
-  val btnInvalidBadRequest400: BTNRequestParameters = BTNRequestParameters(
-    "XEPLR4000000000",
-    LocalDate.now.minusYears(1),
-    LocalDate.now
-  )
-  val btnUnprocessableEntityRequest422: BTNRequestParameters = BTNRequestParameters(
-    "XEPLR4220000000",
-    LocalDate.now.minusYears(1),
-    LocalDate.now
-  )
-  val btnInternalServerErrorRequest500: BTNRequestParameters = BTNRequestParameters(
-    "XEPLR5000000000",
-    LocalDate.now.minusYears(1),
-    LocalDate.now
-  )
 }
