@@ -22,20 +22,21 @@ import models.subscription.{SubscriptionData, SubscriptionLocalData, Subscriptio
 import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
   def readSubscription(
     plrReference: String
   )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
-
     http
-      .GET[HttpResponse](subscriptionUrl)
+      .get(url"$subscriptionUrl")
+      .execute[HttpResponse]
       .flatMap {
         case response if response.status == 200 =>
           Future.successful(Some(Json.parse(response.body).as[SubscriptionSuccess].success))
@@ -48,9 +49,11 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def getSubscriptionCache(
     userId:      String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] = {
+    val subscriptionCacheUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId"
     http
-      .GET[HttpResponse](s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
+      .get(url"$subscriptionCacheUrl")
+      .execute[HttpResponse]
       .map {
         case response if response.status == 200 =>
           Some(Json.parse(response.body).as[SubscriptionLocalData])
@@ -58,5 +61,6 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
           None
       }
+  }
 
 }

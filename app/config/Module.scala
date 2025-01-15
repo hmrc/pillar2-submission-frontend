@@ -20,13 +20,12 @@ import com.google.inject.name.{Named, Names}
 import com.google.inject.{AbstractModule, Provides}
 import controllers.actions._
 import org.apache.fop.apps.FopFactory
-import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.{Clock, ZoneOffset}
 import javax.inject.Singleton
 
-class Module(environment: Environment, configuration: Configuration) extends AbstractModule {
+class Module extends AbstractModule {
 
   override def configure(): Unit = {
 

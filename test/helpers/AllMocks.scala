@@ -30,6 +30,8 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import views.html.btn.CheckYourAnswersView
 
+import scala.annotation.nowarn
+
 trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
 
   val mockAuditConnector:        AuditConnector        = mock[AuditConnector]
@@ -47,6 +49,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockObligationConnector:   ObligationConnector   = mock[ObligationConnector]
   val mockObligationService:     ObligationService     = mock[ObligationService]
 
+  @nowarn
   override protected def beforeEach(): Unit =
     Seq(
       mockAuditConnector,
