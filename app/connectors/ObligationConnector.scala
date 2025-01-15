@@ -23,13 +23,14 @@ import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ObligationConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
+class ObligationConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
 
   def getObligation(
     plrReference: String,
@@ -39,7 +40,8 @@ class ObligationConnector @Inject() (val config: FrontendAppConfig, val http: Ht
     val url = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/get-obligation/$plrReference/${dateFrom.toString}/${dateTo.toString}"
 
     http
-      .GET[HttpResponse](url)
+      .get(url"$url")
+      .execute[HttpResponse]
       .flatMap { response =>
         response.status match {
           case OK =>
