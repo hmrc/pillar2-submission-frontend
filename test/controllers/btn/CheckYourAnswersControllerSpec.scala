@@ -21,7 +21,6 @@ import controllers.{btn, routes}
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
 import pages._
 import play.api.Application
 import play.api.inject.bind
@@ -29,13 +28,12 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import viewmodels.govuk.SummaryListFluency
+import services.{BtnService, BtnServiceSpec}
 import views.html.btn.CheckYourAnswersView
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar {
-
+class CheckYourAnswersControllerSpec extends SpecBase {
   def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
     .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
     .build()
@@ -82,15 +80,21 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     ".onSubmit" should {
+      "must redirect to Btn Confirmation page on submission" in {
+        val applicationBtn: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
+          .overrides(
+            bind[BtnService].toInstance(mockBtnService)
+          )
+          .build()
 
-      "must redirect to Confirmation page on submission" in {
+        when(mockBtnService.submitBtn(any(), any())(any())).thenReturn(Future.successful(BtnServiceSpec.btnSuccessfulHttpResponse))
 
-        val request = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BtnConfirmationController.onPageLoad.url
+        running(applicationBtn) {
+          val requestBtn = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+          val result     = route(applicationBtn, requestBtn).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.btn.routes.BtnConfirmationController.onPageLoad.url
+        }
       }
     }
   }

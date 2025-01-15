@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,8 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-case class BTNRequestParameters(
-  id:                   String,
-  accountingPeriodFrom: LocalDate,
-  accountingPeriodTo:   LocalDate
-)
-object BTNRequestParameters {
-  implicit val format: OFormat[BTNRequestParameters] = Json.format[BTNRequestParameters]
+case class BtnRequest(accountingPeriodFrom: LocalDate, accountingPeriodTo: LocalDate)
+
+object BtnRequest {
+  implicit val format: OFormat[BtnRequest] = Json.format[BtnRequest]
 }

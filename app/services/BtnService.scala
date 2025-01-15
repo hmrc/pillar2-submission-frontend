@@ -18,7 +18,7 @@ package services
 
 import connectors._
 import models.InternalIssueError
-import models.btn.BTNRequest
+import models.btn.BtnRequest
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
@@ -26,13 +26,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class BTNService @Inject() (
-  btnConnector: BTNConnector
+class BtnService @Inject() (
+  btnConnector: BtnConnector
 )(implicit ec:  ExecutionContext)
     extends Logging {
 
-  def submitBTN(btnRequest: BTNRequest, plrReference: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] =
-    btnConnector.submitBTN(btnRequest, plrReference).flatMap {
+  def submitBtn(btnRequest: BtnRequest, plrReference: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] =
+    btnConnector.submitBtn(btnRequest, plrReference).flatMap {
       case httpResponse: HttpResponse =>
         Future.successful(httpResponse)
       case _ =>

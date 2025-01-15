@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.InternalIssueError
-import models.btn.BTNRequest
+import models.btn.BtnRequest
 import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json._
@@ -30,24 +30,24 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BTNConnector @Inject() (val config: FrontendAppConfig, val httpClientV2: HttpClientV2) extends Logging {
+class BtnConnector @Inject() (val config: FrontendAppConfig, val httpClientV2: HttpClientV2) extends Logging {
 
-  def submitBTN(btnRequest: BTNRequest, plrReference: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    val urlBTN = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/below-threshold-notification/submit"
-    logger.info(s"Calling pillar-2 backend url = $urlBTN with plrReference: $plrReference.")
+  def submitBtn(btnRequest: BtnRequest, plrReference: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+    val urlBtn = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/below-threshold-notification/submit"
+    logger.info(s"Calling pillar-2 backend url = $urlBtn with plrReference: $plrReference.")
     httpClientV2
-      .post(url"$urlBTN")
+      .post(url"$urlBtn")
       .withBody(Json.toJson(btnRequest))
       .setHeader("X-Pillar2-Id" -> plrReference)
       .execute[HttpResponse]
       .flatMap { response: HttpResponse =>
         response.status match {
           case CREATED =>
-            logger.info(s"submitBTN request successful with status = ${response.status}. HttpResponse = $response. ")
+            logger.info(s"submitBtn request successful with status = ${response.status}. HttpResponse = $response. ")
             Future.successful(response)
           case _ =>
             logger.debug(
-              s"submitBTN failed with status = ${response.status}. HttpResponse = $response."
+              s"submitBtn failed with status = ${response.status}. HttpResponse = $response."
                 + s" for plrReference $plrReference"
                 + s" and (accountingPeriodFrom, To) = $btnRequest."
             )
