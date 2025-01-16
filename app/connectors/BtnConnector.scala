@@ -46,8 +46,8 @@ class BtnConnector @Inject() (val config: FrontendAppConfig, val httpClientV2: H
             logger.info(s"submitBtn request successful with status = ${response.status}. HttpResponse = $response. ")
             Future.successful(response)
           case _ =>
-            logger.debug(
-              s"submitBtn failed with status = ${response.status}. HttpResponse = $response."
+            logger.warn(
+              s"submitBtn failed with status = ${response.status} "
                 + s" for plrReference $plrReference"
                 + s" and (accountingPeriodFrom, To) = $btnRequest."
             )

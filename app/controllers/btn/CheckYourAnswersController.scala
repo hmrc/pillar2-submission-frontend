@@ -28,7 +28,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.BtnService
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -82,27 +81,26 @@ class CheckYourAnswersController @Inject() (
       accountingPeriodTo = subAccountingPeriod.endDate
     )
 
-    val btnServiceResult: Future[HttpResponse] =
-      btnService.submitBtn(btnPayload, request.subscriptionLocalData.plrReference)
-
-    btnServiceResult.map {
-      case httpResponse: HttpResponse =>
+    btnService
+      .submitBtn(btnPayload, request.subscriptionLocalData.plrReference)
+      .flatMap { httpResponse =>
         if (httpResponse.status == CREATED) {
           logger.info(
             s"Btn Request Submission was successful: httpResponse status= ${httpResponse.status}"
               + " httpResponse.body=" + httpResponse.body
           )
-          Redirect(controllers.btn.routes.BtnConfirmationController.onPageLoad)
+          Future.successful(Redirect(controllers.btn.routes.BtnConfirmationController.onPageLoad))
         } else {
-          logger.debug(
+          logger.warn(
             s"Btn Request failed with invalid httpResponse.status: ${httpResponse.status}"
               + " httpResponse.body=" + httpResponse.body
           )
-          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+          Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
         }
-      case exception =>
-        logger.debug(s"Btn Request failed with exception: $exception")
+      }
+      .recover { case ex: Throwable =>
+        logger.warn(s"Btn Request failed with an exception: " + ex)
         Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+      }
   }
 }
