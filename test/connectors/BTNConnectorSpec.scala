@@ -18,7 +18,7 @@ package connectors
 
 import base.{SpecBase, WireMockServerHandler}
 import models.InternalIssueError
-import models.btn.BtnRequest
+import models.btn.BTNRequest
 import org.scalatest.exceptions.TestFailedException
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -31,53 +31,54 @@ import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
 import scala.concurrent.Future
 
-class BtnConnectorSpec extends SpecBase with WireMockSupport with WireMockServerHandler {
+class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServerHandler {
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(conf = "microservice.services.pillar2.port" -> server.port())
     .build()
-  lazy val connector: BtnConnector = app.injector.instanceOf[BtnConnector]
-  val submitBtnPath = "/report-pillar2-top-up-taxes/below-threshold-notification/submit"
-  val btnRequestBodyDefaultAccountingPeriodDates: BtnRequest = BtnRequest(
+  lazy val connector: BTNConnector = app.injector.instanceOf[BTNConnector]
+  val submitBTNPath = "/report-pillar2-top-up-taxes/below-threshold-notification/submit"
+  val btnRequestBodyDefaultAccountingPeriodDates: BTNRequest = BTNRequest(
     accountingPeriodFrom = LocalDate.now.minusYears(1),
     accountingPeriodTo = LocalDate.now
   )
   val stubProcessedZonedDateTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
-  val defaultSuccessfulBtnResponseBodyJsObject: JsObject = Json.obj(
+  val defaultSuccessfulBTNResponseBodyJsObject: JsObject = Json.obj(
     "processingDate"   -> stubProcessedZonedDateTime,
     "formBundleNumber" -> "11223344556677",
     "chargeReference"  -> "XTC01234123412"
   )
   val accountingPeriodFromDateMinus1Year: LocalDate  = LocalDate.now.minusYears(1)
   val accountingPeriodToDateNow:          LocalDate  = LocalDate.now
-  val btnRequestDatesMinus1YearAndNow:    BtnRequest = BtnRequest(accountingPeriodFromDateMinus1Year, accountingPeriodToDateNow)
+  val btnRequestDatesMinus1YearAndNow:    BTNRequest = BTNRequest(accountingPeriodFromDateMinus1Year, accountingPeriodToDateNow)
 
-  "submit Btn connector " should {
+  "submit BTN connector " should {
     "return 201 CREATED when the pillar-2 backend has returned status=201." in {
-      val plrReferenceForValidResponse = "XEPLR0000000000"
-      stubResponse(submitBtnPath, CREATED, defaultSuccessfulBtnResponseBodyJsObject.toString())
-      val result: HttpResponse = connector.submitBtn(btnRequestDatesMinus1YearAndNow: BtnRequest, plrReferenceForValidResponse).futureValue
-      result.status mustBe CREATED
-      result.json mustBe defaultSuccessfulBtnResponseBodyJsObject
+      implicit val pillar2Id: String = "XEPLR0000000000"
 
-      //Check response body field-values:
+      stubResponse(submitBTNPath, CREATED, defaultSuccessfulBTNResponseBodyJsObject.toString())
+      val result: HttpResponse = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest).futureValue
+
+      result.status mustBe CREATED
+      result.json mustBe defaultSuccessfulBTNResponseBodyJsObject
+
       val formBundleNumberValue: Option[String] = (result.json \ "formBundleNumber").asOpt[String]
       val chargeReferenceValue:  Option[String] = (result.json \ "chargeReference").asOpt[String]
       if (
         (result.json \ "processingDate").isDefined
         && formBundleNumberValue.contains("11223344556677")
         && chargeReferenceValue.contains("XTC01234123412")
-      ) { // All OK
-      } else {
-        throw new AssertionError(s"submitBtn request failed for plrReference= $plrReferenceForValidResponse")
+      ) {} else {
+        throw new AssertionError(s"submitBTN request failed for plrReference= $pillar2Id")
       }
     }
     "raise an Exception when the expected response field-value-checking fails." in {
-      val plrReferenceForValidResponse = "XEPLR9999999999"
-      stubResponse(submitBtnPath, CREATED, defaultSuccessfulBtnResponseBodyJsObject.toString())
-      val result: HttpResponse = connector.submitBtn(btnRequestDatesMinus1YearAndNow: BtnRequest, plrReferenceForValidResponse).futureValue
+      implicit val pillar2Id: String = "XEPLR9999999999"
+
+      stubResponse(submitBTNPath, CREATED, defaultSuccessfulBTNResponseBodyJsObject.toString())
+      val result: HttpResponse = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest).futureValue
       result.status mustBe CREATED
-      result.json mustBe defaultSuccessfulBtnResponseBodyJsObject
-      //Check response body field-values:
+      result.json mustBe defaultSuccessfulBTNResponseBodyJsObject
+
       val formBundleNumberValue: Option[String] = (result.json \ "formBundleNumber").asOpt[String]
       val chargeReferenceValue:  Option[String] = (result.json \ "chargeReference").asOpt[String]
 
@@ -86,31 +87,30 @@ class BtnConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
           (result.json \ "processingDate").isDefined
           && formBundleNumberValue.contains("INVALID-FORM-BUNDLE-NUMBER")
           && chargeReferenceValue.contains("XTC01234123412")
-        ) { // All OK
-        } else {
-          throw new TestFailedException(s"submitBtn response field-value-checking failed for plrReference= $plrReferenceForValidResponse", 0)
+        ) {} else {
+          throw new TestFailedException(s"submitBTN response field-value-checking failed for plrReference= $pillar2Id", 0)
         }
       }
     }
 
     "return InternalIssueError when the pillar-2 backend has returned status=400." in {
-      val plrReferenceForValidResponse = "XEPLR4000000000"
-      stubResponse(submitBtnPath, INTERNAL_SERVER_ERROR, defaultSuccessfulBtnResponseBodyJsObject.toString())
-      val result: Future[HttpResponse] = connector.submitBtn(btnRequestDatesMinus1YearAndNow: BtnRequest, plrReferenceForValidResponse)
+      implicit val pillar2Id: String = "XEPLR4000000000"
+      stubResponse(submitBTNPath, INTERNAL_SERVER_ERROR, defaultSuccessfulBTNResponseBodyJsObject.toString())
+      val result: Future[HttpResponse] = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest)
       result.failed.futureValue mustBe InternalIssueError
     }
 
     "return InternalIssueError when the pillar-2 backend has returned status=422." in {
-      val plrReferenceForValidResponse = "XEPLR4220000000"
-      stubResponse(submitBtnPath, INTERNAL_SERVER_ERROR, defaultSuccessfulBtnResponseBodyJsObject.toString())
-      val result: Future[HttpResponse] = connector.submitBtn(btnRequestDatesMinus1YearAndNow: BtnRequest, plrReferenceForValidResponse)
+      implicit val pillar2Id: String = "XEPLR4220000000"
+      stubResponse(submitBTNPath, INTERNAL_SERVER_ERROR, defaultSuccessfulBTNResponseBodyJsObject.toString())
+      val result: Future[HttpResponse] = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest)
       result.failed.futureValue mustBe InternalIssueError
     }
 
     "return InternalIssueError when the pillar-2 backend has returned status=500." in {
-      val plrReferenceForValidResponse = "XEPLR5000000000"
-      stubResponse(submitBtnPath, INTERNAL_SERVER_ERROR, defaultSuccessfulBtnResponseBodyJsObject.toString())
-      val result: Future[HttpResponse] = connector.submitBtn(btnRequestDatesMinus1YearAndNow: BtnRequest, plrReferenceForValidResponse)
+      implicit val pillar2Id: String = "XEPLR5000000000"
+      stubResponse(submitBTNPath, INTERNAL_SERVER_ERROR, defaultSuccessfulBTNResponseBodyJsObject.toString())
+      val result: Future[HttpResponse] = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest)
       result.failed.futureValue mustBe InternalIssueError
     }
   }

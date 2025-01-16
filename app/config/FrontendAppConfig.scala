@@ -68,4 +68,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
 
   val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
+
+  val bearerToken: String => String = (serviceName: String) => configuration.get[String](s"microservice.services.$serviceName.bearer-token")
+  val environment: String => String = (serviceName: String) => configuration.get[String](s"microservice.services.$serviceName.environment")
 }

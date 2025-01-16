@@ -28,7 +28,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{BtnService, BtnServiceSpec}
+import services.{BTNService, BTNServiceSpec}
 import views.html.btn.CheckYourAnswersView
 
 import scala.concurrent.Future
@@ -46,52 +46,41 @@ class CheckYourAnswersControllerSpec extends SpecBase {
   val view: CheckYourAnswersView = application.injector.instanceOf[CheckYourAnswersView]
 
   "CheckYourAnswersController" when {
-
     ".onPageLoad" should {
-
       "must return OK and the correct view for a GET" in {
-
         val result = route(application, request()).value
-
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(btnCyaSummaryList)(request(), appConfig(application), messages(application)).toString
       }
 
       "must redirect to IndexController on disqualifying answers" in {
-
         val emptyUa = validBtnCyaUa.setOrException(EntitiesBothInUKAndOutsidePage, false)
-
-        val result = route(application, request(emptyUa)).value
-
+        val result  = route(application, request(emptyUa)).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.IndexController.onPageLoad.url
-
       }
 
       "must redirect to JourneyRecoveryController on retrieval of answers failure" in {
-
         val application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData)).build()
-
-        val result = route(application, request()).value
-
+        val result      = route(application, request()).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
     ".onSubmit" should {
-      "must redirect to Btn Confirmation page on submission" in {
-        val applicationBtn: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
+      "must redirect to BTN Confirmation page on submission" in {
+        val applicationBTN: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(
-            bind[BtnService].toInstance(mockBtnService)
+            bind[BTNService].toInstance(mockBTNService)
           )
           .build()
 
-        when(mockBtnService.submitBtn(any(), any())(any())).thenReturn(Future.successful(BtnServiceSpec.btnSuccessfulHttpResponse))
+        when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.successful(BTNServiceSpec.btnSuccessfulHttpResponse))
 
-        running(applicationBtn) {
-          val requestBtn = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
-          val result     = route(applicationBtn, requestBtn).value
+        running(applicationBTN) {
+          val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+          val result     = route(applicationBTN, requestBTN).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.btn.routes.BtnConfirmationController.onPageLoad.url
         }

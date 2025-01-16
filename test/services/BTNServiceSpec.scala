@@ -17,90 +17,97 @@
 package services
 
 import base.SpecBase
-import connectors.BtnConnector
+import connectors.BTNConnector
 import models.InternalIssueError
-import models.btn.BtnRequest
+import models.btn.BTNRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.inject.bind
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
-import services.BtnServiceSpec._
+import services.BTNServiceSpec._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class BtnServiceSpec extends SpecBase {
+class BTNServiceSpec extends SpecBase {
 
   val btnSuccessfulResponseFuture: Future[HttpResponse] = Future.successful(btnSuccessfulHttpResponse)
 
-  "BtnService" must {
-    "return status=201 when Btn connector returns valid data" in {
+  "BTNService" must {
+    "return status=201 when BTN connector returns valid data" in {
+      implicit val pillar2Id: String = pillar2IdForValidResponse
       val application = applicationBuilder()
         .overrides(
-          bind[BtnConnector].toInstance(mockBtnConnector)
+          bind[BTNConnector].toInstance(mockBTNConnector)
         )
         .build()
       running(application) {
-        when(mockBtnConnector.submitBtn(any(), any())(any[HeaderCarrier], any[ExecutionContext]))
+        when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.successful(btnSuccessfulHttpResponse))
 
-        val service: BtnService = application.injector.instanceOf[BtnService]
-        val result = service.submitBtn(btnRequestBodyDefaultAccountingPeriodDates, plrReferenceForValidResponse).futureValue
+        val service: BTNService = application.injector.instanceOf[BTNService]
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
         result.status mustBe CREATED
-        result.json mustBe jsonBtnSuccessfulResponse
+        result.json mustBe jsonBTNSuccessfulResponse
       }
     }
 
-    "return InternalIssueError when Btn connector returns InternalIssueError" in {
+    "return InternalIssueError when BTN connector returns InternalIssueError" in {
+      implicit val pillar2Id: String = pillar2IdForValidResponse
       val application = applicationBuilder()
         .overrides(
-          bind[BtnConnector].toInstance(mockBtnConnector)
+          bind[BTNConnector].toInstance(mockBTNConnector)
         )
         .build()
       running(application) {
-        when(mockBtnConnector.submitBtn(any(), any())(any[HeaderCarrier], any[ExecutionContext]))
+        when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(InternalIssueError))
-        val service: BtnService = application.injector.instanceOf[BtnService]
-        val result = service.submitBtn(btnRequestBodyDefaultAccountingPeriodDates, plrReferenceForValidResponse).failed.futureValue
+        val service: BTNService = application.injector.instanceOf[BTNService]
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates)
+          .failed
+          .futureValue
         result mustBe InternalIssueError
       }
     }
 
-    "throw an Exception when Btn connector throws a RuntimeException" in {
+    "throw an Exception when BTN connector throws a RuntimeException" in {
+      implicit val pillar2Id: String = pillar2IdForValidResponse
       val application = applicationBuilder()
         .overrides(
-          bind[BtnConnector].toInstance(mockBtnConnector)
+          bind[BTNConnector].toInstance(mockBTNConnector)
         )
         .build()
       running(application) {
-        when(mockBtnConnector.submitBtn(any(), any())(any[HeaderCarrier], any[ExecutionContext]))
+        when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(new RuntimeException("runtime error")))
-        val service: BtnService = application.injector.instanceOf[BtnService]
-        val result = service.submitBtn(btnRequestBodyDefaultAccountingPeriodDates, plrReferenceForValidResponse).failed.futureValue
+        val service: BTNService = application.injector.instanceOf[BTNService]
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates)
+          .failed
+          .futureValue
         result shouldBe a[RuntimeException]
       }
     }
   }
 }
 
-object BtnServiceSpec {
-  val btnRequestBodyDefaultAccountingPeriodDates: BtnRequest = BtnRequest(
+object BTNServiceSpec {
+  val btnRequestBodyDefaultAccountingPeriodDates: BTNRequest = BTNRequest(
     accountingPeriodFrom = LocalDate.now.minusYears(1),
     accountingPeriodTo = LocalDate.now
   )
-  val plrReferenceForValidResponse = "XEPLR0000000000"
+  val pillar2IdForValidResponse = "XEPLR0000000000"
   val btnSuccessfulResponseJsonString: String =
     """{"processingDate":"2025-01-10T16:54:26Z",
       | "formBundleNumber":"11223344556677",
       | "chargeReference":"XTC01234123412"}""".stripMargin
-  val jsonBtnSuccessfulResponse: JsValue = Json.parse(btnSuccessfulResponseJsonString)
+  val jsonBTNSuccessfulResponse: JsValue = Json.parse(btnSuccessfulResponseJsonString)
   val btnSuccessfulHttpResponse: HttpResponse = new HttpResponse {
     override def status:  Int                      = CREATED
     override def body:    String                   = btnSuccessfulResponseJsonString
-    override def json:    JsValue                  = jsonBtnSuccessfulResponse
+    override def json:    JsValue                  = jsonBTNSuccessfulResponse
     override def headers: Map[String, Seq[String]] = Map("Content-Type" -> Seq("application/json"))
   }
 }

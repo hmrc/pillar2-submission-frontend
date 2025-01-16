@@ -18,10 +18,19 @@ package models.btn
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
+import java.time.ZonedDateTime
 
-case class BtnRequest(accountingPeriodFrom: LocalDate, accountingPeriodTo: LocalDate)
-
-object BtnRequest {
-  implicit val format: OFormat[BtnRequest] = Json.format[BtnRequest]
+case class ProcessingDate(processingDate: ZonedDateTime)
+object ProcessingDate {
+  implicit val format: OFormat[ProcessingDate] = Json.format[ProcessingDate]
 }
+
+case class BTNSuccessResponse(
+  success: ProcessingDate
+)
+object BTNSuccessResponse {
+  implicit val processingDateFormat: OFormat[ProcessingDate] = Json.format[ProcessingDate]
+  implicit val btnSuccessResponseFormat: OFormat[BTNSuccessResponse] = Json.format[BTNSuccessResponse]
+}
+
+
