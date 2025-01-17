@@ -23,6 +23,7 @@ import models.btn.BTNRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
@@ -33,21 +34,19 @@ import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class BTNServiceSpec extends SpecBase {
-
+  implicit val pillar2Id:          String               = pillar2IdForValidResponse
   val btnSuccessfulResponseFuture: Future[HttpResponse] = Future.successful(btnSuccessfulHttpResponse)
+  val application: Application = applicationBuilder()
+    .overrides(
+      bind[BTNConnector].toInstance(mockBTNConnector)
+    )
+    .build()
 
   "BTNService" must {
     "return status=201 when BTN connector returns valid data" in {
-      implicit val pillar2Id: String = pillar2IdForValidResponse
-      val application = applicationBuilder()
-        .overrides(
-          bind[BTNConnector].toInstance(mockBTNConnector)
-        )
-        .build()
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.successful(btnSuccessfulHttpResponse))
-
         val service: BTNService = application.injector.instanceOf[BTNService]
         val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
         result.status mustBe CREATED
@@ -56,37 +55,21 @@ class BTNServiceSpec extends SpecBase {
     }
 
     "return InternalIssueError when BTN connector returns InternalIssueError" in {
-      implicit val pillar2Id: String = pillar2IdForValidResponse
-      val application = applicationBuilder()
-        .overrides(
-          bind[BTNConnector].toInstance(mockBTNConnector)
-        )
-        .build()
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(InternalIssueError))
         val service: BTNService = application.injector.instanceOf[BTNService]
-        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates)
-          .failed
-          .futureValue
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
         result mustBe InternalIssueError
       }
     }
 
     "throw an Exception when BTN connector throws a RuntimeException" in {
-      implicit val pillar2Id: String = pillar2IdForValidResponse
-      val application = applicationBuilder()
-        .overrides(
-          bind[BTNConnector].toInstance(mockBTNConnector)
-        )
-        .build()
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(new RuntimeException("runtime error")))
         val service: BTNService = application.injector.instanceOf[BTNService]
-        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates)
-          .failed
-          .futureValue
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
         result shouldBe a[RuntimeException]
       }
     }
