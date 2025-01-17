@@ -19,12 +19,12 @@ package forms
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class EntitiesInUKOnlyFormProviderSpec extends BooleanFieldBehaviours {
+class BTNRevenues750InNext2AccountingPeriodsFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "btn.btnEntitiesBothInUKAndOutside.error.required.uk"
+  val requiredKey = "btnRevenues750InNext2AccountingPeriods.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new BTNEntitiesInUKOnlyFormProvider()()
+  val form = new BTNRevenues750InNext2AccountingPeriodsFormProvider()()
 
   ".value" - {
 

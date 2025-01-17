@@ -22,7 +22,7 @@ import controllers.actions._
 import controllers.routes._
 import models.btn.BTNRequest
 import models.subscription.AccountingPeriod
-import pages.{BtnRevenues750In2AccountingPeriodPage, BtnRevenues750InNext2AccountingPeriodsPage, EntitiesBothInUKAndOutsidePage}
+import pages.{BTNRevenues750In2AccountingPeriodPage, BTNRevenues750InNext2AccountingPeriodsPage, EntitiesBothInUKAndOutsidePage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -53,16 +53,16 @@ class CheckYourAnswersController @Inject() (
       (for {
         userAnswers                   <- maybeUserAnswers
         entitiesInOutPage             <- userAnswers.get(EntitiesBothInUKAndOutsidePage)
-        revenuePreviousTwoPeriodsPage <- userAnswers.get(BtnRevenues750In2AccountingPeriodPage)
-        revenueNextTwoPeriodsPage     <- userAnswers.get(BtnRevenues750InNext2AccountingPeriodsPage)
+        revenuePreviousTwoPeriodsPage <- userAnswers.get(BTNRevenues750In2AccountingPeriodPage)
+        revenueNextTwoPeriodsPage     <- userAnswers.get(BTNRevenues750InNext2AccountingPeriodsPage)
       } yield (entitiesInOutPage, revenuePreviousTwoPeriodsPage, revenueNextTwoPeriodsPage) match {
         case (true, false, false) =>
           val summaryList = SummaryListViewModel(
             rows = Seq(
               SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod),
-              BtnEntitiesBothInUKAndOutsideSummary.row(userAnswers),
-              BtnRevenues750In2AccountingPeriodSummary.row(userAnswers),
-              BtnRevenues750InNext2AccountingPeriodsSummary.row(userAnswers)
+              BTNEntitiesBothInUKAndOutsideSummary.row(userAnswers),
+              BTNRevenues750In2AccountingPeriodSummary.row(userAnswers),
+              BTNRevenues750InNext2AccountingPeriodsSummary.row(userAnswers)
             ).flatten
           ).withCssClass("govuk-!-margin-bottom-9")
 
@@ -90,7 +90,7 @@ class CheckYourAnswersController @Inject() (
             s"BTN Request Submission was successful: httpResponse status= ${httpResponse.status}"
               + " httpResponse.body=" + httpResponse.body
           )
-          Future.successful(Redirect(controllers.btn.routes.BtnConfirmationController.onPageLoad))
+          Future.successful(Redirect(controllers.btn.routes.BTNConfirmationController.onPageLoad))
         } else {
           logger.warn(
             s"BTN Request failed with invalid httpResponse.status: ${httpResponse.status}"

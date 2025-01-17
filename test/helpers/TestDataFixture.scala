@@ -28,15 +28,15 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
   lazy val validBtnCyaUa: UserAnswers = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(EntitiesBothInUKAndOutsidePage, true)
-    .setOrException(BtnRevenues750In2AccountingPeriodPage, false)
-    .setOrException(BtnRevenues750InNext2AccountingPeriodsPage, false)
+    .setOrException(BTNRevenues750In2AccountingPeriodPage, false)
+    .setOrException(BTNRevenues750InNext2AccountingPeriodsPage, false)
 
   def btnCyaSummaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(
     rows = Seq(
       SubAccountingPeriodSummary.row(accountingPeriod),
-      BtnEntitiesBothInUKAndOutsideSummary.row(validBtnCyaUa),
-      BtnRevenues750In2AccountingPeriodSummary.row(validBtnCyaUa),
-      BtnRevenues750InNext2AccountingPeriodsSummary.row(validBtnCyaUa)
+      BTNEntitiesBothInUKAndOutsideSummary.row(validBtnCyaUa),
+      BTNRevenues750In2AccountingPeriodSummary.row(validBtnCyaUa),
+      BTNRevenues750InNext2AccountingPeriodsSummary.row(validBtnCyaUa)
     ).flatten
   ).withCssClass("govuk-!-margin-bottom-9")
 

@@ -82,7 +82,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
           val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
           val result     = route(applicationBTN, requestBTN).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.btn.routes.BtnConfirmationController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.btn.routes.BTNConfirmationController.onPageLoad.url
         }
       }
     }
