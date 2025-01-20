@@ -43,15 +43,28 @@ class BTNServiceSpec extends SpecBase {
     .build()
 
   "BTNService" must {
-    "return status=201 when BTN connector returns valid data" in {
+    "return status=201/CREATED when BTN connector returns valid data" in {
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.successful(btnSuccessfulHttpResponse))
         val service: BTNService = application.injector.instanceOf[BTNService]
         val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
-        result.status mustBe CREATED
-        result.json mustBe jsonBTNSuccessfulResponse
+        result shouldBe Right(btnSuccessfulHttpResponse)
       }
+    }
+
+    "return InternalIssueError when BTN connector returns non-CREATED status" in {
+      val unexpectedStatusHttpResponse: HttpResponse = new HttpResponse {
+        override def status:  Int                      = BAD_REQUEST
+        override def body:    String                   = """{"error":"Bad Request"}"""
+        override def json:    JsValue                  = Json.parse(body)
+        override def headers: Map[String, Seq[String]] = Map("Content-Type" -> Seq("application/json"))
+      }
+      when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
+        .thenReturn(Future.successful(unexpectedStatusHttpResponse))
+      val service: BTNService = application.injector.instanceOf[BTNService]
+      val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
+      result mustBe Left(InternalIssueError)
     }
 
     "return InternalIssueError when BTN connector returns InternalIssueError" in {
@@ -59,8 +72,8 @@ class BTNServiceSpec extends SpecBase {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(InternalIssueError))
         val service: BTNService = application.injector.instanceOf[BTNService]
-        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
-        result mustBe InternalIssueError
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
+        result mustBe Left(InternalIssueError)
       }
     }
 
@@ -69,8 +82,8 @@ class BTNServiceSpec extends SpecBase {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(new RuntimeException("runtime error")))
         val service: BTNService = application.injector.instanceOf[BTNService]
-        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
-        result shouldBe a[RuntimeException]
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
+        result mustBe Left(InternalIssueError)
       }
     }
 
@@ -86,8 +99,7 @@ class BTNServiceSpec extends SpecBase {
           .thenReturn(Future.successful(unexpectedStatusHttpResponse))
         val service: BTNService = application.injector.instanceOf[BTNService]
         val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
-        result.status mustBe INTERNAL_SERVER_ERROR
-        result.json mustBe Json.parse("""{"error":"unexpected error"}""")
+        result mustBe Left(InternalIssueError)
       }
     }
 
@@ -96,8 +108,8 @@ class BTNServiceSpec extends SpecBase {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(new IllegalArgumentException("Test exception")))
         val service: BTNService = application.injector.instanceOf[BTNService]
-        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
-        result mustBe a[IllegalArgumentException]
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
+        result mustBe Left(InternalIssueError)
       }
     }
   }

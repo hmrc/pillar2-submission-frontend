@@ -17,9 +17,10 @@
 package services
 
 import connectors._
-import models.InternalIssueError
 import models.btn.BTNRequest
+import models.{ApiError, InternalIssueError}
 import play.api.Logging
+import play.api.http.Status.CREATED
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
@@ -31,11 +32,23 @@ class BTNService @Inject() (
 )(implicit ec:  ExecutionContext)
     extends Logging {
 
-  def submitBTN(btnRequest: BTNRequest)(implicit headerCarrier: HeaderCarrier, pillar2Id: String): Future[HttpResponse] =
-    btnConnector.submitBTN(btnRequest).flatMap {
-      case httpResponse: HttpResponse =>
-        Future.successful(httpResponse)
-      case _ =>
-        Future.failed(InternalIssueError)
-    }
+  def submitBTN(btnRequest: BTNRequest)(implicit headerCarrier: HeaderCarrier, pillar2Id: String): Future[Either[ApiError, HttpResponse]] =
+    btnConnector
+      .submitBTN(btnRequest)
+      .flatMap { response =>
+        response.status match {
+          case CREATED =>
+            Future.successful(Right(response))
+          case _ =>
+            Future.successful(Left(InternalIssueError))
+        }
+      }
+      .recover {
+        case ex: Throwable =>
+          logger.warn(s"BTNService Request failed with an exception: " + ex)
+          Left(InternalIssueError)
+        case _ =>
+          logger.warn(s"BTNService Request failed with an unknown error.")
+          Left(InternalIssueError)
+      }
 }

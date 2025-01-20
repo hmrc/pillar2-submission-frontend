@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,28 +84,28 @@ class CheckYourAnswersController @Inject() (
 
     btnService
       .submitBTN(btnPayload)
-      .flatMap { httpResponse =>
-        if (httpResponse.status == CREATED) {
-          logger.info(
-            s"BTN Request Submission was successful: httpResponse status= ${httpResponse.status}"
-              + " httpResponse.body=" + httpResponse.body
-          )
-          Future.successful(Redirect(controllers.btn.routes.BTNConfirmationController.onPageLoad))
-        } else {
-          logger.warn(
-            s"BTN Request failed with invalid httpResponse.status: ${httpResponse.status}"
-              + " httpResponse.body=" + httpResponse.body
-          )
+      .flatMap {
+        case Right(httpResponse) =>
+          if (httpResponse.status == CREATED) {
+            logger.info(
+              s"BTN Request Submission was successful: httpResponse status= ${httpResponse.status}"
+                + " httpResponse.body=" + httpResponse.body
+            )
+            Future.successful(Redirect(controllers.btn.routes.BTNConfirmationController.onPageLoad))
+          } else {
+            logger.warn(
+              s"BTN Request failed with invalid httpResponse.status: ${httpResponse.status}"
+                + " httpResponse.body=" + httpResponse.body
+            )
+            Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+          }
+        case Left(apiError) =>
+          logger.warn(s"BTN Request failed with ApiError: $apiError")
           Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-        }
       }
-      .recover {
-        case ex: Throwable =>
-          logger.warn(s"BTN Request failed with an exception: " + ex)
-          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-        case _ =>
-          logger.warn(s"BTN Request failed with unknown error.")
-          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      .recover { case ex: Throwable =>
+        logger.error(s"BTN Request failed with unexpected error: ${ex.getMessage}")
+        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       }
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
           )
           .build()
 
-        when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.successful(BTNServiceSpec.btnSuccessfulHttpResponse))
+        when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.successful(Right(BTNServiceSpec.btnSuccessfulHttpResponse)))
 
         running(applicationBTN) {
           val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
