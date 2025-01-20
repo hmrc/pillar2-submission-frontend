@@ -69,7 +69,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
     }
 
     ".onSubmit" should {
-      "must redirect to BTN Confirmation page on submission" in {
+      "redirect to BTN Confirmation page on submission" in {
         val applicationBTN: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(
             bind[BTNService].toInstance(mockBTNService)
@@ -83,6 +83,36 @@ class CheckYourAnswersControllerSpec extends SpecBase {
           val result     = route(applicationBTN, requestBTN).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.btn.routes.BTNConfirmationController.onPageLoad.url
+        }
+      }
+
+      "redirect to UnderConstruction page when BTN submission throws an exception" in {
+        val applicationBTN = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
+          .overrides(bind[BTNService].toInstance(mockBTNService))
+          .build()
+
+        when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.failed(new RuntimeException("Test exception")))
+
+        running(applicationBTN) {
+          val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+          val result     = route(applicationBTN, requestBTN).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        }
+      }
+
+      "redirect to UnderConstruction page for any other error" in {
+        val applicationBTN = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
+          .overrides(bind[BTNService].toInstance(mockBTNService))
+          .build()
+
+        when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.failed(new Error("Unexpected error")))
+
+        running(applicationBTN) {
+          val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+          val result     = route(applicationBTN, requestBTN).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
         }
       }
     }

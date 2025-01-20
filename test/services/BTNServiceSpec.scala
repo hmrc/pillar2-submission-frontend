@@ -73,6 +73,33 @@ class BTNServiceSpec extends SpecBase {
         result shouldBe a[RuntimeException]
       }
     }
+
+    "handle unexpected status codes from BTN connector" in {
+      val unexpectedStatusHttpResponse = new HttpResponse {
+        override def status:  Int                      = 500
+        override def body:    String                   = """{"error":"unexpected error"}"""
+        override def json:    JsValue                  = Json.parse(body)
+        override def headers: Map[String, Seq[String]] = Map("Content-Type" -> Seq("application/json"))
+      }
+      running(application) {
+        when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
+          .thenReturn(Future.successful(unexpectedStatusHttpResponse))
+        val service: BTNService = application.injector.instanceOf[BTNService]
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
+        result.status mustBe INTERNAL_SERVER_ERROR
+        result.json mustBe Json.parse("""{"error":"unexpected error"}""")
+      }
+    }
+
+    "handle exceptions other than InternalIssueError" in {
+      running(application) {
+        when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
+          .thenReturn(Future.failed(new IllegalArgumentException("Test exception")))
+        val service: BTNService = application.injector.instanceOf[BTNService]
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
+        result mustBe a[IllegalArgumentException]
+      }
+    }
   }
 }
 
@@ -83,9 +110,7 @@ object BTNServiceSpec {
   )
   val pillar2IdForValidResponse = "XEPLR0000000000"
   val btnSuccessfulResponseJsonString: String =
-    """{"processingDate":"2025-01-10T16:54:26Z",
-      | "formBundleNumber":"11223344556677",
-      | "chargeReference":"XTC01234123412"}""".stripMargin
+    """{"success":{"processingDate":"2025-01-10T16:54:26Z"}}""".stripMargin
   val jsonBTNSuccessfulResponse: JsValue = Json.parse(btnSuccessfulResponseJsonString)
   val btnSuccessfulHttpResponse: HttpResponse = new HttpResponse {
     override def status:  Int                      = CREATED

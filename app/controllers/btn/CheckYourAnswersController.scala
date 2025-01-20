@@ -99,9 +99,13 @@ class CheckYourAnswersController @Inject() (
           Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
         }
       }
-      .recover { case ex: Throwable =>
-        logger.warn(s"BTN Request failed with an exception: " + ex)
-        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      .recover {
+        case ex: Throwable =>
+          logger.warn(s"BTN Request failed with an exception: " + ex)
+          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+        case _ =>
+          logger.warn(s"BTN Request failed with unknown error.")
+          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
       }
   }
 }
