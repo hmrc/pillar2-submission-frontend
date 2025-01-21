@@ -112,6 +112,15 @@ class BTNServiceSpec extends SpecBase {
         result mustBe Left(InternalIssueError)
       }
     }
+    "handle any other unexpected error" in {
+      running(application) {
+        when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
+          .thenReturn(Future.failed(new Error("Unexpected error")))
+        val service: BTNService = application.injector.instanceOf[BTNService]
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
+        result mustBe Left(InternalIssueError)
+      }
+    }
   }
 }
 

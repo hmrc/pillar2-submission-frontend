@@ -18,17 +18,19 @@ package controllers.btn
 
 import base.SpecBase
 import controllers.{btn, routes}
-import models.UserAnswers
+import models.{ObligationNotFoundError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
 import play.api.Application
 import play.api.inject.bind
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.{BTNService, BTNServiceSpec}
+import uk.gov.hmrc.http.HttpResponse
 import views.html.btn.CheckYourAnswersView
 
 import scala.concurrent.Future
@@ -66,6 +68,26 @@ class CheckYourAnswersControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
+
+      "must redirect to JourneyRecoveryController when there are no user answers" in {
+        def request(ua: UserAnswers = validBtnCyaUa): FakeRequest[AnyContentAsEmpty.type] = {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+          FakeRequest(GET, btn.routes.CheckYourAnswersController.onPageLoad.url)
+        }
+        val result = route(application, request()).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+
+      "must redirect to IndexController on unexpected answer combination" in {
+        val unexpectedUa = validBtnCyaUa
+          .setOrException(EntitiesBothInUKAndOutsidePage, true)
+          .setOrException(BTNRevenues750In2AccountingPeriodPage, true)
+          .setOrException(BTNRevenues750InNext2AccountingPeriodsPage, true)
+        val result = route(application, request(unexpectedUa)).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad.url
+      }
     }
 
     ".onSubmit" should {
@@ -75,9 +97,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
             bind[BTNService].toInstance(mockBTNService)
           )
           .build()
-
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.successful(Right(BTNServiceSpec.btnSuccessfulHttpResponse)))
-
         running(applicationBTN) {
           val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
           val result     = route(applicationBTN, requestBTN).value
@@ -86,13 +106,45 @@ class CheckYourAnswersControllerSpec extends SpecBase {
         }
       }
 
+      "redirect to UnderConstruction page on non-CREATED status" in {
+        val applicationBTN: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
+          .overrides(bind[BTNService].toInstance(mockBTNService))
+          .build()
+        val unexpectedStatusHttpResponse = new HttpResponse {
+          override def status:  Int                      = BAD_REQUEST
+          override def body:    String                   = """{"error":"Bad Request"}"""
+          override def json:    JsValue                  = Json.parse(body)
+          override def headers: Map[String, Seq[String]] = Map("Content-Type" -> Seq("application/json"))
+        }
+        when(mockBTNService.submitBTN(any())(any(), any()))
+          .thenReturn(Future.successful(Right(unexpectedStatusHttpResponse)))
+        running(applicationBTN) {
+          val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+          val result     = route(applicationBTN, requestBTN).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        }
+      }
+
       "redirect to UnderConstruction page when BTN submission throws an exception" in {
         val applicationBTN = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(bind[BTNService].toInstance(mockBTNService))
           .build()
-
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.failed(new RuntimeException("Test exception")))
+        running(applicationBTN) {
+          val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+          val result     = route(applicationBTN, requestBTN).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        }
+      }
 
+      "redirect to UnderConstruction page when BTN submission returns unexpected Left(ApiError)" in {
+        val applicationBTN = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
+          .overrides(bind[BTNService].toInstance(mockBTNService))
+          .build()
+        when(mockBTNService.submitBTN(any())(any(), any()))
+          .thenReturn(Future.successful(Left(ObligationNotFoundError)))
         running(applicationBTN) {
           val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
           val result     = route(applicationBTN, requestBTN).value
@@ -105,9 +157,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
         val applicationBTN = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(bind[BTNService].toInstance(mockBTNService))
           .build()
-
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.failed(new Error("Unexpected error")))
-
         running(applicationBTN) {
           val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
           val result     = route(applicationBTN, requestBTN).value
