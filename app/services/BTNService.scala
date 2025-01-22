@@ -43,12 +43,8 @@ class BTNService @Inject() (
             Future.successful(Left(InternalIssueError))
         }
       }
-      .recover {
-        case ex: Throwable =>
-          logger.warn(s"BTNService Request failed with an exception: " + ex)
-          Left(InternalIssueError)
-        case _ =>
-          logger.warn(s"BTNService Request failed with an unknown error.")
-          Left(InternalIssueError)
+      .recover { case ex: Throwable =>
+        logger.warn(s"BTNService Request failed with an exception: " + ex)
+        Left(InternalIssueError)
       }
 }
