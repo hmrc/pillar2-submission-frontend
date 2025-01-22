@@ -71,3 +71,5 @@ POST        /below-threshold-notification/submit                                
 
 GET         /below-threshold-notification/confirmation                            controllers.btn.BTNConfirmationController.onPageLoad
 GET         /below-threshold-notification/confirmation/download-pdf               controllers.btn.BTNConfirmationController.onDownloadConfirmation
+
+GET         /below-threshold-notification/problem-with-service                    controllers.btn.BTNProblemWithServiceController.onPageLoad

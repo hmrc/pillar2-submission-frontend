@@ -97,15 +97,15 @@ class CheckYourAnswersController @Inject() (
               s"BTN Request failed with invalid httpResponse.status: ${httpResponse.status}"
                 + " httpResponse.body=" + httpResponse.body
             )
-            Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+            Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
           }
         case Left(apiError) =>
           logger.warn(s"BTN Request failed with ApiError: $apiError")
-          Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+          Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
       }
       .recover { case ex: Throwable =>
         logger.error(s"BTN Request failed with unexpected error: ${ex.getMessage}")
-        Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+        Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
       }
   }
 }

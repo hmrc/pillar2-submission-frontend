@@ -250,4 +250,9 @@ btn.confirmation.p2 = HMRC has removed your group’s obligation to submit a UK 
 btn.confirmation.p3 = If your group becomes liable for a UK Tax Return in the future, you must let HMRC know by submitting a UK Tax Return to remove the Below-Threshold Notification from your account. You can
 btn.confirmation.p3.link = find out more about submitting a UKTR
 btn.confirmation.p4.link = View account homepage
+
+btn.error.title = Sorry, there is a problem with the service
+btn.error.heading = Sorry, there is a problem with the service
+btn.error.tryAgainLater.p1 = You can try again later when the service is available.
+btn.error.returnToHomePageText.link = Return to your account homepage to submit a Below-Threshold Notification again
 ###############################################
