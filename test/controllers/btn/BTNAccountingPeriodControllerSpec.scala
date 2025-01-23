@@ -51,11 +51,11 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       val list = SummaryListViewModel(
         rows = Seq(
           SummaryListRowViewModel(
-            "btn.btnAccountingPeriod.startAccountDate",
+            "btn.accountingPeriod.startAccountDate",
             value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(LocalDate.now))))
           ),
           SummaryListRowViewModel(
-            "btn.btnAccountingPeriod.endAccountDate",
+            "btn.accountingPeriod.endAccountDate",
             value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(LocalDate.now.plusYears(1)))))
           )
         )

@@ -28,16 +28,16 @@
 
 @(mneOrDomestic: MneOrDomestic)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = messages("btn.btnEntitiesInsideOutsideUK.amend.title")) {
-    @heading(messages("btn.btnEntitiesInsideOutsideUK.amend.heading"), classes = "govuk-heading-l")
+@layout(pageTitle = messages("btn.entitiesInsideOutsideUK.amend.title")) {
+    @heading(messages("btn.entitiesInsideOutsideUK.amend.heading"), classes = "govuk-heading-l")
     @{
         if(mneOrDomestic == UkAndOther) {
-            p(message1 = Some(messages("btn.btnEntitiesInsideOutsideUK.amend.p1.ukAndOther")), message2 = Some(messages("btn.btnEntitiesInsideOutsideUK.amend.p1.ukAndOther.bold")), message2IsBold = true)
+            p(message1 = Some(messages("btn.entitiesInsideOutsideUK.amend.p1.ukAndOther")), message2 = Some(messages("btn.entitiesInsideOutsideUK.amend.p1.ukAndOther.bold")), message2IsBold = true)
         } else {
-            p(message1 = Some(messages("btn.btnEntitiesInsideOutsideUK.amend.p1.ukOnly")), message2 = Some(messages("btn.btnEntitiesInsideOutsideUK.amend.p1.ukOnly.bold")), message2IsBold = true)
+            p(message1 = Some(messages("btn.entitiesInsideOutsideUK.amend.p1.ukOnly")), message2 = Some(messages("btn.entitiesInsideOutsideUK.amend.p1.ukOnly.bold")), message2IsBold = true)
         }
     }
-    @paragraphMessageWithLink(message1 = Some(messages("btn.btnEntitiesInsideOutsideUK.amend.p2")),
-        linkMessage = messages("btn.btnEntitiesInsideOutsideUK.amend.p2.link"), message2 = Some(messages("btn.btnEntitiesInsideOutsideUK.amend.p2.end")), linkUrl = s"${appConfig.pillar2FrontendUrl}/manage-account/account-details/summary")
+    @paragraphMessageWithLink(message1 = Some(messages("btn.entitiesInsideOutsideUK.amend.p2")),
+        linkMessage = messages("btn.entitiesInsideOutsideUK.amend.p2.link"), message2 = Some(messages("btn.entitiesInsideOutsideUK.amend.p2.end")), linkUrl = s"${appConfig.pillar2FrontendUrl}/manage-account/account-details/summary")
 
 }

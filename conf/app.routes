@@ -32,7 +32,7 @@ GET         /asa/error/individual                                               
 GET         /asa/error/organisation                                               controllers.AgentController.onPageLoadOrganisationError
 GET         /asa/home                                                             controllers.ASAStubController.onPageLoad
 
-GET         /uk-tax-return                                                        controllers.uktr.UkTaxReturnStartController.onPageLoad
+GET         /uk-tax-return                                                        controllers.uktr.UKTaxReturnStartController.onPageLoad
 GET         /below-threshold-notification/start                                   controllers.btn.BTNBeforeStartController.onPageLoad(mode: Mode = NormalMode)
 
 GET         /below-threshold-notification/accounting-period                       controllers.btn.BTNAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)

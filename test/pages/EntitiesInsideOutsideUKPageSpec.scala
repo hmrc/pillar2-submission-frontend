@@ -16,14 +16,14 @@
 
 package pages
 
-class EntitiesBothInUKAndOutsidePageSpec extends PageBehaviours {
+class EntitiesInsideOutsideUKPageSpec extends PageBehaviours {
 
-  "EntitiesBothInUKAndOutsidePage" - {
+  "EntitiesInsideOutsideUKPage" - {
 
-    beRetrievable[Boolean](EntitiesBothInUKAndOutsidePage)
+    beRetrievable[Boolean](EntitiesInsideOutsideUKPage)
 
-    beSettable[Boolean](EntitiesBothInUKAndOutsidePage)
+    beSettable[Boolean](EntitiesInsideOutsideUKPage)
 
-    beRemovable[Boolean](EntitiesBothInUKAndOutsidePage)
+    beRemovable[Boolean](EntitiesInsideOutsideUKPage)
   }
 }

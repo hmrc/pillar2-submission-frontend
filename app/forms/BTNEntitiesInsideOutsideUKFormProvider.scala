@@ -25,6 +25,6 @@ class BTNEntitiesInsideOutsideUKFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("btn.btnEntitiesInsideOutsideUK.error.required.ukAndOther")
+      "value" -> boolean("btn.entitiesInsideOutsideUK.error.required.ukAndOther")
     )
 }

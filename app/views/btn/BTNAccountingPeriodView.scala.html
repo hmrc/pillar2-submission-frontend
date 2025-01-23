@@ -30,14 +30,14 @@
 
 @(list: SummaryList, mode: Mode, changeAccountingPeriodUrl: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
-    pageTitle    = titleNoForm(messages("btn.btnAccountingPeriod.title"))
+    pageTitle    = titleNoForm(messages("btn.accountingPeriod.title"))
 ) {
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
-        @heading(messages("btn.btnAccountingPeriod.header"), classes = "govuk-heading-l")
-        @p(messages("btn.btnAccountingPeriod.p1"))
+        @heading(messages("btn.accountingPeriod.header"), classes = "govuk-heading-l")
+        @p(messages("btn.accountingPeriod.p1"))
         @govukSummaryList(list)
-        @paragraphMessageWithLink(linkMessage = messages("btn.btnAccountingPeriod.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.btnAccountingPeriod.p2.before")), message2 = Some(messages("btn.btnAccountingPeriod.p2")))
+        @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )

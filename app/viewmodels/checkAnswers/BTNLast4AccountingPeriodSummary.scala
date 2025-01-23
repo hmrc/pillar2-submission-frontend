@@ -29,7 +29,7 @@ object BTNLast4AccountingPeriodSummary {
       val value = if (answer) "site.yes" else "site.no"
 
       SummaryListRowViewModel(
-        key = "btn.btnLast4AccountingPeriods.checkYourAnswersLabel",
+        key = "btn.last4AccountingPeriods.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.btn.routes.BTNLast4AccountingPeriodsController.onPageLoad(CheckMode).url)

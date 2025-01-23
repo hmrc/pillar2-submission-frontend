@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes._
-import pages.{BTNLast4AccountingPeriodsPage, BTNNext2AccountingPeriodsPage, EntitiesBothInUKAndOutsidePage}
+import pages.{BTNLast4AccountingPeriodsPage, BTNNext2AccountingPeriodsPage, EntitiesInsideOutsideUKPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,7 +48,7 @@ class CheckYourAnswersController @Inject() (
     sessionRepository.get(request.userId).map { maybeUserAnswers =>
       (for {
         userAnswers                   <- maybeUserAnswers
-        entitiesInOutPage             <- userAnswers.get(EntitiesBothInUKAndOutsidePage)
+        entitiesInOutPage             <- userAnswers.get(EntitiesInsideOutsideUKPage)
         revenuePreviousTwoPeriodsPage <- userAnswers.get(BTNLast4AccountingPeriodsPage)
         revenueNextTwoPeriodsPage     <- userAnswers.get(BTNNext2AccountingPeriodsPage)
       } yield (entitiesInOutPage, revenuePreviousTwoPeriodsPage, revenueNextTwoPeriodsPage) match {

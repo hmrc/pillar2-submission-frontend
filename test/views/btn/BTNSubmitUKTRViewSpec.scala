@@ -30,22 +30,22 @@ class BTNSubmitUKTRViewSpec extends ViewSpecBase {
   "BTNSubmitUKTRView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("btn.btnSubmitUKTR.title"))
+      view.getElementsByTag("title").text must include(messages("btn.submitUKTR.title"))
     }
 
     "have a h1 heading" in {
-      view.getElementsByTag("h1").text must include(messages("btn.btnSubmitUKTR.heading"))
+      view.getElementsByTag("h1").text must include(messages("btn.submitUKTR.heading"))
     }
 
     "have paragraphs" in {
-      view.getElementsByClass("govuk-body").text must include(messages("btn.btnSubmitUKTR.p1"))
-      view.getElementsByClass("govuk-body").text must include(messages("btn.btnSubmitUKTR.p2"))
+      view.getElementsByClass("govuk-body").text must include(messages("btn.submitUKTR.p1"))
+      view.getElementsByClass("govuk-body").text must include(messages("btn.submitUKTR.p2"))
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.attr("href") must include(controllers.uktr.routes.UkTaxReturnStartController.onPageLoad.url)
-      link.text         must include(messages("btn.btnSubmitUKTR.link"))
+      link.attr("href") must include(controllers.uktr.routes.UKTaxReturnStartController.onPageLoad.url)
+      link.text         must include(messages("btn.submitUKTR.link"))
     }
   }
 }

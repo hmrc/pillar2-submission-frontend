@@ -35,13 +35,13 @@ class BTNNavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
 
-      "go from EntitiesBothInUKAndOutsidePage period page to BTNIn2AccountingPeriod page " in {
-        navigator.nextPage(EntitiesBothInUKAndOutsidePage, NormalMode, emptyUserAnswers.setOrException(EntitiesBothInUKAndOutsidePage, true)) mustBe
+      "go from EntitiesInsideOutsideUKPage period page to BTNIn2AccountingPeriod page " in {
+        navigator.nextPage(EntitiesInsideOutsideUKPage, NormalMode, emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, true)) mustBe
           controllers.btn.routes.BTNLast4AccountingPeriodsController.onPageLoad(NormalMode)
       }
 
-      "go from EntitiesBothInUKAndOutsidePage period page to amend group details page when answer is No" in {
-        navigator.nextPage(EntitiesBothInUKAndOutsidePage, NormalMode, emptyUserAnswers.setOrException(EntitiesBothInUKAndOutsidePage, false)) mustBe
+      "go from EntitiesInsideOutsideUKPage period page to amend group details page when answer is No" in {
+        navigator.nextPage(EntitiesInsideOutsideUKPage, NormalMode, emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, false)) mustBe
           controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails()
       }
 

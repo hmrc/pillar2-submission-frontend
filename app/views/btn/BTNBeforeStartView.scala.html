@@ -29,26 +29,26 @@
 @(mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("btn.BtnBeforeStart.title"))
+    pageTitle    = titleNoForm(messages("btn.beforeStart.title"))
 ) {
-    @heading(messages("btn.BtnBeforeStart.header"), classes = "govuk-heading-l")
-    @p(messages("btn.BtnBeforeStart.p1"))
-    @h2(messages("btn.BtnBeforeStart.header2"), size = "m")
-    @p(messages("btn.BtnBeforeStart.p2"))
+    @heading(messages("btn.beforeStart.header"), classes = "govuk-heading-l")
+    @p(messages("btn.beforeStart.p1"))
+    @h2(messages("btn.beforeStart.header2"), size = "m")
+    @p(messages("btn.beforeStart.p2"))
 
     @bulletList(items = List(
-        Html(messages("btn.BtnBeforeStart.li1")),
-        Html(messages("btn.BtnBeforeStart.li2")),
+        Html(messages("btn.beforeStart.li1")),
+        Html(messages("btn.beforeStart.li2")),
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses=Some("govuk-!-margin-bottom-3"))
 
-    @h2(messages("btn.BtnBeforeStart.header3"), size = "m")
-    @p(messages("btn.BtnBeforeStart.p3"))
+    @h2(messages("btn.beforeStart.header3"), size = "m")
+    @p(messages("btn.beforeStart.p3"))
 
     @bulletList(items = List(
-        Html(messages("btn.BtnBeforeStart.li3")),
-        Html(messages("btn.BtnBeforeStart.li4")),
-        Html(messages("btn.BtnBeforeStart.li5")),
-        Html(messages("btn.BtnBeforeStart.li6")),
+        Html(messages("btn.beforeStart.li3")),
+        Html(messages("btn.beforeStart.li4")),
+        Html(messages("btn.beforeStart.li5")),
+        Html(messages("btn.beforeStart.li6")),
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses=Some("govuk-!-margin-bottom-3"))
 
     @govukButton(

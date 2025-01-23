@@ -30,9 +30,9 @@ import views.html.btn.BTNAccountingPeriodView
 class BTNAccountingPeriodViewSpec extends ViewSpecBase {
   val list: SummaryList = SummaryListViewModel(
     rows = Seq(
-      SummaryListRowViewModel("btn.btnAccountingPeriod.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2024")))),
+      SummaryListRowViewModel("btn.accountingPeriod.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2024")))),
       SummaryListRowViewModel(
-        "btn.btnAccountingPeriod.endAccountDate",
+        "btn.accountingPeriod.endAccountDate",
         value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2025").toString))
       )
     )

@@ -19,9 +19,9 @@ package forms
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class EntitiesBothInUKAndOutsideFormProviderSpec extends BooleanFieldBehaviours {
+class EntitiesInsideOutsideUKFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "btn.btnEntitiesInsideOutsideUK.error.required.ukAndOther"
+  val requiredKey = "btn.entitiesInsideOutsideUK.error.required.ukAndOther"
   val invalidKey  = "error.boolean"
 
   val form = new BTNEntitiesInsideOutsideUKFormProvider()()

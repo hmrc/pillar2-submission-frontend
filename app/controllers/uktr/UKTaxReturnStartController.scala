@@ -26,18 +26,18 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.uktr.UkTaxReturnStartView
+import views.html.uktr.UKTaxReturnStartView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
-class UkTaxReturnStartController @Inject() (
+class UKTaxReturnStartController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   subscriptionService:                    SubscriptionService,
   sessionRepository:                      SessionRepository,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
-  view:                                   UkTaxReturnStartView,
+  view:                                   UKTaxReturnStartView,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController

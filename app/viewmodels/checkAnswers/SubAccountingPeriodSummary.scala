@@ -34,11 +34,11 @@ object SubAccountingPeriodSummary {
 
     Some(
       SummaryListRowViewModel(
-        key = "btn.btnAccountingPeriod.checkYourAnswersLabel",
+        key = "btn.accountingPeriod.checkYourAnswersLabel",
         value = ValueViewModel(
           content = HtmlContent(
-            s"""${messages("btn.btnAccountingPeriod.checkYourAnswersPrefix.startDate")} $startDate<br>
-                 |${messages("btn.btnAccountingPeriod.checkYourAnswersPrefix.endDate")} $endDate
+            s"""${messages("btn.accountingPeriod.checkYourAnswersPrefix.startDate")} $startDate<br>
+                 |${messages("btn.accountingPeriod.checkYourAnswersPrefix.endDate")} $endDate
                  |""".stripMargin
           )
         )

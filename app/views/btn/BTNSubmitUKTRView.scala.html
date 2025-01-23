@@ -28,16 +28,16 @@
 
 
 @layout(
-    pageTitle = titleNoForm(messages("btn.btnSubmitUKTR.title")),
+    pageTitle = titleNoForm(messages("btn.submitUKTR.title")),
     showSignOut = false,
     authorised = false
 ) {
-    @heading(messages("btn.btnSubmitUKTR.heading"), "govuk-heading-l")
-    @paragraphBody(messages("btn.btnSubmitUKTR.p1"))
-    @paragraphBody(messages("btn.btnSubmitUKTR.p2"))
+    @heading(messages("btn.submitUKTR.heading"), "govuk-heading-l")
+    @paragraphBody(messages("btn.submitUKTR.p1"))
+    @paragraphBody(messages("btn.submitUKTR.p2"))
     @paragraph(link(
-        text = messages("btn.btnSubmitUKTR.link"),
-        call = controllers.uktr.routes.UkTaxReturnStartController.onPageLoad,
+        text = messages("btn.submitUKTR.link"),
+        call = controllers.uktr.routes.UKTaxReturnStartController.onPageLoad,
         fullStop = false
     ))
 }

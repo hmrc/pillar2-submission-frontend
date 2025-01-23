@@ -22,7 +22,7 @@ import models.{MneOrDomestic, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.EntitiesBothInUKAndOutsidePage
+import pages.EntitiesInsideOutsideUKPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -40,16 +40,16 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
   val formProvider = new BTNEntitiesInsideOutsideUKFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val entitiesBothInUKAndOutsideRoute: String = controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(NormalMode).url
+  lazy val entitiesInsideOutsideUKRoute: String = controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(NormalMode).url
 
-  "EntitiesBothInUKAndOutside Controller" when {
+  "EntitiesBothInUKAndOutsideController" when {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, entitiesBothInUKAndOutsideRoute)
+        val request = FakeRequest(GET, entitiesInsideOutsideUKRoute)
 
         val result = route(application, request).value
 
@@ -62,12 +62,12 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(EntitiesBothInUKAndOutsidePage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(EntitiesInsideOutsideUKPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, entitiesBothInUKAndOutsideRoute)
+        val request = FakeRequest(GET, entitiesInsideOutsideUKRoute)
 
         val view = application.injector.instanceOf[BTNEntitiesInsideOutsideUKView]
 
@@ -93,7 +93,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
 
       running(application) {
         val request =
-          FakeRequest(POST, entitiesBothInUKAndOutsideRoute)
+          FakeRequest(POST, entitiesInsideOutsideUKRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -109,7 +109,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
 
       running(application) {
         val request =
-          FakeRequest(POST, entitiesBothInUKAndOutsideRoute)
+          FakeRequest(POST, entitiesInsideOutsideUKRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))

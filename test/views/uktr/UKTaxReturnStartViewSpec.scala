@@ -19,11 +19,11 @@ package views.uktr
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import utils.ViewSpecBase
-import views.html.uktr.UkTaxReturnStartView
+import views.html.uktr.UKTaxReturnStartView
 
-class UkTaxReturnStartViewSpec extends ViewSpecBase {
+class UKTaxReturnStartViewSpec extends ViewSpecBase {
 
-  val page: UkTaxReturnStartView = inject[UkTaxReturnStartView]
+  val page: UKTaxReturnStartView = inject[UKTaxReturnStartView]
 
   "UK Tax Return Start View with inactiveStatus false" should {
 

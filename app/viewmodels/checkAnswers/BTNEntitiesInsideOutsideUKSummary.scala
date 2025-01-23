@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 import models.{CheckMode, UserAnswers}
-import pages.EntitiesBothInUKAndOutsidePage
+import pages.EntitiesInsideOutsideUKPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -25,15 +25,15 @@ import viewmodels.implicits._
 object BTNEntitiesInsideOutsideUKSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(EntitiesBothInUKAndOutsidePage).map { answer =>
+    answers.get(EntitiesInsideOutsideUKPage).map { answer =>
       val value = if (answer) "site.yes" else "site.no"
 
       SummaryListRowViewModel(
-        key = "btn.btnEntitiesInsideOutsideUK.checkYourAnswersLabel",
+        key = "btn.entitiesInsideOutsideUK.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("btn.btnEntitiesInsideOutsideUK.change.hidden"))
+            .withVisuallyHiddenText(messages("btn.entitiesInsideOutsideUK.change.hidden"))
         )
       )
     }

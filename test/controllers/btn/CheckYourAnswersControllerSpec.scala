@@ -59,7 +59,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
 
       "must redirect to IndexController on disqualifying answers" in {
-        val emptyUa = validBTNCyaUa.setOrException(EntitiesBothInUKAndOutsidePage, false)
+        val emptyUa = validBTNCyaUa.setOrException(EntitiesInsideOutsideUKPage, false)
 
         val result = route(application, request(emptyUa)).value
 

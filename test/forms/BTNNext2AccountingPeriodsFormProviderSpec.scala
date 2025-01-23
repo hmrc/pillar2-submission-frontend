@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class BTNNext2AccountingPeriodsFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "btn.btnNext2AccountingPeriods.error.required"
+  val requiredKey = "btn.next2AccountingPeriods.error.required"
   val invalidKey  = "error.boolean"
 
   val form = new BTNNext2AccountingPeriodsFormProvider()()

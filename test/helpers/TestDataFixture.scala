@@ -27,7 +27,7 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
 
   lazy val validBTNCyaUa: UserAnswers = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
-    .setOrException(EntitiesBothInUKAndOutsidePage, true)
+    .setOrException(EntitiesInsideOutsideUKPage, true)
     .setOrException(BTNLast4AccountingPeriodsPage, false)
     .setOrException(BTNNext2AccountingPeriodsPage, false)
 

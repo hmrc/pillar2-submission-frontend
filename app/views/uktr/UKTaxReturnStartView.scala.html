@@ -29,23 +29,23 @@
 @(inactiveStatus: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("uktr.UkTaxReturnStart.title"))
+    pageTitle    = titleNoForm(messages("uktr.ukTaxReturnStart.title"))
 ) {
     @if(inactiveStatus) {@inactiveStatusBanner()}
-    @heading(messages("uktr.UkTaxReturnStart.header"), classes = "govuk-heading-l")
-    @p(messages("uktr.UkTaxReturnStart.p1"))
-    @p(messages("uktr.UkTaxReturnStart.p2"))
-    @p(messages("uktr.UkTaxReturnStart.p3"))
-    @h2(messages("uktr.UkTaxReturnStart.subheading"), size = "m")
+    @heading(messages("uktr.ukTaxReturnStart.header"), classes = "govuk-heading-l")
+    @p(messages("uktr.ukTaxReturnStart.p1"))
+    @p(messages("uktr.ukTaxReturnStart.p2"))
+    @p(messages("uktr.ukTaxReturnStart.p3"))
+    @h2(messages("uktr.ukTaxReturnStart.subheading"), size = "m")
     @pWithLink(
-        message1 = Some(messages("uktr.UkTaxReturnStart.p4")),
-        linkMessage = messages("uktr.UkTaxReturnStart.p4.link"),
+        message1 = Some(messages("uktr.ukTaxReturnStart.p4")),
+        linkMessage = messages("uktr.ukTaxReturnStart.p4.link"),
         linkUrl = appConfig.changeAccountingPeriodUrl,
         linkFullStop = true
     )
-    @p(messages("uktr.UkTaxReturnStart.p5"))
+    @p(messages("uktr.ukTaxReturnStart.p5"))
     @pWithLink(
-        linkMessage = messages("uktr.UkTaxReturnStart.p6.link"),
+        linkMessage = messages("uktr.ukTaxReturnStart.p6.link"),
         linkUrl = appConfig.ukTaxReturnSupplierListUrl
     )
 }

@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.BTNEntitiesInUKOnlyFormProvider
 import models.Mode
 import navigation.BTNNavigator
-import pages.EntitiesBothInUKAndOutsidePage
+import pages.EntitiesInsideOutsideUKPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -47,7 +47,7 @@ class BTNEntitiesInUKOnlyController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val form = formProvider()
-    val preparedForm = request.userAnswers.get(EntitiesBothInUKAndOutsidePage) match {
+    val preparedForm = request.userAnswers.get(EntitiesInsideOutsideUKPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -63,9 +63,9 @@ class BTNEntitiesInUKOnlyController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EntitiesBothInUKAndOutsidePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(EntitiesInsideOutsideUKPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(EntitiesBothInUKAndOutsidePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(EntitiesInsideOutsideUKPage, mode, updatedAnswers))
       )
   }
 }
