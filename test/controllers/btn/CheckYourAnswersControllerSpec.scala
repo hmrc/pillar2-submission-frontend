@@ -40,7 +40,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
     .build()
 
-  def request(ua: UserAnswers = validBtnCyaUa): FakeRequest[AnyContentAsEmpty.type] = {
+  def request(ua: UserAnswers = validBTNCyaUa): FakeRequest[AnyContentAsEmpty.type] = {
     when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
     FakeRequest(GET, btn.routes.CheckYourAnswersController.onPageLoad.url)
   }
@@ -52,7 +52,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     ".onPageLoad" should {
 
       "must return OK and the correct view for a GET" in {
-
         val result = route(application, request()).value
 
         status(result) mustEqual OK
@@ -60,8 +59,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
 
       "must redirect to IndexController on disqualifying answers" in {
-
-        val emptyUa = validBtnCyaUa.setOrException(EntitiesBothInUKAndOutsidePage, false)
+        val emptyUa = validBTNCyaUa.setOrException(EntitiesBothInUKAndOutsidePage, false)
 
         val result = route(application, request(emptyUa)).value
 
@@ -71,7 +69,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
 
       "must redirect to JourneyRecoveryController on retrieval of answers failure" in {
-
         val application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData)).build()
 
         val result = route(application, request()).value
@@ -90,7 +87,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BtnConfirmationController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNConfirmationController.onPageLoad.url
       }
     }
   }

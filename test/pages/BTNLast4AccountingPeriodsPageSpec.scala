@@ -14,32 +14,16 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+class BTNLast4AccountingPeriodsPageSpec extends PageBehaviours {
 
-class EntitiesInUKOnlyFormProviderSpec extends BooleanFieldBehaviours {
+  "BTNLast4AccountingPeriodsPage" - {
 
-  val requiredKey = "btn.btnEntitiesInsideOutsideUK.error.required.uk"
-  val invalidKey  = "error.boolean"
+    beRetrievable[Boolean](BTNLast4AccountingPeriodsPage)
 
-  val form = new BTNEntitiesInUKOnlyFormProvider()()
+    beSettable[Boolean](BTNLast4AccountingPeriodsPage)
 
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+    beRemovable[Boolean](BTNLast4AccountingPeriodsPage)
   }
 }
