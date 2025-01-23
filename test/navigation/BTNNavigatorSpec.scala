@@ -80,6 +80,13 @@ class BTNNavigatorSpec extends SpecBase {
         ) mustBe controllers.btn.routes.CheckYourAnswersController.onPageLoad
       }
 
+      "redirect to JourneyRecoveryController when user answers are missing" in {
+        navigator.nextPage(
+          EntitiesBothInUKAndOutsidePage,
+          NormalMode,
+          emptyUserAnswers
+        ) mustBe controllers.routes.JourneyRecoveryController.onPageLoad()
+      }
     }
 
     "in Check mode" when {
