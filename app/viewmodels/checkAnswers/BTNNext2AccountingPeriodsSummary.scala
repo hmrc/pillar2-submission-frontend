@@ -29,11 +29,11 @@ object BTNNext2AccountingPeriodsSummary {
       val value = if (answer) "site.yes" else "site.no"
 
       SummaryListRowViewModel(
-        key = "btnNext2AccountingPeriods.checkYourAnswersLabel",
+        key = "btn.btnNext2AccountingPeriods.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.btn.routes.BTNNext2AccountingPeriodsController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("btnNext2AccountingPeriods.change.hidden"))
+            .withVisuallyHiddenText(messages("btn.btnNext2AccountingPeriods.change.hidden"))
         )
       )
     }

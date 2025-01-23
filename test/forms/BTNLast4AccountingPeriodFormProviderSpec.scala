@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class BTNLast4AccountingPeriodFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "btnLast4AccountingPeriods.error.required"
+  val requiredKey = "btn.btnLast4AccountingPeriods.error.required"
   val invalidKey  = "error.boolean"
 
   val form = new BTNLast4AccountingPeriodFormProvider()()

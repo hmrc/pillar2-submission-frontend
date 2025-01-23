@@ -25,6 +25,6 @@ class BTNNext2AccountingPeriodsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("btnNext2AccountingPeriods.error.required")
+      "value" -> boolean("btn.btnNext2AccountingPeriods.error.required")
     )
 }

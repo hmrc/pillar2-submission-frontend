@@ -27,7 +27,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("btnLast4AccountingPeriods.title"))) {
+@layout(pageTitle = title(form, messages("btn.btnLast4AccountingPeriods.title"))) {
 
     @formHelper(action = controllers.btn.routes.BTNLast4AccountingPeriodsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -38,7 +38,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("btnLast4AccountingPeriods.heading")).asPageHeading(Large)
+                legend = LegendViewModel(messages("btn.btnLast4AccountingPeriods.heading")).asPageHeading(Large)
             )
         )
 

@@ -214,17 +214,17 @@ btn.btnEntitiesInsideOutsideUK.amend.p2 = If this has changed, you must
 btn.btnEntitiesInsideOutsideUK.amend.p2.link = amend your group’s details
 btn.btnEntitiesInsideOutsideUK.amend.p2.end = to update the location of your entities before submitting a BTN.
 
-btnLast4AccountingPeriods.title = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-btnLast4AccountingPeriods.heading = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-btnLast4AccountingPeriods.checkYourAnswersLabel = Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-btnLast4AccountingPeriods.error.required = Select yes if the group has consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
-btnLast4AccountingPeriods.change.hidden = Does the group have consolidated revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+btn.btnLast4AccountingPeriods.title = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+btn.btnLast4AccountingPeriods.heading = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+btn.btnLast4AccountingPeriods.checkYourAnswersLabel = Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+btn.btnLast4AccountingPeriods.error.required = Select yes if the group has consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
+btn.btnLast4AccountingPeriods.change.hidden = Does the group have consolidated revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 
-btnNext2AccountingPeriods.title = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
-btnNext2AccountingPeriods.heading = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
-btnNext2AccountingPeriods.checkYourAnswersLabel = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
-btnNext2AccountingPeriods.error.required = Select yes if the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
-btnNext2AccountingPeriods.change.hidden = Is the group expected to make consolidated annual revenues of €750 million or more in the next 2 accounting periods?
+btn.btnNext2AccountingPeriods.title = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+btn.btnNext2AccountingPeriods.heading = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+btn.btnNext2AccountingPeriods.checkYourAnswersLabel = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+btn.btnNext2AccountingPeriods.error.required = Select yes if the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
+btn.btnNext2AccountingPeriods.change.hidden = Is the group expected to make consolidated annual revenues of €750 million or more in the next 2 accounting periods?
 
 btn.btnSubmitUKTR.title = Based on your answer, your group must submit a UK Tax Return
 btn.btnSubmitUKTR.heading = Based on your answer, your group must submit a UK Tax Return
