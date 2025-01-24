@@ -16,7 +16,7 @@
 
 package pages
 
-import generators.Generators
+import helpers.generators.Generators
 import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}

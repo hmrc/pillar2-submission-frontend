@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package form
+package forms
 
+import form.AgentClientPillar2ReferenceFormProvider
 import forms.behaviours.BooleanFieldBehaviours
-import generators.Generators
-import play.api.data.Form
-import play.api.data.FormError
+import helpers.generators.Generators
+import play.api.data.{Form, FormError}
 import utils.{Constants, Validation}
 
 class AgentClientPillar2ReferenceFormProviderSpec extends BooleanFieldBehaviours with Generators {

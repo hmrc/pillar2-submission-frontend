@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package generators
+package helpers.generators
 
 import org.scalacheck.Arbitrary
-import org.scalacheck.Arbitrary.arbitrary
-import pages.agent.AgentClientOrganisationNamePage
-import play.api.libs.json.{JsValue, Json}
+import pages.agent.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
 
-trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+trait PageGenerators {
 
-  implicit lazy val arbitraryAgentClientPillarOrgUserAnswersEntry: Arbitrary[(AgentClientOrganisationNamePage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[AgentClientOrganisationNamePage.type]
-        value <- arbitrary[String].map(Json.toJson(_))
-      } yield (page, value)
-    }
+  implicit lazy val arbitraryAgentClientOrganisationNamePage: Arbitrary[AgentClientOrganisationNamePage.type] =
+    Arbitrary(AgentClientOrganisationNamePage)
 
+  implicit lazy val arbitraryAgentClientPillar2ReferencePage: Arbitrary[AgentClientPillar2ReferencePage.type] =
+    Arbitrary(AgentClientPillar2ReferencePage)
 }

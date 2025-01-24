@@ -16,10 +16,10 @@
 
 package views.agent
 
+import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import utils.ViewSpecBase
 import views.html.agent.AgentClientConfirmDetailsView
 
 class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {

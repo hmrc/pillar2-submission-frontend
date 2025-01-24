@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package generators
+package helpers.generators
 
 import models.subscription.AccountingPeriod
 import org.scalacheck.Arbitrary._

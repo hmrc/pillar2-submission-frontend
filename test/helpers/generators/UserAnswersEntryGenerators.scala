@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package pages
+package helpers.generators
 
-class BTNLast4AccountingPeriodsPageSpec extends PageBehaviours {
+import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary.arbitrary
+import pages.agent.AgentClientOrganisationNamePage
+import play.api.libs.json.{JsValue, Json}
 
-  "BTNLast4AccountingPeriodsPage" - {
+trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
-    beRetrievable[Boolean](BTNLast4AccountingPeriodsPage)
+  implicit lazy val arbitraryAgentClientPillarOrgUserAnswersEntry: Arbitrary[(AgentClientOrganisationNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AgentClientOrganisationNamePage.type]
+        value <- arbitrary[String].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
-    beSettable[Boolean](BTNLast4AccountingPeriodsPage)
-
-    beRemovable[Boolean](BTNLast4AccountingPeriodsPage)
-  }
 }

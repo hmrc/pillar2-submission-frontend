@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package pages
+package pages.btn
+
+import pages.{EntitiesInsideOutsideUKPage, PageBehaviours}
 
 class EntitiesInsideOutsideUKPageSpec extends PageBehaviours {
 

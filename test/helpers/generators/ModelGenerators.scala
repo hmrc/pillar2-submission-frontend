@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-package generators
+package helpers.generators
 
-import org.scalacheck.Arbitrary
-import pages.agent.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
-
-trait PageGenerators {
-
-  implicit lazy val arbitraryAgentClientOrganisationNamePage: Arbitrary[AgentClientOrganisationNamePage.type] =
-    Arbitrary(AgentClientOrganisationNamePage)
-
-  implicit lazy val arbitraryAgentClientPillar2ReferencePage: Arbitrary[AgentClientPillar2ReferencePage.type] =
-    Arbitrary(AgentClientPillar2ReferencePage)
-}
+trait ModelGenerators {}

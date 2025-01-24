@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package pages.btn
 
-trait ModelGenerators {}
+import pages.{BTNLast4AccountingPeriodsPage, PageBehaviours}
+
+class BTNLast4AccountingPeriodsPageSpec extends PageBehaviours {
+
+  "BTNLast4AccountingPeriodsPage" - {
+
+    beRetrievable[Boolean](BTNLast4AccountingPeriodsPage)
+
+    beSettable[Boolean](BTNLast4AccountingPeriodsPage)
+
+    beRemovable[Boolean](BTNLast4AccountingPeriodsPage)
+  }
+}

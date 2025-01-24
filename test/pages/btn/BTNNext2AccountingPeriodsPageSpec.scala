@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package pages
+package pages.btn
+
+import pages.{BTNNext2AccountingPeriodsPage, PageBehaviours}
 
 class BTNNext2AccountingPeriodsPageSpec extends PageBehaviours {
 

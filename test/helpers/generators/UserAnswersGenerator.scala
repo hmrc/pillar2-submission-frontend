@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package generators
+package helpers.generators
 
 import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
