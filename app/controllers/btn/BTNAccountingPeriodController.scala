@@ -24,7 +24,6 @@ import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
-import repositories.SessionRepository
 import services.ObligationService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -38,11 +37,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BTNAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
-  getData:                                DataRetrievalAction,
-  sessionRepository:                      SessionRepository,
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
-  requireData:                            DataRequiredAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
+  btnStatus:                              BTNStatusAction,
   obligationService:                      ObligationService,
   dateHelper:                             ViewHelpers,
   view:                                   BTNAccountingPeriodView,
@@ -52,36 +49,37 @@ class BTNAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
-    val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
-    val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
-    val accountStatus             = request.subscriptionLocalData.accountStatus.forall(_.inactive)
-    val accountingPeriods = {
-      val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
-      val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
+      val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
+      val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
+      val accountStatus             = request.subscriptionLocalData.accountStatus.forall(_.inactive)
+      val accountingPeriods = {
+        val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
+        val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
 
-      SummaryListViewModel(
-        rows = Seq(
-          SummaryListRowViewModel(
-            key = "btn.returnSubmitted.startAccountDate",
-            value = ValueViewModel(HtmlContent(startDate))
-          ),
-          SummaryListRowViewModel(
-            key = "btn.returnSubmitted.endAccountDate",
-            value = ValueViewModel(HtmlContent(endDate))
+        SummaryListViewModel(
+          rows = Seq(
+            SummaryListRowViewModel(
+              key = "btn.returnSubmitted.startAccountDate",
+              value = ValueViewModel(HtmlContent(startDate))
+            ),
+            SummaryListRowViewModel(
+              key = "btn.returnSubmitted.endAccountDate",
+              value = ValueViewModel(HtmlContent(endDate))
+            )
           )
         )
-      )
-    }
-
-    obligationService
-      .handleObligation(request.subscriptionLocalData.plrReference, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
-      .map {
-        case Right(Fulfilled) if !accountStatus => Ok(viewReturnSubmitted(accountingPeriods))
-        case Right(Open) if !accountStatus      => Ok(view(accountingPeriods, mode, changeAccountingPeriodUrl))
-        case _                                  => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
       }
-  }
+
+      obligationService
+        .handleObligation(request.subscriptionLocalData.plrReference, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
+        .map {
+          case Right(Fulfilled) if !accountStatus => Ok(viewReturnSubmitted(accountingPeriods))
+          case Right(Open) if !accountStatus      => Ok(view(accountingPeriods, mode, changeAccountingPeriodUrl))
+          case _                                  => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+        }
+    }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData).async { implicit request =>
     request.maybeSubscriptionLocalData

@@ -63,10 +63,11 @@ GET         /below-threshold-notification/future-annual-revenues                
 POST        /below-threshold-notification/future-annual-revenues                  controllers.btn.BTNNext2AccountingPeriodsController.onSubmit(mode: Mode = NormalMode)
 GET         /below-threshold-notification/change-future-annual-revenues           controllers.btn.BTNNext2AccountingPeriodsController.onPageLoad(mode: Mode = CheckMode)
 POST        /below-threshold-notification/change-future-annual-revenues           controllers.btn.BTNNext2AccountingPeriodsController.onSubmit(mode: Mode = CheckMode)
-GET         /below-threshold-notification/nil-return                              controllers.btn.BTNNext2AccountingPeriodsController.onPageLoadNilReturn
+GET         /below-threshold-notification/nil-return                              controllers.btn.BTNNext2AccountingPeriodsController.submitUKTRKnockback
 
 GET         /below-threshold-notification/submit                                  controllers.btn.CheckYourAnswersController.onPageLoad
 POST        /below-threshold-notification/submit                                  controllers.btn.CheckYourAnswersController.onSubmit
+GET         /below-threshold-notification/cannot-return                           controllers.btn.CheckYourAnswersController.cannotReturnKnockback
 
 GET         /below-threshold-notification/confirmation                            controllers.btn.BTNConfirmationController.onPageLoad
 GET         /below-threshold-notification/confirmation/download-pdf               controllers.btn.BTNConfirmationController.onDownloadConfirmation

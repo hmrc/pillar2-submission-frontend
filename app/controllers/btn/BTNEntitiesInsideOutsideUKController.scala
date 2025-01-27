@@ -39,6 +39,7 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
+  btnStatus:                              BTNStatusAction,
   formProvider:                           BTNEntitiesInsideOutsideUKFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNEntitiesInsideOutsideUKView,
@@ -47,7 +48,7 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen btnStatus.dataRequest) { implicit request =>
     val form = formProvider()
     val preparedForm = request.userAnswers.get(EntitiesInsideOutsideUKPage) match {
       case None        => form

@@ -17,6 +17,7 @@
 package helpers
 
 import models.UserAnswers
+import models.btn.BTNStatus
 import pages._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -24,6 +25,8 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
 trait TestDataFixture extends SubscriptionLocalDataFixture {
+
+  lazy val submittedBTNRecord: UserAnswers = validBTNCyaUa.set(BTNStatus, BTNStatus.submitted).get
 
   lazy val validBTNCyaUa: UserAnswers = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, accountingPeriod)

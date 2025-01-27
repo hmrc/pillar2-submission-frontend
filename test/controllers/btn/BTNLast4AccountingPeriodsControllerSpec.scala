@@ -18,6 +18,7 @@ package controllers.btn
 
 import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
+import controllers.btn.routes._
 import forms.BTNLast4AccountingPeriodFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -42,9 +43,8 @@ class BTNLast4AccountingPeriodsControllerSpec extends SpecBase with MockitoSugar
   val formProvider = new BTNLast4AccountingPeriodFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val btnLast4AccountingPeriodsRoute: String =
-    controllers.btn.routes.BTNLast4AccountingPeriodsController.onPageLoad(NormalMode).url
-  lazy val thresholdMetRoute: String = controllers.btn.routes.BTNLast4AccountingPeriodsController.onPageLoadThresholdMet.url
+  lazy val btnLast4AccountingPeriodsRoute: String = BTNLast4AccountingPeriodsController.onPageLoad(NormalMode).url
+  lazy val thresholdMetRoute:              String = BTNLast4AccountingPeriodsController.onPageLoadThresholdMet.url
 
   private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
@@ -162,6 +162,23 @@ class BTNLast4AccountingPeriodsControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual thresholdMetRoute
+      }
+    }
+
+    "must redirect to a knockback page when a BTN is submitted" in {
+      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(submittedBTNRecord))
+
+      val application =
+        applicationBuilder()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, btnLast4AccountingPeriodsRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual CheckYourAnswersController.cannotReturnKnockback.url
       }
     }
 

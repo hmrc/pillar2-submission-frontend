@@ -39,17 +39,18 @@ class BTNNext2AccountingPeriodsController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
+  btnStatus:                              BTNStatusAction,
   formProvider:                           BTNNext2AccountingPeriodsFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNNext2AccountingPeriodsView,
-  nilReturnView:                          BTNSubmitUKTRView
+  submitUKTRView:                         BTNSubmitUKTRView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen btnStatus.dataRequest) { implicit request =>
     val preparedForm = request.userAnswers.get(BTNNext2AccountingPeriodsPage) match {
       case None        => form
       case Some(value) => form.fill(value)
@@ -71,5 +72,5 @@ class BTNNext2AccountingPeriodsController @Inject() (
       )
   }
 
-  def onPageLoadNilReturn: Action[AnyContent] = identify(implicit request => Ok(nilReturnView()))
+  def submitUKTRKnockback: Action[AnyContent] = identify(implicit request => Ok(submitUKTRView()))
 }

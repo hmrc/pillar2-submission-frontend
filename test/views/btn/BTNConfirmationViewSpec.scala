@@ -35,6 +35,10 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       view.getElementsByTag("title").text must include("Below-Threshold Notification successful")
     }
 
+    "have no back link" in {
+      view.getElementsByClass("govuk-back-link").size mustBe 0
+    }
+
     "have a h1 heading" in {
       view.getElementsByTag("h1").text must include("Below-Threshold Notification successful")
     }

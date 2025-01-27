@@ -17,12 +17,14 @@
 package controllers.btn
 
 import base.SpecBase
+import controllers.btn.routes._
 import forms.BTNNext2AccountingPeriodsFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.BTNNext2AccountingPeriodsPage
+import play.api.Application
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -36,19 +38,15 @@ import scala.concurrent.Future
 class BTNNext2AccountingPeriodsControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute: Call = Call("GET", "/foo")
+  def application(implicit userAnswers: UserAnswers = emptyUserAnswers): Application =
+    applicationBuilder(Some(userAnswers)).build()
 
   val formProvider = new BTNNext2AccountingPeriodsFormProvider()
-  val form: Form[Boolean] = formProvider()
-
-  lazy val btnNext2AccountingPeriodsRoute: String =
-    controllers.btn.routes.BTNNext2AccountingPeriodsController.onPageLoad(NormalMode).url
+  val form:                                Form[Boolean] = formProvider()
+  lazy val btnNext2AccountingPeriodsRoute: String        = BTNNext2AccountingPeriodsController.onPageLoad(NormalMode).url
 
   "BTNNext2AccountingPeriodsController" when {
-
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
       running(application) {
         val request = FakeRequest(GET, btnNext2AccountingPeriodsRoute)
 
@@ -62,15 +60,11 @@ class BTNNext2AccountingPeriodsControllerSpec extends SpecBase with MockitoSugar
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(BTNNext2AccountingPeriodsPage, true).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      implicit val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(BTNNext2AccountingPeriodsPage, true).success.value
 
       running(application) {
         val request = FakeRequest(GET, btnNext2AccountingPeriodsRoute)
-
-        val view = application.injector.instanceOf[BTNNext2AccountingPeriodsView]
+        val view    = application.injector.instanceOf[BTNNext2AccountingPeriodsView]
 
         val result = route(application, request).value
 
@@ -80,17 +74,22 @@ class BTNNext2AccountingPeriodsControllerSpec extends SpecBase with MockitoSugar
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      running(application) {
+        val request =
+          FakeRequest(POST, btnNext2AccountingPeriodsRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual CheckYourAnswersController.onPageLoad.url
+      }
+    }
+
+    "must redirect to a knockback page when the answer is true" in {
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
 
       running(application) {
         val request =
@@ -100,23 +99,34 @@ class BTNNext2AccountingPeriodsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual BTNNext2AccountingPeriodsController.submitUKTRKnockback.url
+      }
+    }
 
-        redirectLocation(result).value mustEqual controllers.btn.routes.BTNNext2AccountingPeriodsController.onPageLoadNilReturn.url
+    "must redirect to a knockback page when a BTN is submitted" in {
+      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(submittedBTNRecord))
+
+      val application = applicationBuilder()
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, btnNext2AccountingPeriodsRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual CheckYourAnswersController.cannotReturnKnockback.url
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
       running(application) {
         val request =
           FakeRequest(POST, btnNext2AccountingPeriodsRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[BTNNext2AccountingPeriodsView]
+        val view      = application.injector.instanceOf[BTNNext2AccountingPeriodsView]
 
         val result = route(application, request).value
 

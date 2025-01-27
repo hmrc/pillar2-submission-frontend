@@ -35,11 +35,11 @@ class BTNNavigator @Inject() {
   private def booleanNavigator(page: QuestionPage[Boolean], mode: Mode, userAnswers: UserAnswers): Call = {
     val (yesRoute, noRoute) = page match {
       case EntitiesInsideOutsideUKPage =>
-        (BTNLast4AccountingPeriodsController.onPageLoad(mode), BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails)
+        (BTNLast4AccountingPeriodsController.onPageLoad(mode), BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails())
       case BTNLast4AccountingPeriodsPage =>
         (BTNLast4AccountingPeriodsController.onPageLoadThresholdMet, BTNNext2AccountingPeriodsController.onPageLoad(mode))
       case BTNNext2AccountingPeriodsPage =>
-        (BTNNext2AccountingPeriodsController.onPageLoadNilReturn, CheckYourAnswersController.onPageLoad)
+        (BTNNext2AccountingPeriodsController.submitUKTRKnockback, CheckYourAnswersController.onPageLoad)
       case _ => (IndexController.onPageLoad, IndexController.onPageLoad)
     }
 

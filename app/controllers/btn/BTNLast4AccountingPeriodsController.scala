@@ -39,6 +39,7 @@ class BTNLast4AccountingPeriodsController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
+  btnStatus:                              BTNStatusAction,
   formProvider:                           BTNLast4AccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNLast4AccountingPeriodsView,
@@ -49,7 +50,7 @@ class BTNLast4AccountingPeriodsController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen btnStatus.dataRequest) { implicit request =>
     val preparedForm = request.userAnswers.get(BTNLast4AccountingPeriodsPage) match {
       case None        => form
       case Some(value) => form.fill(value)

@@ -17,6 +17,7 @@
 package controllers.btn
 
 import base.SpecBase
+import controllers.btn.routes._
 import forms.BTNEntitiesInsideOutsideUKFormProvider
 import models.{MneOrDomestic, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -40,7 +41,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
   val formProvider = new BTNEntitiesInsideOutsideUKFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val entitiesInsideOutsideUKRoute: String = controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(NormalMode).url
+  lazy val entitiesInsideOutsideUKRoute: String = BTNEntitiesInsideOutsideUKController.onPageLoad(NormalMode).url
 
   "EntitiesBothInUKAndOutsideController" when {
 
@@ -99,7 +100,24 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BTNLast4AccountingPeriodsController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual BTNLast4AccountingPeriodsController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to a knockback page when a BTN is submitted" in {
+      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(submittedBTNRecord))
+
+      val application =
+        applicationBuilder()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, entitiesInsideOutsideUKRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual CheckYourAnswersController.cannotReturnKnockback.url
       }
     }
 
@@ -128,7 +146,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails().url)
+        val request = FakeRequest(GET, BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails().url)
 
         val result = route(application, request).value
 
@@ -144,7 +162,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       val application = applicationBuilder(subscriptionLocalData = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails().url)
+        val request = FakeRequest(GET, BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails().url)
 
         val result = route(application, request).value
 

@@ -18,6 +18,7 @@ package controllers.btn
 
 import base.SpecBase
 import connectors.SubscriptionConnector
+import controllers.btn.routes._
 import models.NormalMode
 import models.obligation.ObligationStatus.{Fulfilled, Open}
 import models.subscription.{AccountStatus, AccountingPeriod}
@@ -28,6 +29,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import repositories.SessionRepository
 import services.ObligationService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,6 +42,8 @@ import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class BTNAccountingPeriodControllerSpec extends SpecBase {
+
+  lazy val btnAccountingPeriodRoute: String = BTNAccountingPeriodController.onPageLoad(NormalMode).url
 
   "UK Tax Return Start Controller" when {
 
@@ -76,12 +80,30 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Right(Open)))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, btnAccountingPeriodRoute)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[BTNAccountingPeriodView]
         status(result) mustEqual OK
         val content = contentAsString(result)
         content mustEqual view(list, NormalMode, appConfig.changeAccountingPeriodUrl)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to a knockback page when a BTN is submitted" in {
+      val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
+
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(submittedBTNRecord))
+
+      running(application) {
+        val request = FakeRequest(GET, btnAccountingPeriodRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual CheckYourAnswersController.cannotReturnKnockback.url
       }
     }
 
@@ -104,7 +126,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Right(Fulfilled)))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, btnAccountingPeriodRoute)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -125,10 +147,10 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         )
         .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BTNEntitiesInUKOnlyController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual BTNEntitiesInUKOnlyController.onPageLoad(NormalMode).url
       }
     }
 
@@ -145,10 +167,10 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         )
         .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BTNEntitiesInUKOnlyController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual BTNEntitiesInUKOnlyController.onPageLoad(NormalMode).url
       }
     }
 
@@ -181,7 +203,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Right(Fulfilled)))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, btnAccountingPeriodRoute)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[BTNReturnSubmittedView]
         status(result) mustEqual OK

@@ -17,6 +17,7 @@
 package navigation
 
 import base.SpecBase
+import controllers.btn.routes._
 import controllers.routes
 import models._
 import pages._
@@ -37,12 +38,12 @@ class BTNNavigatorSpec extends SpecBase {
 
       "go from EntitiesInsideOutsideUKPage period page to BTNIn2AccountingPeriod page " in {
         navigator.nextPage(EntitiesInsideOutsideUKPage, NormalMode, emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, true)) mustBe
-          controllers.btn.routes.BTNLast4AccountingPeriodsController.onPageLoad(NormalMode)
+          BTNLast4AccountingPeriodsController.onPageLoad(NormalMode)
       }
 
       "go from EntitiesInsideOutsideUKPage period page to amend group details page when answer is No" in {
         navigator.nextPage(EntitiesInsideOutsideUKPage, NormalMode, emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, false)) mustBe
-          controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails()
+          BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails()
       }
 
       "go from  BTNLast4AccountingPeriodsPage period page to UnderConstruction  page " in {
@@ -51,7 +52,7 @@ class BTNNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(BTNLast4AccountingPeriodsPage, true)
         ) mustBe
-          controllers.btn.routes.BTNLast4AccountingPeriodsController.onPageLoadThresholdMet
+          BTNLast4AccountingPeriodsController.onPageLoadThresholdMet
       }
 
       "go from BTNLast4AccountingPeriodsPage period page to UnderConstruction page " in {
@@ -60,7 +61,7 @@ class BTNNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(BTNLast4AccountingPeriodsPage, false)
         ) mustBe
-          controllers.btn.routes.BTNNext2AccountingPeriodsController.onPageLoad(NormalMode)
+          BTNNext2AccountingPeriodsController.onPageLoad(NormalMode)
       }
 
       "go from BTNNext2AccountingPeriodsPage to BTNSubmitUKTRController page when the answer is true" in {
@@ -69,7 +70,7 @@ class BTNNavigatorSpec extends SpecBase {
           NormalMode,
           emptyUserAnswers.setOrException(BTNNext2AccountingPeriodsPage, true)
         ) mustBe
-          controllers.btn.routes.BTNNext2AccountingPeriodsController.onPageLoadNilReturn
+          BTNNext2AccountingPeriodsController.submitUKTRKnockback
       }
 
       "go from BTNNext2AccountingPeriodsPage to CYA page when the answer is false" in {
@@ -77,7 +78,7 @@ class BTNNavigatorSpec extends SpecBase {
           BTNNext2AccountingPeriodsPage,
           NormalMode,
           emptyUserAnswers.setOrException(BTNNext2AccountingPeriodsPage, false)
-        ) mustBe controllers.btn.routes.CheckYourAnswersController.onPageLoad
+        ) mustBe CheckYourAnswersController.onPageLoad
       }
 
     }

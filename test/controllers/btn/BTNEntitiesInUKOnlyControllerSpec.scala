@@ -17,6 +17,7 @@
 package controllers.btn
 
 import base.SpecBase
+import controllers.btn.routes._
 import forms.BTNEntitiesInUKOnlyFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -40,7 +41,7 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new BTNEntitiesInUKOnlyFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val entitiesInUKOnlyRoute: String = controllers.btn.routes.BTNEntitiesInUKOnlyController.onPageLoad(NormalMode).url
+  lazy val entitiesInUKOnlyRoute: String = BTNEntitiesInUKOnlyController.onPageLoad(NormalMode).url
 
   "Entities In UK Only Controller" when {
 
@@ -99,7 +100,24 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BTNLast4AccountingPeriodsController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual BTNLast4AccountingPeriodsController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to a knockback page when a BTN is submitted" in {
+      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(submittedBTNRecord))
+
+      val application =
+        applicationBuilder()
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, entitiesInUKOnlyRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual CheckYourAnswersController.cannotReturnKnockback.url
       }
     }
 

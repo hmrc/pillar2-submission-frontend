@@ -38,6 +38,7 @@ class BTNEntitiesInUKOnlyController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
+  btnStatus:                              BTNStatusAction,
   formProvider:                           BTNEntitiesInUKOnlyFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNEntitiesInUKOnlyView
@@ -45,7 +46,7 @@ class BTNEntitiesInUKOnlyController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen btnStatus.dataRequest) { implicit request =>
     val form = formProvider()
     val preparedForm = request.userAnswers.get(EntitiesInsideOutsideUKPage) match {
       case None        => form
