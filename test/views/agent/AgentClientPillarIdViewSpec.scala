@@ -16,10 +16,10 @@
 
 package views.agent
 
+import base.ViewSpecBase
 import form.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import utils.ViewSpecBase
 import views.html.agent.AgentClientPillarIdView
 
 class AgentClientPillarIdViewSpec extends ViewSpecBase {

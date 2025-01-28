@@ -144,18 +144,18 @@ asa.agent.heading = ASA Home page for Pillar 2 top-up taxes screen
 asa.agent.p1 = This screen is  home page in development and local for ASA, but  for QA, staging  and production, ASA has it own pages.
 ###############################################
 
-uktr.UkTaxReturnStart.title = UK Tax Return (UKTR)
-uktr.UkTaxReturnStart.header = UK Tax Return (UKTR)
-uktr.UkTaxReturnStart.p1 = A UKTR fulfills your obligation to submit Pillar 2 top-up taxes for your current accounting period. You can report both Domestic Top-up Tax and Multinational Top-up Tax liabilities.
-uktr.UkTaxReturnStart.p2 = If your group only has entities located in the UK, your return will include Domestic Top-up Tax.
-uktr.UkTaxReturnStart.p3 = If your group has entities located both inside and outside the UK, your return will include both Domestic Top-up Tax and Multinational Top-up Tax.
-uktr.UkTaxReturnStart.subheading = How to submit a UKTR
-uktr.UkTaxReturnStart.p4 = You must submit a UKTR via a third party software provider. Before you submit your UKTR,
-uktr.UkTaxReturnStart.p4.link = ensure your group’s details are updated
-uktr.UkTaxReturnStart.p5 = HMRC cannot recommend or endorse any one service over another and will not be responsible for any loss, damage, cost or expense in connection with using the software.
-uktr.UkTaxReturnStart.p6.link = Choose a supplier to submit your UKTR from this list
-uktr.UkTaxReturnStart.inactive.subheading = Important
-uktr.UkTaxReturnStart.inactive.p1 = Your account has a Below Threshold Notification (BTN) and is inactive. Submit a UK tax return (UKTR) to re-activate your account.
+uktr.ukTaxReturnStart.title = UK Tax Return (UKTR)
+uktr.ukTaxReturnStart.header = UK Tax Return (UKTR)
+uktr.ukTaxReturnStart.p1 = A UKTR fulfills your obligation to submit Pillar 2 top-up taxes for your current accounting period. You can report both Domestic Top-up Tax and Multinational Top-up Tax liabilities.
+uktr.ukTaxReturnStart.p2 = If your group only has entities located in the UK, your return will include Domestic Top-up Tax.
+uktr.ukTaxReturnStart.p3 = If your group has entities located both inside and outside the UK, your return will include both Domestic Top-up Tax and Multinational Top-up Tax.
+uktr.ukTaxReturnStart.subheading = How to submit a UKTR
+uktr.ukTaxReturnStart.p4 = You must submit a UKTR via a third party software provider. Before you submit your UKTR,
+uktr.ukTaxReturnStart.p4.link = ensure your group’s details are updated
+uktr.ukTaxReturnStart.p5 = HMRC cannot recommend or endorse any one service over another and will not be responsible for any loss, damage, cost or expense in connection with using the software.
+uktr.ukTaxReturnStart.p6.link = Choose a supplier to submit your UKTR from this list
+uktr.ukTaxReturnStart.inactive.subheading = Important
+uktr.ukTaxReturnStart.inactive.p1 = Your account has a Below Threshold Notification (BTN) and is inactive. Submit a UK tax return (UKTR) to re-activate your account.
 
 ###############################################
 #
@@ -163,32 +163,31 @@ uktr.UkTaxReturnStart.inactive.p1 = Your account has a Below Threshold Notificat
 #
 ###############################################
 
-btn.BtnBeforeStart.title = Below Threshold Notification
-btn.BtnBeforeStart.header = Below Threshold Notification
-btn.BtnBeforeStart.p1 = A Below-Threshold Notification removes your group’s obligation to submit a UKTR for the current accounting period and all future ones.
-btn.BtnBeforeStart.header2 = Who can submit a Below-Threshold Notification
-btn.BtnBeforeStart.p2 = You can submit a Below-Threshold Notification if the group:
-btn.BtnBeforeStart.li1 = does not have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
-btn.BtnBeforeStart.li2 = is not expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
-btn.BtnBeforeStart.header3 = Before you start
-btn.BtnBeforeStart.p3 = To submit a Below-Threshold Notification you will need to tell us:
+btn.beforeStart.title = Below Threshold Notification
+btn.beforeStart.header = Below Threshold Notification
+btn.beforeStart.p1 = A Below-Threshold Notification removes your group’s obligation to submit a UKTR for the current accounting period and all future ones.
+btn.beforeStart.header2 = Who can submit a Below-Threshold Notification
+btn.beforeStart.p2 = You can submit a Below-Threshold Notification if the group:
+btn.beforeStart.li1 = does not have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
+btn.beforeStart.li2 = is not expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
+btn.beforeStart.header3 = Before you start
+btn.beforeStart.p3 = To submit a Below-Threshold Notification you will need to tell us:
+btn.beforeStart.li3 = the start and end date of the group’s accounting period
+btn.beforeStart.li4 = whether the group has entities located in the UK
+btn.beforeStart.li5 = whether the group’s consolidated annual revenues have been €750 million or more in at least 2 of the previous 4 accounting periods
+btn.beforeStart.li6 = whether the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
 
-btn.BtnBeforeStart.li3 = the start and end date of the group’s accounting period
-btn.BtnBeforeStart.li4 = whether the group has entities located in the UK
-btn.BtnBeforeStart.li5 = whether the group’s consolidated annual revenues have been €750 million or more in at least 2 of the previous 4 accounting periods
-btn.BtnBeforeStart.li6 = whether the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
-
-btn.btnAccountingPeriod.title = Submit a Below-Threshold Notification for your group’s current accounting period
-btn.btnAccountingPeriod.header = Submit a Below-Threshold Notification for your group’s current accounting period
-btn.btnAccountingPeriod.p1 = The Below-Threshold Notification you submit will remove your group’s obligation to submit a UKTR for this current accounting period and all future ones.
-btn.btnAccountingPeriod.startAccountDate = Start date of accounting period
-btn.btnAccountingPeriod.endAccountDate = End date of accounting period
-btn.btnAccountingPeriod.p2.before = If the date shown is incorrect,
-btn.btnAccountingPeriod.link = Update your group’s current accounting period
-btn.btnAccountingPeriod.p2 =  before continuing.
-btn.btnAccountingPeriod.checkYourAnswersLabel = Group’s accounting period
-btn.btnAccountingPeriod.checkYourAnswersPrefix.startDate = Start date:
-btn.btnAccountingPeriod.checkYourAnswersPrefix.endDate = End date:
+btn.accountingPeriod.title = Submit a Below-Threshold Notification for your group’s current accounting period
+btn.accountingPeriod.header = Submit a Below-Threshold Notification for your group’s current accounting period
+btn.accountingPeriod.p1 = The Below-Threshold Notification you submit will remove your group’s obligation to submit a UKTR for this current accounting period and all future ones.
+btn.accountingPeriod.startAccountDate = Start date of accounting period
+btn.accountingPeriod.endAccountDate = End date of accounting period
+btn.accountingPeriod.p2.before = If the date shown is incorrect,
+btn.accountingPeriod.link = Update your group’s current accounting period
+btn.accountingPeriod.p2 =  before continuing.
+btn.accountingPeriod.checkYourAnswersLabel = Group’s accounting period
+btn.accountingPeriod.checkYourAnswersPrefix.startDate = Start date:
+btn.accountingPeriod.checkYourAnswersPrefix.endDate = End date:
 
 btn.returnSubmitted.title = Your group has already submitted a UK Tax Return for this accounting period
 btn.returnSubmitted.heading = Your group has already submitted a UK Tax Return for this accounting period
@@ -196,41 +195,41 @@ btn.returnSubmitted.startAccountDate = Start date of accounting period
 btn.returnSubmitted.endAccountDate = End date of accounting period
 btn.returnSubmitted.p1 = If you continue, the Below-Threshold Notification you submit will replace the UK Tax Return you previously submitted for this accounting period.
 
-btn.btnEntitiesBothInUKAndOutside.title.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
-btn.btnEntitiesBothInUKAndOutside.title.uk = Does the group still have entities located only in the UK?
-btn.btnEntitiesBothInUKAndOutside.heading.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
-btn.btnEntitiesBothInUKAndOutside.heading.uk = Does the group still have entities located only in the UK?
-btn.btnEntitiesBothInUKAndOutside.checkYourAnswersLabel = Are the entities still located in both the UK and outside the UK?
-btn.btnEntitiesBothInUKAndOutside.error.required.ukAndOther = Select yes if the group still has entities located in both the UK and outside the UK
-btn.btnEntitiesBothInUKAndOutside.error.required.uk = Select yes if the group still has entities located only in the UK
-btn.btnEntitiesBothInUKAndOutside.change.hidden = Are your entities still located in both the UK and outside the UK?
-btn.btnEntitiesBothInUKAndOutside.amend.title = Based on your answer, you need to amend your details
-btn.btnEntitiesBothInUKAndOutside.amend.heading = Based on your answer, you need to amend your details
-btn.btnEntitiesBothInUKAndOutside.amend.p1.ukAndOther = You previously reported that the group had entities located in both the
-btn.btnEntitiesBothInUKAndOutside.amend.p1.ukAndOther.bold = UK and other outside the UK.
-btn.btnEntitiesBothInUKAndOutside.amend.p1.ukOnly = You previously reported that the group had entities located
-btn.btnEntitiesBothInUKAndOutside.amend.p1.ukOnly.bold = only in the UK.
-btn.btnEntitiesBothInUKAndOutside.amend.p2 = If this has changed, you must
-btn.btnEntitiesBothInUKAndOutside.amend.p2.link = amend your group’s details
-btn.btnEntitiesBothInUKAndOutside.amend.p2.end = to update the location of your entities before submitting a BTN.
+btn.entitiesInsideOutsideUK.title.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
+btn.entitiesInsideOutsideUK.title.uk = Does the group still have entities located only in the UK?
+btn.entitiesInsideOutsideUK.heading.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
+btn.entitiesInsideOutsideUK.heading.uk = Does the group still have entities located only in the UK?
+btn.entitiesInsideOutsideUK.checkYourAnswersLabel = Are the entities still located in both the UK and outside the UK?
+btn.entitiesInsideOutsideUK.error.required.ukAndOther = Select yes if the group still has entities located in both the UK and outside the UK
+btn.entitiesInsideOutsideUK.error.required.uk = Select yes if the group still has entities located only in the UK
+btn.entitiesInsideOutsideUK.change.hidden = Are your entities still located in both the UK and outside the UK?
+btn.entitiesInsideOutsideUK.amend.title = Based on your answer, you need to amend your details
+btn.entitiesInsideOutsideUK.amend.heading = Based on your answer, you need to amend your details
+btn.entitiesInsideOutsideUK.amend.p1.ukAndOther = You previously reported that the group had entities located in both the
+btn.entitiesInsideOutsideUK.amend.p1.ukAndOther.bold = UK and other outside the UK.
+btn.entitiesInsideOutsideUK.amend.p1.ukOnly = You previously reported that the group had entities located
+btn.entitiesInsideOutsideUK.amend.p1.ukOnly.bold = only in the UK.
+btn.entitiesInsideOutsideUK.amend.p2 = If this has changed, you must
+btn.entitiesInsideOutsideUK.amend.p2.link = amend your group’s details
+btn.entitiesInsideOutsideUK.amend.p2.end = to update the location of your entities before submitting a BTN.
 
-btnRevenues750In2AccountingPeriod.title = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-btnRevenues750In2AccountingPeriod.heading = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-btnRevenues750In2AccountingPeriod.checkYourAnswersLabel = Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-btnRevenues750In2AccountingPeriod.error.required = Select yes if the group has consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
-btnRevenues750In2AccountingPeriod.change.hidden = Does the group have consolidated revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+btn.last4AccountingPeriods.title = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+btn.last4AccountingPeriods.heading = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+btn.last4AccountingPeriods.checkYourAnswersLabel = Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+btn.last4AccountingPeriods.error.required = Select yes if the group has consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
+btn.last4AccountingPeriods.change.hidden = Does the group have consolidated revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 
-btnRevenues750InNext2AccountingPeriods.title = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
-btnRevenues750InNext2AccountingPeriods.heading = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
-btnRevenues750InNext2AccountingPeriods.checkYourAnswersLabel = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
-btnRevenues750InNext2AccountingPeriods.error.required = Select yes if the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
-btnRevenues750InNext2AccountingPeriods.change.hidden = Is the group expected to make consolidated annual revenues of €750 million or more in the next 2 accounting periods?
+btn.next2AccountingPeriods.title = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+btn.next2AccountingPeriods.heading = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+btn.next2AccountingPeriods.checkYourAnswersLabel = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
+btn.next2AccountingPeriods.error.required = Select yes if the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
+btn.next2AccountingPeriods.change.hidden = Is the group expected to make consolidated annual revenues of €750 million or more in the next 2 accounting periods?
 
-btn.btnSubmitUKTR.title = Based on your answer, your group must submit a UK Tax Return
-btn.btnSubmitUKTR.heading = Based on your answer, your group must submit a UK Tax Return
-btn.btnSubmitUKTR.p1 = Based on your answer, you cannot submit a Below-Threshold Notification as the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods.
-btn.btnSubmitUKTR.p2 = You can submit a nil return UK Tax Return if your group is not due to pay any Domestic Top-up Tax for their current accounting period.
-btn.btnSubmitUKTR.link = Find out more about submitting a late or new UK Tax Return
+btn.submitUKTR.title = Based on your answer, your group must submit a UK Tax Return
+btn.submitUKTR.heading = Based on your answer, your group must submit a UK Tax Return
+btn.submitUKTR.p1 = Based on your answer, you cannot submit a Below-Threshold Notification as the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods.
+btn.submitUKTR.p2 = You can submit a nil return UK Tax Return if your group is not due to pay any Domestic Top-up Tax for their current accounting period.
+btn.submitUKTR.link = Find out more about submitting a late or new UK Tax Return
 
 btn.cya.heading = Check your answers to submit your Below-Threshold Notification
 btn.cya.p1 = Now submit your Below Threshold Notification
@@ -250,4 +249,8 @@ btn.confirmation.p2 = HMRC has removed your group’s obligation to submit a UK 
 btn.confirmation.p3 = If your group becomes liable for a UK Tax Return in the future, you must let HMRC know by submitting a UK Tax Return to remove the Below-Threshold Notification from your account. You can
 btn.confirmation.p3.link = find out more about submitting a UKTR
 btn.confirmation.p4.link = View account homepage
+
+btn.cannotReturn.heading = Submission successful
+btn.cannotReturn.p1 = You have submitted a Below-Threshold Notification
+btn.cannotReturn.link = Return to your group’s homepage
 ###############################################

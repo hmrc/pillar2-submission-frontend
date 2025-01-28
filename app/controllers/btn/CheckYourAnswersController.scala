@@ -19,8 +19,11 @@ package controllers.btn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.btn.routes._
 import controllers.routes._
-import pages.{BtnRevenues750In2AccountingPeriodPage, BtnRevenues750InNext2AccountingPeriodsPage, EntitiesBothInUKAndOutsidePage}
+import models.btn.BTNStatus
+import models.btn.BTNStatus.submitted
+import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,49 +31,59 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.html.btn.CheckYourAnswersView
+import views.html.btn.{BTNCannotReturnView, CheckYourAnswersView}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
-  getData:                  SubscriptionDataRetrievalAction,
-  requireData:              SubscriptionDataRequiredAction,
+  getData:                  DataRetrievalAction,
+  getSubscriptionData:      SubscriptionDataRetrievalAction,
+  requireData:              DataRequiredAction,
+  requireSubscriptionData:  SubscriptionDataRequiredAction,
+  btnStatus:                BTNStatusAction,
   sessionRepository:        SessionRepository,
   view:                     CheckYourAnswersView,
+  cannotReturnView:         BTNCannotReturnView,
   val controllerComponents: MessagesControllerComponents
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    sessionRepository.get(request.userId).map { maybeUserAnswers =>
-      (for {
-        userAnswers                   <- maybeUserAnswers
-        entitiesInOutPage             <- userAnswers.get(EntitiesBothInUKAndOutsidePage)
-        revenuePreviousTwoPeriodsPage <- userAnswers.get(BtnRevenues750In2AccountingPeriodPage)
-        revenueNextTwoPeriodsPage     <- userAnswers.get(BtnRevenues750InNext2AccountingPeriodsPage)
-      } yield (entitiesInOutPage, revenuePreviousTwoPeriodsPage, revenueNextTwoPeriodsPage) match {
-        case (true, false, false) =>
-          val summaryList = SummaryListViewModel(
-            rows = Seq(
-              SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod),
-              BtnEntitiesBothInUKAndOutsideSummary.row(userAnswers),
-              BtnRevenues750In2AccountingPeriodSummary.row(userAnswers),
-              BtnRevenues750InNext2AccountingPeriodsSummary.row(userAnswers)
-            ).flatten
-          ).withCssClass("govuk-!-margin-bottom-9")
+  def onPageLoad: Action[AnyContent] =
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
+      sessionRepository.get(request.userId).map { maybeUserAnswers =>
+        (for {
+          userAnswers    <- maybeUserAnswers
+          entitiesInOut  <- userAnswers.get(EntitiesInsideOutsideUKPage)
+          last4Periods   <- userAnswers.get(BTNLast4AccountingPeriodsPage)
+          nextTwoPeriods <- userAnswers.get(BTNNext2AccountingPeriodsPage)
+        } yield (entitiesInOut, last4Periods, nextTwoPeriods) match {
+          case (true, false, false) =>
+            val summaryList = SummaryListViewModel(
+              rows = Seq(
+                SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod),
+                BTNEntitiesInsideOutsideUKSummary.row(userAnswers),
+                BTNLast4AccountingPeriodSummary.row(userAnswers),
+                BTNNext2AccountingPeriodsSummary.row(userAnswers)
+              ).flatten
+            ).withCssClass("govuk-!-margin-bottom-9")
 
-          Ok(view(summaryList))
+            Ok(view(summaryList))
 
-        case _ => Redirect(IndexController.onPageLoad)
+          case _ => Redirect(IndexController.onPageLoad)
 
-      }).getOrElse(Redirect(JourneyRecoveryController.onPageLoad()))
+        }).getOrElse(Redirect(JourneyRecoveryController.onPageLoad()))
+      }
     }
+
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    for {
+      updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
+      _              <- sessionRepository.set(updatedAnswers)
+    } yield Redirect(BTNConfirmationController.onPageLoad)
   }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData) {
-    Redirect(controllers.btn.routes.BtnConfirmationController.onPageLoad)
-  }
+  def cannotReturnKnockback: Action[AnyContent] = identify(implicit request => BadRequest(cannotReturnView()))
 }

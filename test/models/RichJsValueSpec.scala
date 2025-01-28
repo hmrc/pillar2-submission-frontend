@@ -16,7 +16,7 @@
 
 package models
 
-import generators.ModelGenerators
+import helpers.generators.ModelGenerators
 import org.scalacheck.{Gen, Shrink}
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec

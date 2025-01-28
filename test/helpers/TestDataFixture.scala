@@ -17,6 +17,7 @@
 package helpers
 
 import models.UserAnswers
+import models.btn.BTNStatus
 import pages._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -25,18 +26,20 @@ import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
 trait TestDataFixture extends SubscriptionLocalDataFixture {
 
-  lazy val validBtnCyaUa: UserAnswers = UserAnswers("id")
+  lazy val submittedBTNRecord: UserAnswers = validBTNCyaUa.set(BTNStatus, BTNStatus.submitted).get
+
+  lazy val validBTNCyaUa: UserAnswers = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
-    .setOrException(EntitiesBothInUKAndOutsidePage, true)
-    .setOrException(BtnRevenues750In2AccountingPeriodPage, false)
-    .setOrException(BtnRevenues750InNext2AccountingPeriodsPage, false)
+    .setOrException(EntitiesInsideOutsideUKPage, true)
+    .setOrException(BTNLast4AccountingPeriodsPage, false)
+    .setOrException(BTNNext2AccountingPeriodsPage, false)
 
   def btnCyaSummaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(
     rows = Seq(
       SubAccountingPeriodSummary.row(accountingPeriod),
-      BtnEntitiesBothInUKAndOutsideSummary.row(validBtnCyaUa),
-      BtnRevenues750In2AccountingPeriodSummary.row(validBtnCyaUa),
-      BtnRevenues750InNext2AccountingPeriodsSummary.row(validBtnCyaUa)
+      BTNEntitiesInsideOutsideUKSummary.row(validBTNCyaUa),
+      BTNLast4AccountingPeriodSummary.row(validBTNCyaUa),
+      BTNNext2AccountingPeriodsSummary.row(validBTNCyaUa)
     ).flatten
   ).withCssClass("govuk-!-margin-bottom-9")
 

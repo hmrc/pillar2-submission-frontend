@@ -16,9 +16,9 @@
 
 package views.agent
 
+import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import utils.ViewSpecBase
 import views.html.agent.AgentIndividualErrorView
 
 class AgentIndividualErrorViewSpec extends ViewSpecBase {

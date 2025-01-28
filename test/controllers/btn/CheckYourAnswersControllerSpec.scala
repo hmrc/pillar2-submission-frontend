@@ -17,7 +17,8 @@
 package controllers.btn
 
 import base.SpecBase
-import controllers.{btn, routes}
+import controllers.btn.routes._
+import controllers.routes._
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -40,9 +41,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
     .build()
 
-  def request(ua: UserAnswers = validBtnCyaUa): FakeRequest[AnyContentAsEmpty.type] = {
+  def request(ua: UserAnswers = validBTNCyaUa): FakeRequest[AnyContentAsEmpty.type] = {
     when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
-    FakeRequest(GET, btn.routes.CheckYourAnswersController.onPageLoad.url)
+    FakeRequest(GET, CheckYourAnswersController.onPageLoad.url)
   }
 
   val view: CheckYourAnswersView = application.injector.instanceOf[CheckYourAnswersView]
@@ -52,7 +53,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     ".onPageLoad" should {
 
       "must return OK and the correct view for a GET" in {
-
         val result = route(application, request()).value
 
         status(result) mustEqual OK
@@ -60,37 +60,42 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
 
       "must redirect to IndexController on disqualifying answers" in {
-
-        val emptyUa = validBtnCyaUa.setOrException(EntitiesBothInUKAndOutsidePage, false)
+        val emptyUa = validBTNCyaUa.setOrException(EntitiesInsideOutsideUKPage, false)
 
         val result = route(application, request(emptyUa)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad.url
+        redirectLocation(result).value mustEqual IndexController.onPageLoad.url
+      }
 
+      "must redirect to a knockback page when a BTN is submitted" in {
+        val result = route(application, request(submittedBTNRecord)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual CheckYourAnswersController.cannotReturnKnockback.url
       }
 
       "must redirect to JourneyRecoveryController on retrieval of answers failure" in {
-
         val application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData)).build()
 
         val result = route(application, request()).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
       }
     }
 
     ".onSubmit" should {
 
       "must redirect to Confirmation page on submission" in {
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-        val request = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+        val request = FakeRequest(POST, CheckYourAnswersController.onSubmit.url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BtnConfirmationController.onPageLoad.url
+        redirectLocation(result).value mustEqual BTNConfirmationController.onPageLoad.url
       }
     }
   }
