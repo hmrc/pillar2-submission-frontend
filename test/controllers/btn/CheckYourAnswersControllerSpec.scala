@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.btn.routes._
 import controllers.routes._
 import models.UserAnswers
+import models.btn.BTNSuccess
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -30,15 +31,18 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.BTNService
 import viewmodels.govuk.SummaryListFluency
 import views.html.btn.CheckYourAnswersView
 
+import java.time.{ZoneId, ZonedDateTime}
 import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar {
 
   def application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
     .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+    .overrides(bind[BTNService].toInstance(mockBTNService))
     .build()
 
   def request(ua: UserAnswers = validBTNCyaUa): FakeRequest[AnyContentAsEmpty.type] = {
@@ -89,6 +93,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "must redirect to Confirmation page on submission" in {
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockBTNService.submitBTN(any())(any(), any())) thenReturn Future.successful(BTNSuccess(ZonedDateTime.now(ZoneId.of("UTC"))))
 
         val request = FakeRequest(POST, CheckYourAnswersController.onSubmit.url)
 

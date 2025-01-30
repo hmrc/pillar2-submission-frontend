@@ -21,13 +21,15 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.btn.routes._
 import controllers.routes._
-import models.btn.BTNStatus
+import models.btn.{BTNRequest, BTNStatus}
 import models.btn.BTNStatus.submitted
+import models.subscription.AccountingPeriod
 import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.BTNService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -37,14 +39,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  getSubscriptionData:      SubscriptionDataRetrievalAction,
-  requireData:              DataRequiredAction,
-  requireSubscriptionData:  SubscriptionDataRequiredAction,
+  getData:                  SubscriptionDataRetrievalAction,
+  requireData:              SubscriptionDataRequiredAction,
   btnStatus:                BTNStatusAction,
   sessionRepository:        SessionRepository,
   view:                     CheckYourAnswersView,
   cannotReturnView:         BTNCannotReturnView,
+  btnService:               BTNService,
   val controllerComponents: MessagesControllerComponents
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -52,7 +53,7 @@ class CheckYourAnswersController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
+    (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
       sessionRepository.get(request.userId).map { maybeUserAnswers =>
         (for {
           userAnswers    <- maybeUserAnswers
@@ -79,9 +80,18 @@ class CheckYourAnswersController @Inject() (
     }
 
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    implicit val pillar2Id:  String           = request.subscriptionLocalData.plrReference
+    val subAccountingPeriod: AccountingPeriod = request.subscriptionLocalData.subAccountingPeriod
+    val btnPayload = BTNRequest(
+      accountingPeriodFrom = subAccountingPeriod.startDate,
+      accountingPeriodTo = subAccountingPeriod.endDate
+    )
     for {
       updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
       _              <- sessionRepository.set(updatedAnswers)
+      apiSuccessResponse <- btnService
+                              .submitBTN(btnPayload)
+      _ = logger.info(s"BTN Request Submission was successful. response.body= $apiSuccessResponse")
     } yield Redirect(BTNConfirmationController.onPageLoad)
   }
 
