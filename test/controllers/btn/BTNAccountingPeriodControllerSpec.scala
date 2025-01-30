@@ -66,7 +66,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       )
       val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
 
-      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[ObligationService].toInstance(mockObligationService)
@@ -92,7 +92,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
     "must redirect to a knockback page when a BTN is submitted" in {
       val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
 
-      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 
@@ -112,7 +112,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         .copy(accountStatus = Some(AccountStatus(true)))
         .setOrException(SubAccountingPeriodPage, dates)
         .setOrException(PlrReferencePage, plrReference)
-      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[ObligationService].toInstance(mockObligationService)
@@ -141,7 +141,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
-      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
@@ -161,7 +161,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalDataUkOther)))
 
-      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
@@ -189,7 +189,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       )
       val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
 
-      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[ObligationService].toInstance(mockObligationService)

@@ -37,7 +37,7 @@ import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar {
 
-  def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
+  def application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
     .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
     .build()
 
@@ -76,7 +76,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
 
       "must redirect to JourneyRecoveryController on retrieval of answers failure" in {
-        val application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData)).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData)).build()
 
         val result = route(application, request()).value
 
