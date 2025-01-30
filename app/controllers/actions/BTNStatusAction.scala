@@ -19,6 +19,7 @@ package controllers.actions
 import controllers.btn.routes._
 import models.btn.BTNStatus
 import models.requests.{DataRequest, SubscriptionDataRequest}
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import repositories.SessionRepository
@@ -26,7 +27,7 @@ import repositories.SessionRepository
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BTNStatusAction @Inject() (val sessionRepository: SessionRepository)(implicit val ec: ExecutionContext) {
+class BTNStatusAction @Inject() (val sessionRepository: SessionRepository)(implicit val ec: ExecutionContext) extends Logging {
 
   def subscriptionRequest: ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] =
     new ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] {
@@ -43,13 +44,17 @@ class BTNStatusAction @Inject() (val sessionRepository: SessionRepository)(impli
 
   def dataRequest: ActionRefiner[DataRequest, DataRequest] =
     new ActionRefiner[DataRequest, DataRequest] {
-      override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
+      override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
+        println(sessionRepository.getClass.getCanonicalName)
         sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
+          println("I'm here slkdfj;lskdjf;lskdjf;lsdkjf;lkj")
+          println(s"$maybeUserAnswers")
           maybeUserAnswers.flatMap(_.get(BTNStatus)) match {
             case Some(BTNStatus.submitted) => Future.successful(Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
             case _                         => Future.successful(Right(request))
           }
         }
+      }
 
       override protected def executionContext: ExecutionContext = ec
     }

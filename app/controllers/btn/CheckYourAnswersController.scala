@@ -21,8 +21,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.btn.routes._
 import controllers.routes._
-import models.btn.{BTNRequest, BTNStatus}
 import models.btn.BTNStatus.submitted
+import models.btn.{BTNRequest, BTNStatus}
 import models.subscription.AccountingPeriod
 import pages._
 import play.api.Logging
@@ -87,10 +87,10 @@ class CheckYourAnswersController @Inject() (
       accountingPeriodTo = subAccountingPeriod.endDate
     )
     (for {
-      updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
-      _              <- sessionRepository.set(updatedAnswers)
       apiSuccessResponse <- btnService
                               .submitBTN(btnPayload)
+      updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
+      _              <- sessionRepository.set(updatedAnswers)
       _ = logger.info(s"BTN Request Submission was successful. response.body= $apiSuccessResponse")
     } yield Redirect(BTNConfirmationController.onPageLoad)).recover { case ex: Throwable =>
       logger.error(s"BTN Request failed with error: ${ex.getMessage}")
