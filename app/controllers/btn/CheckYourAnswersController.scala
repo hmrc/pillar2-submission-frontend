@@ -86,13 +86,16 @@ class CheckYourAnswersController @Inject() (
       accountingPeriodFrom = subAccountingPeriod.startDate,
       accountingPeriodTo = subAccountingPeriod.endDate
     )
-    for {
+    (for {
       updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
       _              <- sessionRepository.set(updatedAnswers)
       apiSuccessResponse <- btnService
                               .submitBTN(btnPayload)
       _ = logger.info(s"BTN Request Submission was successful. response.body= $apiSuccessResponse")
-    } yield Redirect(BTNConfirmationController.onPageLoad)
+    } yield Redirect(BTNConfirmationController.onPageLoad)).recover { case ex: Throwable =>
+      logger.error(s"BTN Request failed with error: ${ex.getMessage}")
+      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+    }
   }
 
   def cannotReturnKnockback: Action[AnyContent] = identify(implicit request => BadRequest(cannotReturnView()))
