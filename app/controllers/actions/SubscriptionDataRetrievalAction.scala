@@ -37,22 +37,17 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalSubscriptionDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    subscriptionConnector.getSubscriptionCache(request.userId).flatMap { maybeSubscriptionLocalData =>
-      sessionRepository
-        .get(request.userId)
-        .map { maybeUserAnswers =>
-          OptionalSubscriptionDataRequest(
-            request.request,
-            request.userId,
-            maybeSubscriptionLocalData,
-            maybeUserAnswers,
-            request.enrolments
-          )
-        }
-
-    }
+    for {
+      maybeSubscriptionLocalData <- subscriptionConnector.getSubscriptionCache(request.userId)
+      maybeUserAnswers           <- sessionRepository.get(request.userId)
+    } yield OptionalSubscriptionDataRequest(
+      request.request,
+      request.userId,
+      maybeSubscriptionLocalData,
+      maybeUserAnswers,
+      request.enrolments
+    )
   }
-
 }
 
 trait SubscriptionDataRetrievalAction extends ActionTransformer[IdentifierRequest, OptionalSubscriptionDataRequest]
