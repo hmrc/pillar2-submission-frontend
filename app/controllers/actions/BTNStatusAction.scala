@@ -32,30 +32,23 @@ class BTNStatusAction @Inject() (val sessionRepository: SessionRepository)(impli
   def subscriptionRequest: ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] =
     new ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] {
       override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
-        sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
-          maybeUserAnswers.flatMap(_.get(BTNStatus)) match {
-            case Some(BTNStatus.submitted) => Future.successful(Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
-            case _                         => Future.successful(Right(request))
-          }
-        }
+        btnAlreadySubmitted(request.userId)(request)
 
       override protected def executionContext: ExecutionContext = ec
     }
 
   def dataRequest: ActionRefiner[DataRequest, DataRequest] =
     new ActionRefiner[DataRequest, DataRequest] {
-      override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-        println(sessionRepository.getClass.getCanonicalName)
-        sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
-          println("I'm here slkdfj;lskdjf;lskdjf;lsdkjf;lkj")
-          println(s"$maybeUserAnswers")
-          maybeUserAnswers.flatMap(_.get(BTNStatus)) match {
-            case Some(BTNStatus.submitted) => Future.successful(Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
-            case _                         => Future.successful(Right(request))
-          }
-        }
-      }
+      override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
+        btnAlreadySubmitted(request.userId)(request)
 
       override protected def executionContext: ExecutionContext = ec
     }
+
+  private def btnAlreadySubmitted[T](userId: String)(request: T) = sessionRepository.get(userId).map { maybeUserAnswers =>
+    if (maybeUserAnswers.flatMap(_.get(BTNStatus)).contains(BTNStatus.submitted))
+      Left(Redirect(CheckYourAnswersController.cannotReturnKnockback))
+    else
+      Right(request)
+  }
 }
