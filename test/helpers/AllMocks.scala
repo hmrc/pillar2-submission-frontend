@@ -32,22 +32,23 @@ import views.html.btn.CheckYourAnswersView
 
 trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
 
-  val mockAuditConnector:        AuditConnector        = mock[AuditConnector]
-  val mockAuthConnector:         AuthConnector         = mock[AuthConnector]
-  val mockFrontendAppConfig:     FrontendAppConfig     = mock[FrontendAppConfig]
-  val mockMessagesApi:           MessagesApi           = mock[MessagesApi]
-  val mockSessionRepository:     SessionRepository     = mock[SessionRepository]
-  val mockDataRetrievalAction:   DataRetrievalAction   = mock[DataRetrievalAction]
-  val mockDataRequiredAction:    DataRequiredAction    = mock[DataRequiredAction]
-  val mockCheckYourAnswersView:  CheckYourAnswersView  = mock[CheckYourAnswersView]
-  val mockHttpClient:            HttpClientV2          = mock[HttpClientV2]
-  val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
-  val mockSubscriptionService:   SubscriptionService   = mock[SubscriptionService]
+  val mockAuditConnector:                     AuditConnector                    = mock[AuditConnector]
+  val mockAuthConnector:                      AuthConnector                     = mock[AuthConnector]
+  val mockFrontendAppConfig:                  FrontendAppConfig                 = mock[FrontendAppConfig]
+  val mockMessagesApi:                        MessagesApi                       = mock[MessagesApi]
+  val mockSessionRepository:                  SessionRepository                 = mock[SessionRepository]
+  val mockDataRetrievalAction:                DataRetrievalAction               = mock[DataRetrievalAction]
+  val mockDataRequiredAction:                 DataRequiredAction                = mock[DataRequiredAction]
+  val mockCheckYourAnswersView:               CheckYourAnswersView              = mock[CheckYourAnswersView]
+  val mockHttpClient:                         HttpClientV2                      = mock[HttpClientV2]
+  val mockSubscriptionConnector:              SubscriptionConnector             = mock[SubscriptionConnector]
+  val mockSubscriptionService:                SubscriptionService               = mock[SubscriptionService]
+  val mockAgentIdentifierAction:              AgentIdentifierAction             = mock[AgentIdentifierAction]
   val mockAgentIdentifierAction: AgentIdentifierAction = mock[AgentIdentifierAction]
-  val mockObligationConnector:   ObligationConnector   = mock[ObligationConnector]
-  val mockObligationService:     ObligationService     = mock[ObligationService]
   val mockBTNConnector:          BTNConnector          = mock[BTNConnector]
   val mockBTNService:            BTNService            = mock[BTNService]
+  val mockObligationsAndSubmissionsConnector: ObligationAndSubmissionsConnector = mock[ObligationAndSubmissionsConnector]
+  val mockObligationsAndSubmissionsService:   ObligationsAndSubmissionsService  = mock[ObligationsAndSubmissionsService]
 
   override protected def beforeEach(): Unit =
     Seq(

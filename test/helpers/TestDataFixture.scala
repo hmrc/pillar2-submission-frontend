@@ -16,15 +16,28 @@
 
 package helpers
 
-import models.UserAnswers
 import models.btn.BTNStatus
+import models.obligationsandsubmissions.ObligationStatus.Fulfilled
+import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
+import models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.now
+import models.obligationsandsubmissions.SubmissionType.UKTR
+import models.obligationsandsubmissions._
+import models.subscription._
+import models.{MneOrDomestic, NonUKAddress, UserAnswers}
 import pages._
 import play.api.i18n.Messages
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
+import java.time.{LocalDate, ZonedDateTime}
+
 trait TestDataFixture extends SubscriptionLocalDataFixture {
+
+  lazy val localDateFrom:                                LocalDate = LocalDate.now
+  lazy val localDateTo:                                  LocalDate = LocalDate.now.plusYears(1)
+  lazy val obligationsAndSubmissionsSuccessResponseJson: JsValue   = Json.toJson(obligationsAndSubmissionsSuccessResponse())
 
   lazy val submittedBTNRecord: UserAnswers = validBTNCyaUa.set(BTNStatus, BTNStatus.submitted).get
 
@@ -43,4 +56,87 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
     ).flatten
   ).withCssClass("govuk-!-margin-bottom-9")
 
+  def obligationsAndSubmissionsSuccessResponse(
+    underEnquiry:   Boolean = false,
+    obligationType: ObligationType = Pillar2TaxReturn,
+    status:         ObligationStatus = Fulfilled,
+    canAmend:       Boolean = true,
+    submissionType: SubmissionType = UKTR,
+    receivedDate:   ZonedDateTime = now,
+    country:        Option[String] = None
+  ): ObligationsAndSubmissionsSuccessResponse =
+    ObligationsAndSubmissionsSuccessResponse(
+      ObligationsAndSubmissionsSuccess(
+        processingDate = now,
+        accountingPeriodDetails = Seq(
+          AccountingPeriodDetails(
+            startDate = localDateFrom,
+            endDate = localDateTo,
+            dueDate = localDateTo.plusMonths(10),
+            underEnquiry = underEnquiry,
+            obligations = Seq(
+              Obligation(
+                obligationType = obligationType,
+                status = status,
+                canAmend = canAmend,
+                submissions = Seq(
+                  Submission(submissionType = submissionType, receivedDate = receivedDate, country = country)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+}
+
+trait SubscriptionLocalDataFixture {
+  private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
+  private val contactDetails           = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
+  val accountingPeriod: AccountingPeriod = AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 24))
+
+  val subscriptionData: SubscriptionData = SubscriptionData(
+    formBundleNumber = "form bundle",
+    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
+    upeCorrespAddressDetails = upeCorrespondenceAddress,
+    primaryContactDetails = contactDetails,
+    secondaryContactDetails = None,
+    filingMemberDetails = None,
+    accountingPeriod = accountingPeriod,
+    accountStatus = Some(AccountStatus(false))
+  )
+
+  val someSubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
+    subMneOrDomestic = MneOrDomestic.Uk,
+    subAccountingPeriod = accountingPeriod,
+    subPrimaryContactName = "John",
+    subPrimaryEmail = "john@email.com",
+    subPrimaryPhonePreference = true,
+    subPrimaryCapturePhone = Some("123"),
+    subAddSecondaryContact = true,
+    subSecondaryContactName = Some("Doe"),
+    subSecondaryEmail = Some("doe@email.com"),
+    subSecondaryCapturePhone = Some("123"),
+    subSecondaryPhonePreference = Some(true),
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
+    accountStatus = Some(AccountStatus(false))
+  )
+
+  val someSubscriptionLocalDataUkOther: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
+    subMneOrDomestic = MneOrDomestic.UkAndOther,
+    subAccountingPeriod = accountingPeriod,
+    subPrimaryContactName = "John",
+    subPrimaryEmail = "john@email.com",
+    subPrimaryPhonePreference = true,
+    subPrimaryCapturePhone = Some("123"),
+    subAddSecondaryContact = true,
+    subSecondaryContactName = Some("Doe"),
+    subSecondaryEmail = Some("doe@email.com"),
+    subSecondaryCapturePhone = Some("123"),
+    subSecondaryPhonePreference = Some(true),
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
+    accountStatus = Some(AccountStatus(false))
+  )
 }

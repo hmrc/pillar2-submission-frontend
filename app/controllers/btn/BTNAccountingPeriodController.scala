@@ -18,13 +18,14 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.obligation.ObligationStatus.{Fulfilled, Open}
+import models.obligationsandsubmissions.ObligationStatus.{Fulfilled, Open}
+import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import models.{MneOrDomestic, Mode}
 import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
-import services.ObligationService
+import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ViewHelpers
@@ -40,7 +41,7 @@ class BTNAccountingPeriodController @Inject() (
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
   btnStatus:                              BTNStatusAction,
-  obligationService:                      ObligationService,
+  obligationAndSubmissionsService:        ObligationsAndSubmissionsService,
   dateHelper:                             ViewHelpers,
   view:                                   BTNAccountingPeriodView,
   viewReturnSubmitted:                    BTNReturnSubmittedView,
@@ -51,6 +52,8 @@ class BTNAccountingPeriodController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
+      implicit val pillar2Id: String = request.subscriptionLocalData.plrReference
+
       val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
       val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
       val accountStatus             = request.subscriptionLocalData.accountStatus.forall(_.inactive)
@@ -72,12 +75,16 @@ class BTNAccountingPeriodController @Inject() (
         )
       }
 
-      obligationService
-        .handleObligation(request.subscriptionLocalData.plrReference, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
-        .map {
-          case Right(Fulfilled) if !accountStatus => Ok(viewReturnSubmitted(accountingPeriods))
-          case Right(Open) if !accountStatus      => Ok(view(accountingPeriods, mode, changeAccountingPeriodUrl))
-          case _                                  => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+      // This works but might not be business-accurate. The journey is getting redesigned soon,
+      // I don't think it's worth wasting effort making this perfect now
+      obligationAndSubmissionsService
+        .handleData(subAccountingPeriod.startDate, subAccountingPeriod.endDate)
+        .map { success: ObligationsAndSubmissionsSuccess =>
+          success.accountingPeriodDetails.head.obligations.head.status match {
+            case Fulfilled if !accountStatus => Ok(viewReturnSubmitted(accountingPeriods))
+            case Open if !accountStatus      => Ok(view(accountingPeriods, mode, changeAccountingPeriodUrl))
+            case _                           => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          }
         }
     }
 
