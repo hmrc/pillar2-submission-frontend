@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.btn.routes._
 import models.NormalMode
-import models.obligationsandsubmissions.ObligationStatus.Open
+import models.obligation.ObligationStatus.{Fulfilled, Open}
 import models.subscription.{AccountStatus, AccountingPeriod, SubscriptionLocalData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
-import services.obligationsandsubmissions.ObligationsAndSubmissionsService
+import services.ObligationService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.ViewHelpers
@@ -56,7 +56,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
   def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
     .overrides(
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-      bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+      bind[ObligationService].toInstance(mockObligationService)
     )
     .build()
 
@@ -78,8 +78,8 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
-      when(mockObligationsAndSubmissionsService.handleData(any(), any())(any[HeaderCarrier], any[String]))
-        .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(status = Open).success))
+      when(mockObligationService.handleObligation(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(Open)))
 
       running(application) {
         val request = FakeRequest(GET, btnAccountingPeriodRoute)
@@ -115,15 +115,15 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          bind[ObligationService].toInstance(mockObligationService)
         )
         .build()
 
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData.copy(accountStatus = Some(AccountStatus(true))))))
 
-      when(mockObligationsAndSubmissionsService.handleData(any(), any())(any[HeaderCarrier], any[String]))
-        .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse().success))
+      when(mockObligationService.handleObligation(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(Fulfilled)))
 
       running(application) {
         val request = FakeRequest(GET, btnAccountingPeriodRoute)
@@ -175,8 +175,8 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
-      when(mockObligationsAndSubmissionsService.handleData(any(), any())(any[HeaderCarrier], any[String]))
-        .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse().success))
+      when(mockObligationService.handleObligation(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(Fulfilled)))
 
       running(application) {
         val request = FakeRequest(GET, btnAccountingPeriodRoute)
