@@ -63,8 +63,8 @@ trait SpecBase
     with GuiceOneAppPerSuite
     with TestDataFixture {
 
-  val userAnswersId:         String = "id"
-  implicit val PlrReference: String = "XMPLR0123456789"
+  val userAnswersId: String = "id"
+  val PlrReference:  String = "XMPLR0123456789"
 
   val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 

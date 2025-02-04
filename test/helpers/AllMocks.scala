@@ -17,14 +17,16 @@
 package helpers
 
 import config.FrontendAppConfig
-import connectors.{BTNConnector, ObligationConnector, SubscriptionConnector}
+import connectors.obligationsandsubmissions.ObligationAndSubmissionsConnector
+import connectors.{BTNConnector, SubscriptionConnector}
 import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction}
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import repositories.SessionRepository
-import services.{BTNService, ObligationService, SubscriptionService}
+import services.obligationsandsubmissions.ObligationsAndSubmissionsService
+import services.{BTNService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -44,9 +46,8 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockSubscriptionConnector:              SubscriptionConnector             = mock[SubscriptionConnector]
   val mockSubscriptionService:                SubscriptionService               = mock[SubscriptionService]
   val mockAgentIdentifierAction:              AgentIdentifierAction             = mock[AgentIdentifierAction]
-  val mockAgentIdentifierAction: AgentIdentifierAction = mock[AgentIdentifierAction]
-  val mockBTNConnector:          BTNConnector          = mock[BTNConnector]
-  val mockBTNService:            BTNService            = mock[BTNService]
+  val mockBTNConnector:                       BTNConnector                      = mock[BTNConnector]
+  val mockBTNService:                         BTNService                        = mock[BTNService]
   val mockObligationsAndSubmissionsConnector: ObligationAndSubmissionsConnector = mock[ObligationAndSubmissionsConnector]
   val mockObligationsAndSubmissionsService:   ObligationsAndSubmissionsService  = mock[ObligationsAndSubmissionsService]
 

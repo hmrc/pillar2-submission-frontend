@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class ObligationsAndSubmissionsControllerSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
-  val application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
+  val application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
     .overrides(bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService))
     .build()
 

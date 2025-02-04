@@ -35,9 +35,7 @@ import java.time.{LocalDate, ZonedDateTime}
 
 trait TestDataFixture extends SubscriptionLocalDataFixture {
 
-  lazy val localDateFrom:                                LocalDate = LocalDate.now
-  lazy val localDateTo:                                  LocalDate = LocalDate.now.plusYears(1)
-  lazy val obligationsAndSubmissionsSuccessResponseJson: JsValue   = Json.toJson(obligationsAndSubmissionsSuccessResponse())
+  lazy val obligationsAndSubmissionsSuccessResponseJson: JsValue = Json.toJson(obligationsAndSubmissionsSuccessResponse())
 
   lazy val submittedBTNRecord: UserAnswers = validBTNCyaUa.set(BTNStatus, BTNStatus.submitted).get
 
@@ -91,13 +89,16 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
 }
 
 trait SubscriptionLocalDataFixture {
+  lazy val localDateFrom: LocalDate = LocalDate.of(2024, 10, 24)
+  lazy val localDateTo:   LocalDate = localDateFrom.plusYears(1)
+
   private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
   private val contactDetails           = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
-  val accountingPeriod: AccountingPeriod = AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 24))
+  val accountingPeriod: AccountingPeriod = AccountingPeriod(localDateFrom, localDateTo)
 
   val subscriptionData: SubscriptionData = SubscriptionData(
     formBundleNumber = "form bundle",
-    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
+    upeDetails = UpeDetails(None, None, None, "orgName", localDateFrom, domesticOnly = false, filingMember = false),
     upeCorrespAddressDetails = upeCorrespondenceAddress,
     primaryContactDetails = contactDetails,
     secondaryContactDetails = None,

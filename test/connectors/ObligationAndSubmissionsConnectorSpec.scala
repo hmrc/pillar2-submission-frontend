@@ -28,6 +28,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
     .build()
 
   val BasePath = "/report-pillar2-top-up-taxes/obligations-and-submissions"
+  implicit val pillar2Id: String = PlrReference
 
   lazy val connector: ObligationAndSubmissionsConnector = app.injector.instanceOf[ObligationAndSubmissionsConnector]
 

@@ -21,8 +21,7 @@ import connectors.SubscriptionConnector
 import controllers.btn.routes._
 import models.NormalMode
 import models.obligationsandsubmissions.ObligationStatus.Open
-import models.subscription.SubscriptionLocalData
-import models.subscription.{AccountStatus, AccountingPeriod}
+import models.subscription.{AccountStatus, AccountingPeriod, SubscriptionLocalData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{PlrReferencePage, SubAccountingPeriodPage}
@@ -54,7 +53,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
   val ua: SubscriptionLocalData =
     emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
 
-  def application: Application = applicationBuilder(subscriptionLocalData = Some(ua))
+  def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
     .overrides(
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
       bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -93,7 +92,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "must redirect to a knockback page when a BTN is submitted" in {
-      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+      val application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 

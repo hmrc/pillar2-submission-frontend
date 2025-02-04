@@ -36,7 +36,8 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
     .overrides(bind[ObligationAndSubmissionsConnector].toInstance(mockObligationsAndSubmissionsConnector))
     .build()
 
-  val service: ObligationsAndSubmissionsService = application.injector.instanceOf[ObligationsAndSubmissionsService]
+  val service:            ObligationsAndSubmissionsService = application.injector.instanceOf[ObligationsAndSubmissionsService]
+  implicit val pillar2Id: String                           = PlrReference
 
   private def setupMockConnector(response: Future[ObligationsAndSubmissionsSuccess]): OngoingStubbing[Future[ObligationsAndSubmissionsSuccess]] =
     when(mockObligationsAndSubmissionsConnector.getData(any(), any())(any[HeaderCarrier], any[ExecutionContext], any()))
