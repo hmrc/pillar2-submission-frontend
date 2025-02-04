@@ -24,7 +24,7 @@ import views.html.btn.BTNProblemWithServiceView
 class BTNProblemWithServiceViewSpec extends ViewSpecBase {
 
   private val page: BTNProblemWithServiceView = inject[BTNProblemWithServiceView]
-  private val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString)
+  private val view: Document                  = Jsoup.parse(page()(request, appConfig, messages).toString)
 
   "BTNProblemWithServiceView" should {
 
@@ -47,4 +47,4 @@ class BTNProblemWithServiceViewSpec extends ViewSpecBase {
     }
 
   }
-} 
+}
