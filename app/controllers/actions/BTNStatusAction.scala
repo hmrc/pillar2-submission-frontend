@@ -19,6 +19,7 @@ package controllers.actions
 import controllers.btn.routes._
 import models.btn.BTNStatus
 import models.requests.{DataRequest, SubscriptionDataRequest}
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import repositories.SessionRepository
@@ -26,17 +27,12 @@ import repositories.SessionRepository
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BTNStatusAction @Inject() (val sessionRepository: SessionRepository)(implicit val ec: ExecutionContext) {
+class BTNStatusAction @Inject() (val sessionRepository: SessionRepository)(implicit val ec: ExecutionContext) extends Logging {
 
   def subscriptionRequest: ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] =
     new ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] {
       override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
-        sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
-          maybeUserAnswers.flatMap(_.get(BTNStatus)) match {
-            case Some(BTNStatus.submitted) => Future.successful(Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
-            case _                         => Future.successful(Right(request))
-          }
-        }
+        btnAlreadySubmitted(request.userId)(request)
 
       override protected def executionContext: ExecutionContext = ec
     }
@@ -44,13 +40,15 @@ class BTNStatusAction @Inject() (val sessionRepository: SessionRepository)(impli
   def dataRequest: ActionRefiner[DataRequest, DataRequest] =
     new ActionRefiner[DataRequest, DataRequest] {
       override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-        sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
-          maybeUserAnswers.flatMap(_.get(BTNStatus)) match {
-            case Some(BTNStatus.submitted) => Future.successful(Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
-            case _                         => Future.successful(Right(request))
-          }
-        }
+        btnAlreadySubmitted(request.userId)(request)
 
       override protected def executionContext: ExecutionContext = ec
     }
+
+  private def btnAlreadySubmitted[T](userId: String)(request: T) = sessionRepository.get(userId).map { maybeUserAnswers =>
+    if (maybeUserAnswers.flatMap(_.get(BTNStatus)).contains(BTNStatus.submitted))
+      Left(Redirect(CheckYourAnswersController.cannotReturnKnockback))
+    else
+      Right(request)
+  }
 }

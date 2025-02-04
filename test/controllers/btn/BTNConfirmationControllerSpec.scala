@@ -36,7 +36,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = None, subscriptionLocalData = Some(someSubscriptionLocalData)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData)).build()
 
       val currentDate: String = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM y"))
       val date:        String = someSubscriptionLocalData.subAccountingPeriod.startDate.format(DateTimeFormatter.ofPattern("d MMMM y"))
@@ -57,7 +57,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
     "onDownloadRfmAnswers" should {
       "return OK and the correct view" in {
         val mockFopService = mock[FopService]
-        val application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(
             bind[FopService].toInstance(mockFopService)
           )

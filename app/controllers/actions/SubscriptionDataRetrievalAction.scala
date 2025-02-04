@@ -20,6 +20,7 @@ import connectors.SubscriptionConnector
 import models.requests.{IdentifierRequest, OptionalSubscriptionDataRequest}
 import play.api.Logging
 import play.api.mvc.ActionTransformer
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -27,7 +28,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionDataRetrievalActionImpl @Inject() (
-  val subscriptionConnector:     SubscriptionConnector
+  val subscriptionConnector:     SubscriptionConnector,
+  sessionRepository:             SessionRepository
 )(implicit val executionContext: ExecutionContext)
     extends SubscriptionDataRetrievalAction
     with Logging {
@@ -35,17 +37,17 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalSubscriptionDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    subscriptionConnector.getSubscriptionCache(request.userId).map { maybeSubscriptionLocalData =>
-      OptionalSubscriptionDataRequest(
-        request.request,
-        request.userId,
-        maybeSubscriptionLocalData,
-        request.enrolments
-      )
-    }
-
+    for {
+      maybeSubscriptionLocalData <- subscriptionConnector.getSubscriptionCache(request.userId)
+      maybeUserAnswers           <- sessionRepository.get(request.userId)
+    } yield OptionalSubscriptionDataRequest(
+      request.request,
+      request.userId,
+      maybeSubscriptionLocalData,
+      maybeUserAnswers,
+      request.enrolments
+    )
   }
-
 }
 
 trait SubscriptionDataRetrievalAction extends ActionTransformer[IdentifierRequest, OptionalSubscriptionDataRequest]
