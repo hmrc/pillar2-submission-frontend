@@ -116,7 +116,9 @@ class EnrolmentIdentifierAction @Inject() (
               Left(Redirect(routes.UnauthorisedController.onPageLoad))
           }
         case _ =>
-          logger.warn(s"EnrolmentAuthIdentifierAction - Unable to retrieve plrReference from session")
+          logger.warn(
+            s"EnrolmentAuthIdentifierAction - Unable to retrieve plrReference from session" + s" [Session ID: ${Pillar2SessionKeys.sessionId(hc)}]" + s" [Internal ID: $internalId]"
+          )
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       }
     }

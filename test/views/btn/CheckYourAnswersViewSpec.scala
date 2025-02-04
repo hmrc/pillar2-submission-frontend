@@ -44,7 +44,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have the correct summary list" should {
       "have a summary list keys" in {
-        view.getElementsByClass("govuk-summary-list__key").get(0).text mustEqual "Group’s accounting period"
+        view.getElementsByClass("govuk-summary-list__key").get(0).text mustEqual "Group`s accounting period"
         view.getElementsByClass("govuk-summary-list__key").get(1).text mustEqual
           "Are the entities still located in both the UK and outside the UK?"
 
