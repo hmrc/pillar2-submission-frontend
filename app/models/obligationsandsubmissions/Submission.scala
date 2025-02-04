@@ -16,6 +16,7 @@
 
 package models.obligationsandsubmissions
 
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 import play.api.libs.json._
 
 import java.time.ZonedDateTime
@@ -26,29 +27,12 @@ object Submission {
   implicit val format: OFormat[Submission] = Json.format[Submission]
 }
 
-sealed trait SubmissionType
-object SubmissionType {
+sealed trait SubmissionType extends EnumEntry
+object SubmissionType extends Enum[SubmissionType] with PlayJsonEnum[SubmissionType] {
+  val values: IndexedSeq[SubmissionType] = findValues
+
   case object UKTR extends SubmissionType
   case object ORN extends SubmissionType
   case object BTN extends SubmissionType
   case object GIR extends SubmissionType
-
-  implicit val format: Format[SubmissionType] = new Format[SubmissionType] {
-    override def reads(json: JsValue): JsResult[SubmissionType] =
-      json.as[String] match {
-        case "UKTR" => JsSuccess(UKTR)
-        case "ORN"  => JsSuccess(ORN)
-        case "BTN"  => JsSuccess(BTN)
-        case "GIR"  => JsSuccess(GIR)
-        case _      => JsError("Invalid submission type")
-      }
-
-    override def writes(obligationType: SubmissionType): JsValue =
-      obligationType match {
-        case UKTR => JsString("UKTR")
-        case ORN  => JsString("ORN")
-        case BTN  => JsString("BTN")
-        case GIR  => JsString("GIR")
-      }
-  }
 }

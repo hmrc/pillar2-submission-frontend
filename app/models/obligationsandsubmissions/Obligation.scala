@@ -16,6 +16,7 @@
 
 package models.obligationsandsubmissions
 
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 import play.api.libs.json._
 
 case class Obligation(obligationType: ObligationType, status: ObligationStatus, canAmend: Boolean, submissions: Seq[Submission])
@@ -24,44 +25,18 @@ object Obligation {
   implicit val format: OFormat[Obligation] = Json.format[Obligation]
 }
 
-sealed trait ObligationStatus
-object ObligationStatus {
+sealed trait ObligationStatus extends EnumEntry
+object ObligationStatus extends Enum[ObligationStatus] with PlayJsonEnum[ObligationStatus] {
+  val values: IndexedSeq[ObligationStatus] = findValues
+
   case object Open extends ObligationStatus
   case object Fulfilled extends ObligationStatus
-
-  implicit val format: Format[ObligationStatus] = new Format[ObligationStatus] {
-    override def reads(json: JsValue): JsResult[ObligationStatus] =
-      json.as[String] match {
-        case "Open"      => JsSuccess(Open)
-        case "Fulfilled" => JsSuccess(Fulfilled)
-        case _           => JsError("Invalid obligation status")
-      }
-
-    override def writes(ObligationStatus: ObligationStatus): JsValue =
-      ObligationStatus match {
-        case Open      => JsString("Open")
-        case Fulfilled => JsString("Fulfilled")
-      }
-  }
 }
 
-sealed trait ObligationType
-object ObligationType {
+sealed trait ObligationType extends EnumEntry
+object ObligationType extends Enum[ObligationType] with PlayJsonEnum[ObligationType] {
+  val values: IndexedSeq[ObligationType] = findValues
+
   case object Pillar2TaxReturn extends ObligationType
   case object GlobeInformationReturn extends ObligationType
-
-  implicit val format: Format[ObligationType] = new Format[ObligationType] {
-    override def reads(json: JsValue): JsResult[ObligationType] =
-      json.as[String] match {
-        case "Pillar2TaxReturn"       => JsSuccess(Pillar2TaxReturn)
-        case "GlobeInformationReturn" => JsSuccess(GlobeInformationReturn)
-        case _                        => JsError("Invalid obligation type")
-      }
-
-    override def writes(obligationType: ObligationType): JsValue =
-      obligationType match {
-        case Pillar2TaxReturn       => JsString("Pillar2TaxReturn")
-        case GlobeInformationReturn => JsString("GlobeInformationReturn")
-      }
-  }
 }
