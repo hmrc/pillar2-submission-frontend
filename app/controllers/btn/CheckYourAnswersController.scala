@@ -94,7 +94,7 @@ class CheckYourAnswersController @Inject() (
       _ = logger.info(s"BTN Request Submission was successful. response.body= $apiSuccessResponse")
     } yield Redirect(BTNConfirmationController.onPageLoad)).recover { case ex: Throwable =>
       logger.error(s"BTN Request failed with error: ${ex.getMessage}")
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      Redirect(BTNProblemWithServiceController.onPageLoad)
     }
   }
 

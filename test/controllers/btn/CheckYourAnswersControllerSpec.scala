@@ -106,7 +106,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         redirectLocation(result).value mustEqual BTNConfirmationController.onPageLoad.url
       }
 
-      "redirect to UnderConstruction page when BTN submission throws an exception" in {
+      "redirect to Problem with Service page when BTN submission throws an exception" in {
         val applicationBTN =
           applicationBuilder(userAnswers = Option(UserAnswers("id", JsObject.empty)), subscriptionLocalData = Some(someSubscriptionLocalData))
             .overrides(bind[BTNService].toInstance(mockBTNService))
@@ -116,11 +116,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
           val result     = route(applicationBTN, requestBTN).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
         }
       }
 
-      "redirect to UnderConstruction page when BTN submission returns Future.failed(ApiError)" in {
+      "redirect to Problem with Service page when BTN submission returns Future.failed(ApiError)" in {
         val applicationBTN =
           applicationBuilder(userAnswers = Option(UserAnswers("id", JsObject.empty)), subscriptionLocalData = Some(someSubscriptionLocalData))
             .overrides(bind[BTNService].toInstance(mockBTNService))
@@ -131,12 +131,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
           val result     = route(applicationBTN, requestBTN).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
         }
         Await.result(applicationBTN.stop(), 5.seconds)
       }
 
-      "redirect to UnderConstruction page for any other error" in {
+      "redirect to Problem with Service page for any other error" in {
         val applicationBTN =
           applicationBuilder(userAnswers = Option(UserAnswers("id", JsObject.empty)), subscriptionLocalData = Some(someSubscriptionLocalData))
             .overrides(bind[BTNService].toInstance(mockBTNService))
@@ -146,7 +146,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val requestBTN = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
           val result     = route(applicationBTN, requestBTN).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
         }
       }
     }
