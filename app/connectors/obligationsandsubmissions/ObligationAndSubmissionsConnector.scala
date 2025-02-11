@@ -35,7 +35,7 @@ class ObligationAndSubmissionsConnector @Inject() (val config: FrontendAppConfig
     pillar2Id:          String
   ): Future[ObligationsAndSubmissionsSuccess] = {
     val url =
-      s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/obligations-and-submissions?fromDate=$dateFrom&toDate=$dateTo"
+      s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/obligations-and-submissions/$dateFrom/$dateTo"
     logger.info(s"Calling the backend ($url) with pillar2Id: $pillar2Id")
 
     http
