@@ -27,7 +27,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
     .configure(conf = "microservice.services.pillar2.port" -> server.port())
     .build()
 
-  val BasePath = "/report-pillar2-top-up-taxes/obligations-and-submissions"
+  val url = s"/report-pillar2-top-up-taxes/obligations-and-submissions/$localDateFrom/$localDateTo"
   implicit val pillar2Id: String = PlrReference
 
   lazy val connector: ObligationAndSubmissionsConnector = app.injector.instanceOf[ObligationAndSubmissionsConnector]
@@ -35,7 +35,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
   "getData" should {
     "return obligations and submissions when the backend returns 200 OK with data" in {
       stubGet(
-        s"$BasePath?fromDate=$localDateFrom&toDate=$localDateTo",
+        url,
         OK,
         obligationsAndSubmissionsSuccessResponseJson.toString(),
         Map("X-Pillar2-Id" -> PlrReference)
@@ -47,7 +47,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
 
     "fail when the backend returns a non-200 status" in {
       stubGet(
-        s"$BasePath?fromDate=$localDateFrom&toDate=$localDateTo",
+        url,
         INTERNAL_SERVER_ERROR,
         headers = Map("X-Pillar2-Id" -> PlrReference)
       )
@@ -57,7 +57,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
 
     "fail when the response cannot be parsed" in {
       stubGet(
-        s"$BasePath?fromDate=$localDateFrom&toDate=$localDateTo",
+        url,
         OK,
         "invalid json",
         Map("X-Pillar2-Id" -> PlrReference)
