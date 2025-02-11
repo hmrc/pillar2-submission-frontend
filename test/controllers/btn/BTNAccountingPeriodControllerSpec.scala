@@ -21,10 +21,11 @@ import connectors.SubscriptionConnector
 import controllers.btn.routes._
 import models.NormalMode
 import models.obligation.ObligationStatus.{Fulfilled, Open}
-import models.subscription.{AccountStatus, AccountingPeriod}
+import models.subscription.{AccountStatus, AccountingPeriod, SubscriptionLocalData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{PlrReferencePage, SubAccountingPeriodPage}
+import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -45,12 +46,21 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
 
   lazy val btnAccountingPeriodRoute: String = BTNAccountingPeriodController.onPageLoad(NormalMode).url
 
-  "UK Tax Return Start Controller" when {
+  val plrReference = "testPlrRef"
+  val dates: AccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
+  val dateHelper = new ViewHelpers()
 
-    val plrReference = "testPlrRef"
-    val dates        = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
-    val dateHelper   = new ViewHelpers()
+  val ua: SubscriptionLocalData =
+    emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
 
+  def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
+    .overrides(
+      bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+      bind[ObligationService].toInstance(mockObligationService)
+    )
+    .build()
+
+  "BTNAccountingPeriodController" when {
     "must return OK and the correct view if PlrReference in session and obligation is not fulfilled and account status is false" in {
       val list = SummaryListViewModel(
         rows = Seq(
@@ -64,14 +74,6 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
           )
         )
       )
-      val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
-        .overrides(
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-          bind[ObligationService].toInstance(mockObligationService)
-        )
-        .build()
 
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
@@ -90,9 +92,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "must redirect to a knockback page when a BTN is submitted" in {
-      val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
+      val application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 
@@ -112,7 +112,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         .copy(accountStatus = Some(AccountStatus(true)))
         .setOrException(SubAccountingPeriodPage, dates)
         .setOrException(PlrReferencePage, plrReference)
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
+      val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[ObligationService].toInstance(mockObligationService)
@@ -135,17 +135,9 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
-
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
-        .overrides(
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-        )
-        .build()
       running(application) {
         val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
@@ -155,17 +147,9 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "must redirect to the next page when valid data is submitted with UkOther" in {
-
-      val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
-
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalDataUkOther)))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
-        .overrides(
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-        )
-        .build()
       running(application) {
         val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
@@ -187,14 +171,6 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
           )
         )
       )
-      val ua = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(ua))
-        .overrides(
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-          bind[ObligationService].toInstance(mockObligationService)
-        )
-        .build()
 
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
