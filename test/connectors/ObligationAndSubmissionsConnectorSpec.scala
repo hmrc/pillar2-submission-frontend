@@ -27,7 +27,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
     .configure(conf = "microservice.services.pillar2.port" -> server.port())
     .build()
 
-  val url = s"/report-pillar2-top-up-taxes/obligations-and-submissions/$localDateFrom/$localDateTo"
+  val url:                String = s"/report-pillar2-top-up-taxes/obligations-and-submissions/$localDateFrom/$localDateTo"
   implicit val pillar2Id: String = PlrReference
 
   lazy val connector: ObligationAndSubmissionsConnector = app.injector.instanceOf[ObligationAndSubmissionsConnector]
