@@ -18,7 +18,7 @@ package base
 import config.FrontendAppConfig
 import controllers.actions._
 import helpers._
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, ObligationType, ObligationsAndSubmissionsSuccess}
+import models.obligationsandsubmissions._
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import models.subscription.{AccountStatus, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}
