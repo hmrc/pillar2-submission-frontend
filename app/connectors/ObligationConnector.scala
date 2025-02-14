@@ -31,6 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
+  @deprecated("Use ObligationsAndSubmissionsConnector instead")
   def getObligation(
     plrReference: String,
     dateFrom:     LocalDate,

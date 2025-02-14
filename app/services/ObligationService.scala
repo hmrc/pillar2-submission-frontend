@@ -29,6 +29,7 @@ class ObligationService @Inject() (
   obligationConnector: ObligationConnector
 )(implicit ec:         ExecutionContext) {
 
+  @deprecated("Use ObligationsAndSubmissionsService instead")
   def handleObligation(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
     hc:                              HeaderCarrier
   ): Future[Either[ApiError, ObligationStatus]] =

@@ -18,6 +18,7 @@ package base
 import config.FrontendAppConfig
 import controllers.actions._
 import helpers._
+import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, ObligationType, ObligationsAndSubmissionsSuccess}
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import models.subscription.{AccountStatus, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}
@@ -40,6 +41,7 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.{ExecutionContext, Future}
 
 trait SpecBase
@@ -82,6 +84,26 @@ trait SpecBase
 
   val pillar2OrganisationEnrolment: Enrolments = Enrolments(
     Set(Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", None))
+  )
+
+  def obligationsAndSubmissionsSuccessResponse(status: ObligationStatus): ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+    processingDate = ZonedDateTime.now(),
+    accountingPeriodDetails = Seq(
+      AccountingPeriodDetails(
+        startDate = LocalDate.now(),
+        endDate = LocalDate.now().plusMonths(12),
+        dueDate = LocalDate.now().plusMonths(12),
+        underEnquiry = false,
+        obligations = Seq(
+          Obligation(
+            obligationType = ObligationType.Pillar2TaxReturn,
+            status = status,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+      )
+    )
   )
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
