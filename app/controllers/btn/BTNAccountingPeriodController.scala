@@ -18,13 +18,13 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.obligation.ObligationStatus.{Fulfilled, Open}
+import models.obligationsandsubmissions.ObligationStatus
 import models.{MneOrDomestic, Mode}
 import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
-import services.ObligationService
+import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ViewHelpers
@@ -40,7 +40,7 @@ class BTNAccountingPeriodController @Inject() (
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
   btnStatus:                              BTNStatusAction,
-  obligationService:                      ObligationService,
+  obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
   dateHelper:                             ViewHelpers,
   view:                                   BTNAccountingPeriodView,
   viewReturnSubmitted:                    BTNReturnSubmittedView,
@@ -51,9 +51,11 @@ class BTNAccountingPeriodController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
+      implicit val pillar2Id: String = request.subscriptionLocalData.plrReference
       val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
       val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
       val accountStatus             = request.subscriptionLocalData.accountStatus.forall(_.inactive)
+
       val accountingPeriods = {
         val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
         val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
@@ -72,12 +74,18 @@ class BTNAccountingPeriodController @Inject() (
         )
       }
 
-      obligationService
-        .handleObligation(request.subscriptionLocalData.plrReference, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
+      obligationsAndSubmissionsService
+        .handleData(subAccountingPeriod.startDate, subAccountingPeriod.endDate)
         .map {
-          case Right(Fulfilled) if !accountStatus => Ok(viewReturnSubmitted(accountingPeriods))
-          case Right(Open) if !accountStatus      => Ok(view(accountingPeriods, mode, changeAccountingPeriodUrl))
-          case _                                  => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+          case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Fulfilled)) =>
+            Ok(viewReturnSubmitted(accountingPeriods))
+          case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Open)) =>
+            Ok(view(accountingPeriods, mode, changeAccountingPeriodUrl))
+          case _ =>
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+        }
+        .recover { case _ =>
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
         }
     }
 
