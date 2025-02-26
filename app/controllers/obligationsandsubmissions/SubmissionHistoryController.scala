@@ -18,17 +18,12 @@ package controllers.obligationsandsubmissions
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Submission}
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.obligationsandsubmissions.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
 import scala.concurrent.ExecutionContext
 
@@ -55,45 +50,11 @@ class SubmissionHistoryController @Inject() (
       )
       .map {
         case success if success.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty)) =>
-          Ok(view(generateSubmissionHistoryTable(success.accountingPeriodDetails)))
+          Ok(view(success.accountingPeriodDetails))
         case _ => Ok(viewNoSubscription())
       }
       .recover { case _: Exception =>
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
       }
   }
-
-  private def generateSubmissionHistoryTable(accountingPeriods: Seq[AccountingPeriodDetails])(implicit
-    messages:                                                   Messages
-  ): Seq[Table] =
-    accountingPeriods.map { accountPeriod =>
-      val rows = accountPeriod.obligations.flatMap(_.submissions.map(submission => createTableRows(submission)))
-      createTable(accountPeriod.startDate, accountPeriod.endDate, rows)
-    }
-
-  private def createTable(startDate: LocalDate, endDate: LocalDate, rows: Seq[Seq[TableRow]])(implicit messages: Messages): Table = {
-    val formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-    val formattedEndDate   = endDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-
-    Table(
-      caption = Some(s"$formattedStartDate to $formattedEndDate"),
-      rows = rows,
-      head = Some(
-        Seq(
-          HeadCell(Text(messages("submissionHistory.submissionType")), attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("submissionHistory.submissionDate")), attributes = Map("scope" -> "col"))
-        )
-      )
-    )
-  }
-
-  private def createTableRows(submission: Submission): Seq[TableRow] =
-    Seq(
-      TableRow(
-        content = Text(submission.submissionType.toString)
-      ),
-      TableRow(
-        content = Text(submission.receivedDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))
-      )
-    )
 }

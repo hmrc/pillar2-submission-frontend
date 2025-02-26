@@ -20,6 +20,8 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 @import views.html.components.gds.ScrollWrapper
 @import views.html.styles.tableScrollStyles
+@import models.obligationsandsubmissions.AccountingPeriodDetails
+@import views.helpers.SubmissionHistoryHelper
 
 @this(
         layout: templates.Layout,
@@ -31,7 +33,7 @@
         govukTable: GovukTable
 )
 
-@(tables: Seq[Table])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(accountPeriods: Seq[AccountingPeriodDetails])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle    = titleNoForm(messages("submissionHistory.title"))
 ) {
@@ -41,7 +43,7 @@
     @govukInsetText(InsetText(content = Text(messages("submissionHistory.insetText"))))
     <br>
     @tableScrollStyles()
-    @for(table <- tables) {
+    @for(table <- SubmissionHistoryHelper.generateSubmissionHistoryTable(accountPeriods)) {
         @ScrollWrapper {
             @govukTable(table)
         }

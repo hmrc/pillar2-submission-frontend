@@ -20,7 +20,7 @@ import base.SpecBase
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
 import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
 import models.obligationsandsubmissions.SubmissionType.{GIR, UKTR}
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationsAndSubmissionsSuccess, Submission}
+import models.obligationsandsubmissions._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -29,48 +29,13 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
-import uk.gov.hmrc.govukfrontend.views.Aliases.{HeadCell, TableRow, Text}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.obligationsandsubmissions.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
-import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
 class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with ScalaFutures {
-
-  val fromDate:       String = LocalDate.now.minusDays(1).minusYears(7).format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-  val toDate:         String = LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-  val submissionDate: String = ZonedDateTime.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-
-  val tables: Seq[Table] = Seq(
-    Table(
-      caption = Some(s"$fromDate to $toDate"),
-      head = Some(
-        Seq(
-          HeadCell(Text(messages("submissionHistory.submissionType")), attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("submissionHistory.submissionDate")), attributes = Map("scope" -> "col"))
-        )
-      ),
-      rows = List(
-        List(TableRow(Text("UKTR")), TableRow(Text(submissionDate))),
-        List(TableRow(Text("GIR")), TableRow(Text(submissionDate)))
-      )
-    ),
-    Table(
-      caption = Some(s"$fromDate to $toDate"),
-      head = Some(
-        Seq(
-          HeadCell(Text(messages("submissionHistory.submissionType")), attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("submissionHistory.submissionDate")), attributes = Map("scope" -> "col"))
-        )
-      ),
-      rows = List(
-        List(TableRow(Text("UKTR")), TableRow(Text(submissionDate)))
-      )
-    )
-  )
 
   val submissionHistoryResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
     ZonedDateTime.now,
@@ -163,7 +128,11 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(tables)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(submissionHistoryResponse.accountingPeriodDetails)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 

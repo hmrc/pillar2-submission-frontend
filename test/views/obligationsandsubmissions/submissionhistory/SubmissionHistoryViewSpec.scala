@@ -17,32 +17,53 @@
 package views.obligationsandsubmissions.submissionhistory
 
 import base.ViewSpecBase
+import models.obligationsandsubmissions.ObligationStatus.Fulfilled
+import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
+import models.obligationsandsubmissions.SubmissionType.UKTR
+import models.obligationsandsubmissions._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import uk.gov.hmrc.govukfrontend.views.Aliases._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import views.html.obligationsandsubmissions.submissionhistory.SubmissionHistoryView
+
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZonedDateTime}
 
 class SubmissionHistoryViewSpec extends ViewSpecBase {
 
-  val table: Seq[Table] = Seq(
-    Table(
-      List(
-        List(TableRow(Text("UKTR")), TableRow(Text("25 February 2025"))),
-        List(TableRow(Text("UKTR")), TableRow(Text("25 February 2025")))
-      ),
-      head = Some(
+  val submissionHistoryResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+    ZonedDateTime.now,
+    Seq(
+      AccountingPeriodDetails(
+        LocalDate.now.minusDays(1).minusYears(7),
+        LocalDate.now,
+        LocalDate.now,
+        underEnquiry = false,
         Seq(
-          HeadCell(Text(messages("submissionHistory.submissionType"))),
-          HeadCell(Text(messages("submissionHistory.submissionDate")))
+          Obligation(
+            Pillar2TaxReturn,
+            Fulfilled,
+            canAmend = true,
+            Seq(
+              Submission(
+                UKTR,
+                ZonedDateTime.now,
+                None
+              ),
+              Submission(
+                UKTR,
+                ZonedDateTime.now,
+                None
+              )
+            )
+          )
         )
-      ),
-      caption = Some("25 February 2024 to 25 February 2025")
+      )
     )
   )
+
   val page: SubmissionHistoryView = inject[SubmissionHistoryView]
 
-  val view: Document = Jsoup.parse(page(table)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(submissionHistoryResponse.accountingPeriodDetails)(request, appConfig, messages).toString())
 
   "Transaction History View" should {
 
@@ -74,8 +95,12 @@ class SubmissionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have a table" in {
+      val fromDate:       String = LocalDate.now.minusDays(1).minusYears(7).format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+      val toDate:         String = LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+      val submissionDate: String = ZonedDateTime.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+
       val captions = view.getElementsByClass("govuk-table__caption")
-      captions.first().text must include("25 February 2024 to 25 February 2025")
+      captions.first().text must include(s"$fromDate to $toDate")
 
       val tableHeaders = view.getElementsByClass("govuk-table__header")
 
@@ -85,7 +110,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase {
       (1 to 2).foreach { int =>
         val tableRow = view.getElementsByClass("govuk-table__row").get(int).getElementsByClass("govuk-table__cell")
         tableRow.first().text must include("UKTR")
-        tableRow.get(1).text  must include("25 February 2025")
+        tableRow.get(1).text  must include(submissionDate)
       }
     }
 
@@ -99,7 +124,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase {
         "Information on your group’s"
       )
       link.text must include("due and overdue returns")
-      link.attr("href") mustEqual "#" //TODO: Update when clarified
+      link.attr("href") mustEqual "#" //TODO: Change to URL when returns page built
     }
   }
 }
