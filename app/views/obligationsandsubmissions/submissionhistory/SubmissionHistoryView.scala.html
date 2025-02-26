@@ -18,6 +18,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
 @import views.html.components.gds._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+@import views.html.components.gds.ScrollWrapper
+@import views.html.styles.tableScrollStyles
 
 @this(
         layout: templates.Layout,
@@ -38,8 +40,11 @@
     @p(messages("submissionHistory.p2"))
     @govukInsetText(InsetText(content = Text(messages("submissionHistory.insetText"))))
     <br>
+    @tableScrollStyles()
     @for(table <- tables) {
-        @govukTable(table)
+        @ScrollWrapper {
+            @govukTable(table)
+        }
     }
     <br>
     @h2(messages("submissionHistory.h2"), size = "m")

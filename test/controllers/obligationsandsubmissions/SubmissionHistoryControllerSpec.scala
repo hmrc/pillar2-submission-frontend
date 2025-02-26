@@ -19,46 +19,56 @@ package controllers.obligationsandsubmissions
 import base.SpecBase
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
 import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
-import models.obligationsandsubmissions.SubmissionType.UKTR
+import models.obligationsandsubmissions.SubmissionType.{GIR, UKTR}
 import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationsAndSubmissionsSuccess, Submission}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HeadCell, TableRow, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
-import views.html.obligationsandsubmissions.submissionhistory.SubmissionHistoryView
+import uk.gov.hmrc.http.HeaderCarrier
+import views.html.obligationsandsubmissions.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
+import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
 class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
-//  val enrolments: Set[Enrolment] = Set(
-//    Enrolment(
-//      key = "HMRC-PILLAR2-ORG",
-//      identifiers = Seq(
-//        EnrolmentIdentifier("PLRID", "Abc123")
-//      ),
-//      state = "activated"
-//    )
-//  )
+  val fromDate:       String = LocalDate.now.minusDays(1).minusYears(7).format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+  val toDate:         String = LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+  val submissionDate: String = ZonedDateTime.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
 
   val tables: Seq[Table] = Seq(
     Table(
-      List(
-        List(TableRow(Text("UKTR")), TableRow(Text("25 February 2025"))),
-        List(TableRow(Text("UKTR")), TableRow(Text("25 February 2025"))),
-      ),
+      caption = Some(s"$fromDate to $toDate"),
       head = Some(
         Seq(
-          HeadCell(Text(messages("submissionHistory.submissionType"))),
-          HeadCell(Text(messages("submissionHistory.submissionDate")))
+          HeadCell(Text(messages("submissionHistory.submissionType")), attributes = Map("scope" -> "col")),
+          HeadCell(Text(messages("submissionHistory.submissionDate")), attributes = Map("scope" -> "col"))
         )
       ),
-      caption = Some("25 February 2024 to 25 February 2025")
+      rows = List(
+        List(TableRow(Text("UKTR")), TableRow(Text(submissionDate))),
+        List(TableRow(Text("GIR")), TableRow(Text(submissionDate)))
+      )
+    ),
+    Table(
+      caption = Some(s"$fromDate to $toDate"),
+      head = Some(
+        Seq(
+          HeadCell(Text(messages("submissionHistory.submissionType")), attributes = Map("scope" -> "col")),
+          HeadCell(Text(messages("submissionHistory.submissionDate")), attributes = Map("scope" -> "col"))
+        )
+      ),
+      rows = List(
+        List(TableRow(Text("UKTR")), TableRow(Text(submissionDate)))
+      )
     )
   )
 
@@ -66,7 +76,32 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
     ZonedDateTime.now,
     Seq(
       AccountingPeriodDetails(
+        LocalDate.now.minusDays(1).minusYears(7),
         LocalDate.now,
+        LocalDate.now,
+        underEnquiry = false,
+        Seq(
+          Obligation(
+            Pillar2TaxReturn,
+            Fulfilled,
+            canAmend = true,
+            Seq(
+              Submission(
+                UKTR,
+                ZonedDateTime.now,
+                None
+              ),
+              Submission(
+                GIR,
+                ZonedDateTime.now,
+                None
+              )
+            )
+          )
+        )
+      ),
+      AccountingPeriodDetails(
+        LocalDate.now.minusDays(1).minusYears(7),
         LocalDate.now,
         LocalDate.now,
         underEnquiry = false,
@@ -88,7 +123,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
     )
   )
 
-  val submissionHistoryNoSubmissionResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+  val noSubmissionHistoryResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
     ZonedDateTime.now,
     Seq(
       AccountingPeriodDetails(
@@ -108,12 +143,16 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
     )
   )
 
-  "SubmissionHistoryController" should {
+  "SubmissionHistoryController" must {
     "return OK and render the SubmissionHistoryView when submissions are present" in {
-      when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(any(), any()))
+      when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[String]))
         .thenReturn(Future.successful(submissionHistoryResponse))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+        .overrides(
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.obligationsandsubmissions.routes.SubmissionHistoryController.onPageLoad.url)
@@ -129,14 +168,46 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
     }
 
     "return OK and render the SubmissionHistoryNoSubscriptionView when no submissions are present" in {
-      when(mockObligationsAndSubmissionsService.handleData(any(), any())(any(), any()))
-        .thenReturn(Future.successful(submissionHistoryNoSubmissionResponse))
+      when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[String]))
+        .thenReturn(Future.successful(noSubmissionHistoryResponse))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+        .overrides(
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.obligationsandsubmissions.routes.SubmissionHistoryController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SubmissionHistoryNoSubmissionsView]
+
+        status(result) mustEqual OK
+
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+      }
     }
+
     "redirect to JourneyRecoveryController on exception" in {
       when(mockObligationsAndSubmissionsService.handleData(any(), any())(any(), any()))
-        .thenReturn(Future.failed(new Exception("Service error")))
-//      status(result) mustBe SEE_OTHER
-//      redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad(None).url)
+        .thenReturn(Future.failed(new Exception("something went wrong")))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+        .overrides(
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.obligationsandsubmissions.routes.SubmissionHistoryController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad(None).url)
+      }
     }
   }
 }

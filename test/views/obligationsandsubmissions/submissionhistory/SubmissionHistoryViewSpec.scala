@@ -29,7 +29,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase {
     Table(
       List(
         List(TableRow(Text("UKTR")), TableRow(Text("25 February 2025"))),
-        List(TableRow(Text("UKTR")), TableRow(Text("25 February 2025"))),
+        List(TableRow(Text("UKTR")), TableRow(Text("25 February 2025")))
       ),
       head = Some(
         Seq(
