@@ -70,7 +70,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with SubmissionHistoryDataF
 
       val tableHeaders = view.getElementsByClass("govuk-table__header")
 
-      tableHeaders.first().text must include("Submission type")
+      tableHeaders.first().text must include("Type of return")
       tableHeaders.get(1).text  must include("Submission date")
 
       (1 to 2).foreach { int =>

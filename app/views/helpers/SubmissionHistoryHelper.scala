@@ -43,7 +43,7 @@ object SubmissionHistoryHelper {
       rows = rows,
       head = Some(
         Seq(
-          HeadCell(Text(messages("submissionHistory.submissionType")), attributes = Map("scope" -> "col")),
+          HeadCell(Text(messages("submissionHistory.typeOfReturn")), attributes = Map("scope" -> "col")),
           HeadCell(Text(messages("submissionHistory.submissionDate")), attributes = Map("scope" -> "col"))
         )
       )

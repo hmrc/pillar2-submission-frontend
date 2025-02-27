@@ -51,7 +51,7 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
         AccountingPeriodDetails(startDate2, endDate2, LocalDate.now, underEnquiry = false, Seq(obligation2))
       )
 
-      when(messages("submissionHistory.submissionType")).thenReturn("Submission Type")
+      when(messages("submissionHistory.typeOfReturn")).thenReturn("Type of return")
       when(messages("submissionHistory.submissionDate")).thenReturn("Submission Date")
 
       val tables = SubmissionHistoryHelper.generateSubmissionHistoryTable(accountingPeriods)
