@@ -22,8 +22,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.obligationsandsubmissions.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
+import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.ExecutionContext
 
@@ -41,12 +43,11 @@ class SubmissionHistoryController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
     implicit val pillar2Id: String = request.subscriptionLocalData.plrReference
-    val accountingPeriods = 7
 
     obligationsAndSubmissionsService
       .handleData(
-        request.subscriptionLocalData.subAccountingPeriod.startDate.minusYears(accountingPeriods),
-        request.subscriptionLocalData.subAccountingPeriod.endDate
+        LocalDate.now.minusYears(SUBMISSION_ACCOUNTING_PERIODS),
+        LocalDate.now
       )
       .map {
         case success if success.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty)) =>

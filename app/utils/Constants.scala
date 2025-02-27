@@ -17,5 +17,6 @@
 package utils
 
 object Constants {
-  final val EQUAL_LENGTH_15 = 15
+  final val EQUAL_LENGTH_15               = 15
+  final val SUBMISSION_ACCOUNTING_PERIODS = 7
 }
