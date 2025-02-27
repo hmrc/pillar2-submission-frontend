@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.obligationsandsubmissions.submissionhistory
+package views.submissionhistory
 
 import base.ViewSpecBase
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
@@ -23,7 +23,7 @@ import models.obligationsandsubmissions.SubmissionType.UKTR
 import models.obligationsandsubmissions._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.obligationsandsubmissions.submissionhistory.SubmissionHistoryView
+import views.html.submissionhistory.SubmissionHistoryView
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
@@ -124,7 +124,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase {
         "Information on your group’s"
       )
       link.text must include("due and overdue returns")
-      link.attr("href") mustEqual "#" //TODO: Change to URL when returns page built
+      link.attr("href") mustEqual "#" //TODO: Change URL when due and overdue returns page is built
     }
   }
 }

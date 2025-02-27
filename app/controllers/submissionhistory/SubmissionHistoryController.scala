@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.obligationsandsubmissions
+package controllers.submissionhistory
 
 import config.FrontendAppConfig
 import controllers.actions._
@@ -23,7 +23,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
-import views.html.obligationsandsubmissions.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
+import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Named}

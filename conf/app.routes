@@ -75,4 +75,4 @@ GET         /below-threshold-notification/confirmation/download-pdf             
 
 GET         /obligations-and-submissions                                          controllers.obligationsandsubmissions.ObligationsAndSubmissionsController.onPageLoad(fromDate: String, toDate: String)
 
-GET         /obligations-and-submissions/submission-history                       controllers.obligationsandsubmissions.SubmissionHistoryController.onPageLoad
+GET         /submission-history                                                   controllers.submissionhistory.SubmissionHistoryController.onPageLoad

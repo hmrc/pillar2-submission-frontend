@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.obligationsandsubmissions
+package controllers.submissionhistory
 
 import base.SpecBase
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
@@ -30,7 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.obligationsandsubmissions.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
+import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
 import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
@@ -120,7 +120,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.obligationsandsubmissions.routes.SubmissionHistoryController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
 
         val result = route(application, request).value
 
@@ -147,7 +147,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.obligationsandsubmissions.routes.SubmissionHistoryController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
 
         val result = route(application, request).value
 
@@ -170,7 +170,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.obligationsandsubmissions.routes.SubmissionHistoryController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
 
         val result = route(application, request).value
 

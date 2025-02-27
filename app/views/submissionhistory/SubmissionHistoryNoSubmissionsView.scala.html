@@ -1,5 +1,5 @@
 @*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,9 @@
 ) {
     @heading(messages("submissionHistoryNoSubscription.heading"), classes = "govuk-heading-l")
     @p(messages("submissionHistoryNoSubscription.p1"))
+    <br>
     @p(messages("submissionHistoryNoSubscription.p2"))
-
-
-
+    <br>
     @h2(messages("submissionHistoryNoSubscription.h2"), size = "m")
     @paragraphMessageWithLink(Some(messages("submissionHistoryNoSubscription.p3")), linkMessage = messages("submissionHistoryNoSubscription.link"), linkUrl = "#", linkFullStop = true)
 }
