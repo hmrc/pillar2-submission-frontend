@@ -17,98 +17,28 @@
 package controllers.submissionhistory
 
 import base.SpecBase
-import models.obligationsandsubmissions.ObligationStatus.Fulfilled
-import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
-import models.obligationsandsubmissions.SubmissionType.{GIR, UKTR}
-import models.obligationsandsubmissions._
+import controllers.helpers.SubmissionHistoryDataFixture
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.LocalDate
 import scala.concurrent.Future
 
-class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with ScalaFutures {
+class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with ScalaFutures with SubmissionHistoryDataFixture {
 
-  val submissionHistoryResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    ZonedDateTime.now,
-    Seq(
-      AccountingPeriodDetails(
-        LocalDate.now.minusDays(1).minusYears(7),
-        LocalDate.now,
-        LocalDate.now,
-        underEnquiry = false,
-        Seq(
-          Obligation(
-            Pillar2TaxReturn,
-            Fulfilled,
-            canAmend = true,
-            Seq(
-              Submission(
-                UKTR,
-                ZonedDateTime.now,
-                None
-              ),
-              Submission(
-                GIR,
-                ZonedDateTime.now,
-                None
-              )
-            )
-          )
-        )
-      ),
-      AccountingPeriodDetails(
-        LocalDate.now.minusDays(1).minusYears(7),
-        LocalDate.now,
-        LocalDate.now,
-        underEnquiry = false,
-        Seq(
-          Obligation(
-            Pillar2TaxReturn,
-            Fulfilled,
-            canAmend = true,
-            Seq(
-              Submission(
-                UKTR,
-                ZonedDateTime.now,
-                None
-              )
-            )
-          )
-        )
-      )
-    )
-  )
-
-  val noSubmissionHistoryResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    ZonedDateTime.now,
-    Seq(
-      AccountingPeriodDetails(
-        LocalDate.now,
-        LocalDate.now,
-        LocalDate.now,
-        underEnquiry = false,
-        Seq(
-          Obligation(
-            Pillar2TaxReturn,
-            Fulfilled,
-            canAmend = true,
-            Seq.empty
-          )
-        )
-      )
-    )
-  )
+  val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
 
   "SubmissionHistoryController" must {
+
     "return OK and render the SubmissionHistoryView when submissions are present" in {
       when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[String]))
         .thenReturn(Future.successful(submissionHistoryResponse))
@@ -120,7 +50,6 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
 
         val result = route(application, request).value
 
@@ -138,7 +67,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
 
     "return OK and render the submissionHistoryNoSubmissionsView when no submissions are present" in {
       when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[String]))
-        .thenReturn(Future.successful(noSubmissionHistoryResponse))
+        .thenReturn(Future.successful(submissionHistoryResponse.copy(accountingPeriodDetails = Seq.empty)))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
         .overrides(
@@ -147,7 +76,6 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
 
         val result = route(application, request).value
 
@@ -170,7 +98,6 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
 
         val result = route(application, request).value
 

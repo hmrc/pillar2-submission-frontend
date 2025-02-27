@@ -17,10 +17,7 @@
 package views.submissionhistory
 
 import base.ViewSpecBase
-import models.obligationsandsubmissions.ObligationStatus.Fulfilled
-import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
-import models.obligationsandsubmissions.SubmissionType.UKTR
-import models.obligationsandsubmissions._
+import controllers.helpers.SubmissionHistoryDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.submissionhistory.SubmissionHistoryView
@@ -28,38 +25,7 @@ import views.html.submissionhistory.SubmissionHistoryView
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 
-class SubmissionHistoryViewSpec extends ViewSpecBase {
-
-  val submissionHistoryResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    ZonedDateTime.now,
-    Seq(
-      AccountingPeriodDetails(
-        LocalDate.now.minusDays(1).minusYears(7),
-        LocalDate.now,
-        LocalDate.now,
-        underEnquiry = false,
-        Seq(
-          Obligation(
-            Pillar2TaxReturn,
-            Fulfilled,
-            canAmend = true,
-            Seq(
-              Submission(
-                UKTR,
-                ZonedDateTime.now,
-                None
-              ),
-              Submission(
-                UKTR,
-                ZonedDateTime.now,
-                None
-              )
-            )
-          )
-        )
-      )
-    )
-  )
+class SubmissionHistoryViewSpec extends ViewSpecBase with SubmissionHistoryDataFixture {
 
   val page: SubmissionHistoryView = inject[SubmissionHistoryView]
 
