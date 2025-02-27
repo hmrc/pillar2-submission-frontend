@@ -19,7 +19,7 @@ package controllers.helpers
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
 import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
 import models.obligationsandsubmissions.SubmissionType.UKTR
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationsAndSubmissionsSuccess, Submission}
+import models.obligationsandsubmissions._
 
 import java.time.{LocalDate, ZonedDateTime}
 
