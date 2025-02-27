@@ -17,26 +17,25 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
 @import views.html.components.gds._
-@import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
+
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
         paragraphMessageWithLink : ParagraphMessageWithLink,
         p: ParagraphBody,
         heading: Heading,
-        h2: HeadingH2,
-        govukSummaryList: GovukSummaryList
+        h2: HeadingH2
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
-    pageTitle    = titleNoForm(messages("submissionHistoryNoSubscription.title"))
+    pageTitle    = titleNoForm(messages("submissionHistoryNoSubmissions.title"))
 ) {
-    @heading(messages("submissionHistoryNoSubscription.heading"), classes = "govuk-heading-l")
-    @p(messages("submissionHistoryNoSubscription.p1"))
+    @heading(messages("submissionHistoryNoSubmissions.heading"), classes = "govuk-heading-l")
+    @p(messages("submissionHistoryNoSubmissions.p1"))
     <br>
-    @p(messages("submissionHistoryNoSubscription.p2"))
+    @p(messages("submissionHistoryNoSubmissions.p2"))
     <br>
-    @h2(messages("submissionHistoryNoSubscription.h2"), size = "m")
-    @paragraphMessageWithLink(Some(messages("submissionHistoryNoSubscription.p3")), linkMessage = messages("submissionHistoryNoSubscription.link"), linkUrl = "#", linkFullStop = true)
+    @h2(messages("submissionHistoryNoSubmissions.h2"), size = "m")
+    @paragraphMessageWithLink(Some(messages("submissionHistoryNoSubmissions.p3")), linkMessage = messages("submissionHistoryNoSubmissions.link"), linkUrl = "#", linkFullStop = true)
 }

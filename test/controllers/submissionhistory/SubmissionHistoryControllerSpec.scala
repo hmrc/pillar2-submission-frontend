@@ -136,7 +136,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
       }
     }
 
-    "return OK and render the SubmissionHistoryNoSubscriptionView when no submissions are present" in {
+    "return OK and render the submissionHistoryNoSubmissionsView when no submissions are present" in {
       when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[String]))
         .thenReturn(Future.successful(noSubmissionHistoryResponse))
 

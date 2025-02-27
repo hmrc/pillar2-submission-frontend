@@ -35,7 +35,7 @@ class SubmissionHistoryController @Inject() (
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
   view:                                   SubmissionHistoryView,
-  viewNoSubscription:                     SubmissionHistoryNoSubmissionsView,
+  viewNoSubmissions:                      SubmissionHistoryNoSubmissionsView,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit ec:                            ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
@@ -52,7 +52,7 @@ class SubmissionHistoryController @Inject() (
       .map {
         case success if success.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty)) =>
           Ok(view(success.accountingPeriodDetails))
-        case _ => Ok(viewNoSubscription())
+        case _ => Ok(viewNoSubmissions())
       }
       .recover { case _: Exception =>
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
