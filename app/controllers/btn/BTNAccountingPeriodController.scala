@@ -51,7 +51,7 @@ class BTNAccountingPeriodController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
-      implicit val pillar2Id: String = request.subscriptionLocalData.plrReference
+      val pillar2Id                 = request.subscriptionLocalData.plrReference
       val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
       val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
       val accountStatus             = request.subscriptionLocalData.accountStatus.forall(_.inactive)
@@ -75,7 +75,7 @@ class BTNAccountingPeriodController @Inject() (
       }
 
       obligationsAndSubmissionsService
-        .handleData(subAccountingPeriod.startDate, subAccountingPeriod.endDate)
+        .handleData(pillar2Id, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
         .map {
           case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Fulfilled)) =>
             Ok(viewReturnSubmitted(accountingPeriods))

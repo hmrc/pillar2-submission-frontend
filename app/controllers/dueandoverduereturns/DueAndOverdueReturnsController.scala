@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,49 +14,51 @@
  * limitations under the License.
  */
 
-package controllers.submissionhistory
+package controllers.dueandoverduereturns
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.routes.JourneyRecoveryController
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
-import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
+import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.ExecutionContext
 
-class SubmissionHistoryController @Inject() (
+class DueAndOverdueReturnsController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
-  obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
-  view:                                   SubmissionHistoryView,
-  viewNoSubmissions:                      SubmissionHistoryNoSubmissionsView,
+  obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
+  view:                                   DueAndOverdueReturnsView,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit ec:                            ExecutionContext, config: FrontendAppConfig)
-    extends FrontendBaseController
-    with I18nSupport {
+)(implicit
+  appConfig: FrontendAppConfig,
+  ec:        ExecutionContext
+) extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
-    val pillar2Id: String = request.subscriptionLocalData.plrReference
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
+      val fromDate  = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
+      val toDate    = LocalDate.now()
+      val pillar2Id = request.subscriptionLocalData.plrReference
 
-    obligationsAndSubmissionsService
-      .handleData(
-        pillar2Id,
-        LocalDate.now.minusYears(SUBMISSION_ACCOUNTING_PERIODS),
-        LocalDate.now
-      )
-      .map {
-        case success if success.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty)) =>
-          Ok(view(success.accountingPeriodDetails))
-        case _ => Ok(viewNoSubmissions())
-      }
-      .recover { case _: Exception =>
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
-      }
-  }
+      obligationsAndSubmissionsService
+        .handleData(pillar2Id, fromDate, toDate)
+        .map { data =>
+          Ok(view(data, fromDate, toDate))
+        }
+        .recover { case e =>
+          logger.error(s"Error calling obligationsAndSubmissionsService.handleData: ${e.getMessage}", e)
+          Redirect(JourneyRecoveryController.onPageLoad())
+        }
+    }
 }
