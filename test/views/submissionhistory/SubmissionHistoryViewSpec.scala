@@ -75,7 +75,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with SubmissionHistoryDataF
 
       (1 to 2).foreach { int =>
         val tableRow = view.getElementsByClass("govuk-table__row").get(int).getElementsByClass("govuk-table__cell")
-        tableRow.first().text must include("UKTR")
+        tableRow.first().text must include("UK Tax Return")
         tableRow.get(1).text  must include(submissionDate)
       }
     }

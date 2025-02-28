@@ -43,8 +43,16 @@ object SubmissionHistoryHelper {
       rows = rows,
       head = Some(
         Seq(
-          HeadCell(Text(messages("submissionHistory.typeOfReturn")), attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("submissionHistory.submissionDate")), attributes = Map("scope" -> "col"))
+          HeadCell(
+            Text(messages("submissionHistory.typeOfReturn")),
+            classes = "govuk-table__header govuk-!-width-two-thirds",
+            attributes = Map("scope" -> "col")
+          ),
+          HeadCell(
+            Text(messages("submissionHistory.submissionDate")),
+            classes = "govuk-table__header govuk-!-width-two-thirds",
+            attributes = Map("scope" -> "col")
+          )
         )
       )
     )
@@ -53,7 +61,7 @@ object SubmissionHistoryHelper {
   def createTableRows(submission: Submission): Seq[TableRow] =
     Seq(
       TableRow(
-        content = Text(submission.submissionType.toString)
+        content = Text(submission.submissionType.fullName)
       ),
       TableRow(
         content = Text(submission.receivedDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))
