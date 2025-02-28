@@ -27,12 +27,23 @@ object Submission {
   implicit val format: OFormat[Submission] = Json.format[Submission]
 }
 
-sealed trait SubmissionType extends EnumEntry
+sealed trait SubmissionType extends EnumEntry {
+  def fullName: String
+}
+
 object SubmissionType extends Enum[SubmissionType] with PlayJsonEnum[SubmissionType] {
   val values: IndexedSeq[SubmissionType] = findValues
 
-  case object UKTR extends SubmissionType
-  case object ORN extends SubmissionType
-  case object BTN extends SubmissionType
-  case object GIR extends SubmissionType
+  case object UKTR extends SubmissionType {
+    override def fullName: String = "UK Tax Return"
+  }
+  case object ORN extends SubmissionType {
+    override def fullName: String = "Overseas Return Notification"
+  }
+  case object BTN extends SubmissionType {
+    override def fullName: String = "Below Threshold Notification"
+  }
+  case object GIR extends SubmissionType {
+    override def fullName: String = "Information Return"
+  }
 }

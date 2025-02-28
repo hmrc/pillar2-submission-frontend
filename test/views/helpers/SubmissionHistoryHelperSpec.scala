@@ -76,7 +76,7 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
       val submission = Submission(UKTR, ZonedDateTime.now, None)
       val rows       = SubmissionHistoryHelper.createTableRows(submission)
       rows                should have length 2
-      rows.head.content shouldBe Text("UKTR")
+      rows.head.content shouldBe Text("UK Tax Return")
       rows.last.content shouldBe Text(submissionDate)
     }
   }
