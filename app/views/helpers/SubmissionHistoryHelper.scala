@@ -1,0 +1,63 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package views.helpers
+
+import models.obligationsandsubmissions.{AccountingPeriodDetails, Submission}
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+object SubmissionHistoryHelper {
+
+  def generateSubmissionHistoryTable(accountingPeriods: Seq[AccountingPeriodDetails])(implicit
+    messages:                                           Messages
+  ): Seq[Table] =
+    accountingPeriods.map { accountPeriod =>
+      val rows = accountPeriod.obligations.flatMap(_.submissions.map(submission => createTableRows(submission)))
+      createTable(accountPeriod.startDate, accountPeriod.endDate, rows)
+    }
+
+  def createTable(startDate: LocalDate, endDate: LocalDate, rows: Seq[Seq[TableRow]])(implicit messages: Messages): Table = {
+    val formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+    val formattedEndDate   = endDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+
+    Table(
+      caption = Some(s"$formattedStartDate to $formattedEndDate"),
+      rows = rows,
+      head = Some(
+        Seq(
+          HeadCell(Text(messages("submissionHistory.typeOfReturn")), attributes = Map("scope" -> "col")),
+          HeadCell(Text(messages("submissionHistory.submissionDate")), attributes = Map("scope" -> "col"))
+        )
+      )
+    )
+  }
+
+  def createTableRows(submission: Submission): Seq[TableRow] =
+    Seq(
+      TableRow(
+        content = Text(submission.submissionType.toString)
+      ),
+      TableRow(
+        content = Text(submission.receivedDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))
+      )
+    )
+
+}

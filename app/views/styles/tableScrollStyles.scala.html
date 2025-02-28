@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,11 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package utils
+@()
 
-object Constants {
-  final val EQUAL_LENGTH_15               = 15
-  final val SUBMISSION_ACCOUNTING_PERIODS = 7
-}
+<style>
+        .table-scroll-wrapper {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .govuk-table thead th {
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            z-index: 2;
+            border-bottom: 2px solid #b1b4b6;
+
+        }
+</style>
