@@ -28,22 +28,22 @@ object Submission {
 }
 
 sealed trait SubmissionType extends EnumEntry {
-  def fullName: String
+  val fullName: String
 }
 
 object SubmissionType extends Enum[SubmissionType] with PlayJsonEnum[SubmissionType] {
   val values: IndexedSeq[SubmissionType] = findValues
 
   case object UKTR extends SubmissionType {
-    override def fullName: String = "UK Tax Return"
+    override val fullName: String = "UK Tax Return"
   }
   case object ORN extends SubmissionType {
-    override def fullName: String = "Overseas Return Notification"
+    override val fullName: String = "Overseas Return Notification"
   }
   case object BTN extends SubmissionType {
-    override def fullName: String = "Below Threshold Notification"
+    override val fullName: String = "Below Threshold Notification"
   }
   case object GIR extends SubmissionType {
-    override def fullName: String = "Information Return"
+    override val fullName: String = "Information Return"
   }
 }
