@@ -43,8 +43,16 @@ object SubmissionHistoryHelper {
       rows = rows,
       head = Some(
         Seq(
-          HeadCell(Text(messages("submissionHistory.typeOfReturn")), attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("submissionHistory.submissionDate")), attributes = Map("scope" -> "col"))
+          HeadCell(
+            Text(messages("submissionHistory.typeOfReturn")),
+            classes = "govuk-table__header govuk-!-width-two-thirds",
+            attributes = Map("scope" -> "col")
+          ),
+          HeadCell(
+            Text(messages("submissionHistory.submissionDate")),
+            classes = "govuk-table__header govuk-!-width-two-thirds",
+            attributes = Map("scope" -> "col")
+          )
         )
       )
     )
