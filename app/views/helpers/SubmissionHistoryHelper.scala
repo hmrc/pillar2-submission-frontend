@@ -35,8 +35,8 @@ object SubmissionHistoryHelper {
     }
 
   def createTable(startDate: LocalDate, endDate: LocalDate, rows: Seq[Seq[TableRow]])(implicit messages: Messages): Table = {
-    val formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-    val formattedEndDate   = endDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+    val formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+    val formattedEndDate   = endDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
 
     Table(
       caption = Some(s"$formattedStartDate to $formattedEndDate"),
@@ -64,7 +64,7 @@ object SubmissionHistoryHelper {
         content = Text(submission.submissionType.fullName)
       ),
       TableRow(
-        content = Text(submission.receivedDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))
+        content = Text(submission.receivedDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))
       )
     )
 

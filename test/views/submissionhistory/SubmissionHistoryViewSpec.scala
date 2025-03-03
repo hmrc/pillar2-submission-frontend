@@ -61,9 +61,9 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with SubmissionHistoryDataF
     }
 
     "have a table" in {
-      val fromDate:       String = LocalDate.now.minusDays(1).minusYears(7).format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-      val toDate:         String = LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-      val submissionDate: String = ZonedDateTime.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+      val fromDate:       String = LocalDate.now.minusDays(1).minusYears(7).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+      val toDate:         String = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+      val submissionDate: String = ZonedDateTime.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
 
       val captions = view.getElementsByClass("govuk-table__caption")
       captions.first().text must include(s"$fromDate to $toDate")
