@@ -36,11 +36,11 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
     .overrides(bind[ObligationAndSubmissionsConnector].toInstance(mockObligationsAndSubmissionsConnector))
     .build()
 
-  val service:            ObligationsAndSubmissionsService = application.injector.instanceOf[ObligationsAndSubmissionsService]
-  implicit val pillar2Id: String                           = PlrReference
+  val service:   ObligationsAndSubmissionsService = application.injector.instanceOf[ObligationsAndSubmissionsService]
+  val pillar2Id: String                           = PlrReference
 
   private def setupMockConnector(response: Future[ObligationsAndSubmissionsSuccess]): OngoingStubbing[Future[ObligationsAndSubmissionsSuccess]] =
-    when(mockObligationsAndSubmissionsConnector.getData(any(), any())(any[HeaderCarrier], any[ExecutionContext], any()))
+    when(mockObligationsAndSubmissionsConnector.getData(any(), any(), any())(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(response)
 
   "handleData" must {
@@ -50,7 +50,7 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
       running(application) {
         setupMockConnector(Future.successful(successResponse))
 
-        val result = service.handleData(localDateFrom, localDateTo).futureValue
+        val result = service.handleData(pillar2Id, localDateFrom, localDateTo).futureValue
 
         result mustBe successResponse
       }
@@ -60,7 +60,7 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
       running(application) {
         setupMockConnector(Future.failed(new RuntimeException))
 
-        whenReady(service.handleData(localDateFrom, localDateTo).failed)(exception => exception mustBe a[RuntimeException])
+        whenReady(service.handleData(pillar2Id, localDateFrom, localDateTo).failed)(exception => exception mustBe a[RuntimeException])
       }
     }
   }
