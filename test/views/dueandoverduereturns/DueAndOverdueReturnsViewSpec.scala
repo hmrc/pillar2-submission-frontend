@@ -26,8 +26,8 @@ import java.time.format.DateTimeFormatter
 
 class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturnsDataFixture {
 
-  lazy val page: DueAndOverdueReturnsView = inject[DueAndOverdueReturnsView]
-  val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  lazy val page:     DueAndOverdueReturnsView = inject[DueAndOverdueReturnsView]
+  val dateFormatter: DateTimeFormatter        = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def verifyCommonPageElements(view: Document): Unit = {
     view.getElementsByTag("title").get(0).text mustEqual "Due and overdue returns - Report Pillar 2 top-up taxes - GOV.UK"
