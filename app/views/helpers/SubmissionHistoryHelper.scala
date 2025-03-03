@@ -35,16 +35,24 @@ object SubmissionHistoryHelper {
     }
 
   def createTable(startDate: LocalDate, endDate: LocalDate, rows: Seq[Seq[TableRow]])(implicit messages: Messages): Table = {
-    val formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-    val formattedEndDate   = endDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+    val formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+    val formattedEndDate   = endDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
 
     Table(
       caption = Some(s"$formattedStartDate to $formattedEndDate"),
       rows = rows,
       head = Some(
         Seq(
-          HeadCell(Text(messages("submissionHistory.typeOfReturn")), attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("submissionHistory.submissionDate")), attributes = Map("scope" -> "col"))
+          HeadCell(
+            Text(messages("submissionHistory.typeOfReturn")),
+            classes = "govuk-table__header govuk-!-width-two-thirds",
+            attributes = Map("scope" -> "col")
+          ),
+          HeadCell(
+            Text(messages("submissionHistory.submissionDate")),
+            classes = "govuk-table__header govuk-!-width-two-thirds",
+            attributes = Map("scope" -> "col")
+          )
         )
       )
     )
@@ -53,10 +61,10 @@ object SubmissionHistoryHelper {
   def createTableRows(submission: Submission): Seq[TableRow] =
     Seq(
       TableRow(
-        content = Text(submission.submissionType.toString)
+        content = Text(submission.submissionType.fullName)
       ),
       TableRow(
-        content = Text(submission.receivedDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))
+        content = Text(submission.receivedDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))
       )
     )
 
