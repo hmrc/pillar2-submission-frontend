@@ -25,17 +25,17 @@ trait DueAndOverdueReturnsDataFixture {
 
   // Use the current date as the base for our tests
   val currentDate: LocalDate = LocalDate.now()
-  val fromDate: LocalDate = currentDate.minusYears(SUBMISSION_ACCOUNTING_PERIODS)
-  val toDate: LocalDate   = currentDate
-  
+  val fromDate:    LocalDate = currentDate.minusYears(SUBMISSION_ACCOUNTING_PERIODS)
+  val toDate:      LocalDate = currentDate
+
   // Calculate dates that will always be in the past or future
-  val pastDueDate: LocalDate = currentDate.minusDays(30) // Always overdue
+  val pastDueDate:   LocalDate = currentDate.minusDays(30) // Always overdue
   val futureDueDate: LocalDate = currentDate.plusDays(30) // Always due
 
   def createObligation(
     obligationType: ObligationType = ObligationType.Pillar2TaxReturn,
-    status: ObligationStatus = ObligationStatus.Open,
-    canAmend: Boolean = true
+    status:         ObligationStatus = ObligationStatus.Open,
+    canAmend:       Boolean = true
   ): Obligation =
     Obligation(
       obligationType = obligationType,
@@ -45,11 +45,11 @@ trait DueAndOverdueReturnsDataFixture {
     )
 
   def createAccountingPeriod(
-    startDate: LocalDate = fromDate,
-    endDate: LocalDate = toDate,
-    dueDate: LocalDate,
+    startDate:    LocalDate = fromDate,
+    endDate:      LocalDate = toDate,
+    dueDate:      LocalDate,
     underEnquiry: Boolean = false,
-    obligations: Seq[Obligation]
+    obligations:  Seq[Obligation]
   ): AccountingPeriodDetails =
     AccountingPeriodDetails(
       startDate = startDate,
@@ -142,4 +142,4 @@ trait DueAndOverdueReturnsDataFixture {
       )
     )
   )
-} 
+}
