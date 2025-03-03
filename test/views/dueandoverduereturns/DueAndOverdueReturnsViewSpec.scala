@@ -17,133 +17,17 @@
 package views.dueandoverduereturns
 
 import base.ViewSpecBase
-import models.obligationsandsubmissions._
+import helpers.DueAndOverdueReturnsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, ZonedDateTime}
 
-class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
+class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturnsDataFixture {
 
   lazy val page: DueAndOverdueReturnsView = inject[DueAndOverdueReturnsView]
-
-  val fixedNow:       LocalDate     = LocalDate.now()
-  val fromDate:       LocalDate     = LocalDate.of(2023, 1, 1)
-  val toDate:         LocalDate     = LocalDate.of(2023, 12, 31)
-  val processingDate: ZonedDateTime = ZonedDateTime.now()
-
-  def createObligation(
-    obligationType: ObligationType = ObligationType.Pillar2TaxReturn,
-    status:         ObligationStatus = ObligationStatus.Open,
-    canAmend:       Boolean = true
-  ): Obligation =
-    Obligation(
-      obligationType = obligationType,
-      status = status,
-      canAmend = canAmend,
-      submissions = Seq.empty
-    )
-
-  def createAccountingPeriod(
-    startDate:    LocalDate = fromDate,
-    endDate:      LocalDate = toDate,
-    dueDate:      LocalDate,
-    underEnquiry: Boolean = false,
-    obligations:  Seq[Obligation]
-  ): AccountingPeriodDetails =
-    AccountingPeriodDetails(
-      startDate = startDate,
-      endDate = endDate,
-      dueDate = dueDate,
-      underEnquiry = underEnquiry,
-      obligations = obligations
-    )
-
-  val emptyData: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    processingDate = processingDate,
-    accountingPeriodDetails = Seq.empty
-  )
-
-  val allFulfilledData: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    processingDate = processingDate,
-    accountingPeriodDetails = Seq(
-      createAccountingPeriod(
-        dueDate = fixedNow.minusDays(30),
-        obligations = Seq(
-          createObligation(status = ObligationStatus.Fulfilled),
-          createObligation(
-            obligationType = ObligationType.GlobeInformationReturn,
-            status = ObligationStatus.Fulfilled
-          )
-        )
-      )
-    )
-  )
-
-  val dueReturnsData: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    processingDate = processingDate,
-    accountingPeriodDetails = Seq(
-      createAccountingPeriod(
-        dueDate = fixedNow.plusDays(30),
-        obligations = Seq(
-          createObligation()
-        )
-      )
-    )
-  )
-
-  val overdueReturnsData: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    processingDate = processingDate,
-    accountingPeriodDetails = Seq(
-      createAccountingPeriod(
-        dueDate = fixedNow.minusDays(30),
-        obligations = Seq(
-          createObligation()
-        )
-      )
-    )
-  )
-
-  val mixedStatusData: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    processingDate = processingDate,
-    accountingPeriodDetails = Seq(
-      createAccountingPeriod(
-        dueDate = fixedNow.plusDays(30),
-        obligations = Seq(
-          createObligation(),
-          createObligation(
-            obligationType = ObligationType.GlobeInformationReturn,
-            status = ObligationStatus.Fulfilled
-          )
-        )
-      )
-    )
-  )
-
-  val multiplePeriodsData: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    processingDate = processingDate,
-    accountingPeriodDetails = Seq(
-      createAccountingPeriod(
-        startDate = LocalDate.of(2022, 1, 1),
-        endDate = LocalDate.of(2022, 12, 31),
-        dueDate = fixedNow.minusDays(60),
-        obligations = Seq(
-          createObligation()
-        )
-      ),
-      createAccountingPeriod(
-        dueDate = fixedNow.plusDays(30),
-        obligations = Seq(
-          createObligation(),
-          createObligation(
-            obligationType = ObligationType.GlobeInformationReturn
-          )
-        )
-      )
-    )
-  )
+  val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def verifyCommonPageElements(view: Document): Unit = {
     view.getElementsByTag("title").get(0).text mustEqual "Due and overdue returns - Report Pillar 2 top-up taxes - GOV.UK"
@@ -152,7 +36,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
     // Check for submission history section regardless of its position
     val headings = view.getElementsByTag("h2")
     val submissionHistoryHeading =
-      headings.stream.filter(h => h.text.contains("Support links") || h.text.contains("Submission history")).findFirst()
+      headings.stream.filter(h => h.text.contains("Submission history")).findFirst()
     submissionHistoryHeading.isPresent() mustEqual true
 
     // Look for the paragraph containing the submission history link
@@ -173,7 +57,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
 
   "DueAndOverdueReturnsView" when {
     "there are no returns" must {
-      lazy val view: Document = Jsoup.parse(page(emptyData, fromDate, toDate)(request, appConfig, messages).toString())
+      lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate)(request, appConfig, messages).toString())
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -190,7 +74,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
     }
 
     "all returns are fulfilled" must {
-      lazy val view: Document = Jsoup.parse(page(allFulfilledData, fromDate, toDate)(request, appConfig, messages).toString())
+      lazy val view: Document = Jsoup.parse(page(allFulfilledResponse, fromDate, toDate)(request, appConfig, messages).toString())
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -208,7 +92,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
     }
 
     "there are due returns" must {
-      lazy val view: Document = Jsoup.parse(page(dueReturnsData, fromDate, toDate)(request, appConfig, messages).toString())
+      lazy val view: Document = Jsoup.parse(page(dueReturnsResponse, fromDate, toDate)(request, appConfig, messages).toString())
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -222,7 +106,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
 
       "display the accounting period heading correctly" in {
         val periodHeading = view.getElementsByTag("h2").first()
-        periodHeading.text mustEqual "1 January 2023 to 31 December 2023"
+        periodHeading.text mustEqual s"${fromDate.format(dateFormatter)} to ${toDate.format(dateFormatter)}"
       }
 
       "show a table with properly formatted due returns" in {
@@ -233,7 +117,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
 
         val cells = tables.select("td")
         cells.get(0).text mustEqual "UK Tax Return"
-        cells.get(1).text mustEqual LocalDate.now().plusDays(30).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        cells.get(1).text mustEqual futureDueDate.format(dateFormatter)
 
         val statusTag = tables.select("td p.govuk-tag")
         statusTag.text mustEqual "Due"
@@ -242,7 +126,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
     }
 
     "there are overdue returns" must {
-      lazy val view: Document = Jsoup.parse(page(overdueReturnsData, fromDate, toDate)(request, appConfig, messages).toString())
+      lazy val view: Document = Jsoup.parse(page(overdueReturnsResponse, fromDate, toDate)(request, appConfig, messages).toString())
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -256,7 +140,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
 
         val cells = tables.select("td")
         cells.get(0).text mustEqual "UK Tax Return"
-        cells.get(1).text mustEqual LocalDate.now().minusDays(30).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        cells.get(1).text mustEqual pastDueDate.format(dateFormatter)
 
         val statusTag = tables.select("td p.govuk-tag")
         statusTag.size must be > 0
@@ -266,7 +150,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
     }
 
     "there is a mix of due and fulfilled returns" must {
-      lazy val view: Document = Jsoup.parse(page(mixedStatusData, fromDate, toDate)(request, appConfig, messages).toString())
+      lazy val view: Document = Jsoup.parse(page(mixedStatusResponse, fromDate, toDate)(request, appConfig, messages).toString())
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -285,7 +169,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
     }
 
     "there are multiple accounting periods" must {
-      lazy val view: Document = Jsoup.parse(page(multiplePeriodsData, fromDate, toDate)(request, appConfig, messages).toString())
+      lazy val view: Document = Jsoup.parse(page(multiplePeriodsResponse, fromDate, toDate)(request, appConfig, messages).toString())
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -294,8 +178,13 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase {
       "show headings for each accounting period with open obligations" in {
         val periodHeadings = view.select("h2.govuk-heading-s")
         periodHeadings.size mustEqual 2
-        periodHeadings.get(0).text mustEqual "1 January 2022 to 31 December 2022"
-        periodHeadings.get(1).text mustEqual "1 January 2023 to 31 December 2023"
+
+        val expectedFirstPeriod =
+          s"${currentDate.minusYears(1).withMonth(1).withDayOfMonth(1).format(dateFormatter)} to ${currentDate.minusYears(1).withMonth(12).withDayOfMonth(31).format(dateFormatter)}"
+        val expectedSecondPeriod = s"${fromDate.format(dateFormatter)} to ${toDate.format(dateFormatter)}"
+
+        periodHeadings.get(0).text mustEqual expectedFirstPeriod
+        periodHeadings.get(1).text mustEqual expectedSecondPeriod
       }
 
       "display tables for each accounting period with open obligations" in {

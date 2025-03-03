@@ -18,7 +18,7 @@ package controllers.dueandoverduereturns
 
 import base.SpecBase
 import controllers.{routes => baseRoutes}
-import models.obligationsandsubmissions._
+import helpers.DueAndOverdueReturnsDataFixture
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -31,15 +31,9 @@ import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
-class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with ScalaFutures {
-
-  // Fixed date values to ensure consistent testing
-  val fixedNow:      LocalDate = LocalDate.of(2023, 6, 1)
-  val fromLocalDate: LocalDate = LocalDate.now().minusYears(7)
-  val toLocalDate:   LocalDate = LocalDate.now()
+class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with ScalaFutures with DueAndOverdueReturnsDataFixture {
 
   // Standard application with mocked service
   lazy val application: Application = applicationBuilder(
@@ -51,63 +45,17 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
 
   lazy val view: DueAndOverdueReturnsView = application.injector.instanceOf[DueAndOverdueReturnsView]
 
-  // Response objects for different test scenarios
-  val emptyObligationsAndSubmissionsSuccess: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    processingDate = obligationsAndSubmissionsSuccessResponse().success.processingDate,
-    accountingPeriodDetails = Seq.empty
-  )
-
-  val dueReturnsObligationsAndSubmissionsSuccess: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    processingDate = obligationsAndSubmissionsSuccessResponse().success.processingDate,
-    accountingPeriodDetails = Seq(
-      AccountingPeriodDetails(
-        startDate = fromLocalDate,
-        endDate = toLocalDate,
-        dueDate = fixedNow.plusDays(30),
-        underEnquiry = false,
-        obligations = Seq(
-          Obligation(
-            obligationType = ObligationType.Pillar2TaxReturn,
-            status = ObligationStatus.Open,
-            canAmend = true,
-            submissions = Seq.empty
-          )
-        )
-      )
-    )
-  )
-
-  val overdueReturnsObligationsAndSubmissionsSuccess: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
-    processingDate = obligationsAndSubmissionsSuccessResponse().success.processingDate,
-    accountingPeriodDetails = Seq(
-      AccountingPeriodDetails(
-        startDate = fromLocalDate,
-        endDate = toLocalDate,
-        dueDate = fixedNow.minusDays(30),
-        underEnquiry = false,
-        obligations = Seq(
-          Obligation(
-            obligationType = ObligationType.Pillar2TaxReturn,
-            status = ObligationStatus.Open,
-            canAmend = true,
-            submissions = Seq.empty
-          )
-        )
-      )
-    )
-  )
-
   "DueAndOverdueReturnsController" when {
     "onPageLoad" must {
       "return OK and display the correct view for a GET with no returns" in {
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-          .thenReturn(Future.successful(emptyObligationsAndSubmissionsSuccess))
+          .thenReturn(Future.successful(emptyResponse))
 
         val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(emptyObligationsAndSubmissionsSuccess, fromLocalDate, toLocalDate)(
+        contentAsString(result) mustEqual view(emptyResponse, fromDate, toDate)(
           request,
           appConfig(application),
           messages(application)
@@ -116,13 +64,13 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
 
       "return OK and display the correct view for a GET with due returns" in {
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-          .thenReturn(Future.successful(dueReturnsObligationsAndSubmissionsSuccess))
+          .thenReturn(Future.successful(dueReturnsResponse))
 
         val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(dueReturnsObligationsAndSubmissionsSuccess, fromLocalDate, toLocalDate)(
+        contentAsString(result) mustEqual view(dueReturnsResponse, fromDate, toDate)(
           request,
           appConfig(application),
           messages(application)
@@ -131,31 +79,14 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
 
       "return OK and display the correct view for a GET with overdue returns" in {
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-          .thenReturn(Future.successful(overdueReturnsObligationsAndSubmissionsSuccess))
+          .thenReturn(Future.successful(overdueReturnsResponse))
 
         val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(overdueReturnsObligationsAndSubmissionsSuccess, fromLocalDate, toLocalDate)(
+        contentAsString(result) mustEqual view(overdueReturnsResponse, fromDate, toDate)(
           request,
-          appConfig(application),
-          messages(application)
-        ).toString
-      }
-
-      "correctly determine if a return is due or overdue based on the toDate parameter" in {
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-          .thenReturn(Future.successful(overdueReturnsObligationsAndSubmissionsSuccess))
-
-        // Test with past date (should show Overdue)
-        val pastRequest =
-          FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
-        val pastResult = route(application, pastRequest).value
-
-        status(pastResult) mustEqual OK
-        contentAsString(pastResult) mustEqual view(overdueReturnsObligationsAndSubmissionsSuccess, fromLocalDate, toLocalDate)(
-          pastRequest,
           appConfig(application),
           messages(application)
         ).toString
