@@ -35,7 +35,7 @@ import java.time.{LocalDate, ZonedDateTime}
 
 trait TestDataFixture extends SubscriptionLocalDataFixture {
 
-  lazy val obligationsAndSubmissionsSuccessResponseJson: JsValue = Json.toJson(obligationsAndSubmissionsSuccessResponse())
+  lazy val obligationsAndSubmissionsSuccessResponseJson: JsValue = Json.toJson(obligationsAndSubmissionsSuccessResponse().success)
 
   lazy val submittedBTNRecord: UserAnswers = validBTNCyaUa.set(BTNStatus, BTNStatus.submitted).get
 
