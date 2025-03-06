@@ -28,6 +28,6 @@ class ObligationsAndSubmissionsService @Inject() (
   obligationAndSubmissionsConnector: ObligationAndSubmissionsConnector
 )(implicit ec:                       ExecutionContext) {
 
-  def handleData(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, pillar2Id: String): Future[ObligationsAndSubmissionsSuccess] =
-    obligationAndSubmissionsConnector.getData(fromDate, toDate).flatMap(Future.successful)
+  def handleData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[ObligationsAndSubmissionsSuccess] =
+    obligationAndSubmissionsConnector.getData(pillar2Id, fromDate, toDate).flatMap(Future.successful)
 }
