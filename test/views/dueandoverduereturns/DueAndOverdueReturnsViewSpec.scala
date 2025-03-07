@@ -375,5 +375,25 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
         }
       }
     }
+
+    "displaying submission history section" when {
+      "not in agent view" must {
+        lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+        "show the organisation-specific submission history description" in {
+          val submissionHistoryParagraph = view.select("p.govuk-body").stream.filter(p => p.text.contains("submission history")).findFirst().get()
+          submissionHistoryParagraph.text must include("You can find full details of your groups submitted returns on the submission history page.")
+        }
+      }
+
+      "in agent view" must {
+        lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, true)(request, appConfig, messages).toString())
+
+        "show the agent-specific submission history description" in {
+          val submissionHistoryParagraph = view.select("p.govuk-body").stream.filter(p => p.text.contains("submission history")).findFirst().get()
+          submissionHistoryParagraph.text must include("You can find full details of your clients submitted returns on the submission history page.")
+        }
+      }
+    }
   }
 }
