@@ -55,9 +55,6 @@ class DueAndOverdueReturnsController @Inject() (
       val fromDate  = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
       val toDate    = LocalDate.now()
       val pillar2Id = request.subscriptionLocalData.plrReference
-
-      logger.info(s"isAgent: ${request.isAgent}")
-
       obligationsAndSubmissionsService
         .handleData(pillar2Id, fromDate, toDate)
         .map { data =>
