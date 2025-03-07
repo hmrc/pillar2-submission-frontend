@@ -45,7 +45,8 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
       request.userId,
       maybeSubscriptionLocalData,
       maybeUserAnswers,
-      request.enrolments
+      request.enrolments,
+      request.isAgent
     )
   }
 }

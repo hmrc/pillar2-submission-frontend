@@ -55,7 +55,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(emptyResponse, fromDate, toDate)(
+        contentAsString(result) mustEqual view(emptyResponse, fromDate, toDate, false)(
           request,
           appConfig(application),
           messages(application)
@@ -70,7 +70,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(dueReturnsResponse, fromDate, toDate)(
+        contentAsString(result) mustEqual view(dueReturnsResponse, fromDate, toDate, false)(
           request,
           appConfig(application),
           messages(application)
@@ -85,7 +85,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(overdueReturnsResponse, fromDate, toDate)(
+        contentAsString(result) mustEqual view(overdueReturnsResponse, fromDate, toDate, false)(
           request,
           appConfig(application),
           messages(application)

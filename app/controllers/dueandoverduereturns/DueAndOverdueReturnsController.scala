@@ -19,11 +19,14 @@ package controllers.dueandoverduereturns
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes.JourneyRecoveryController
+import models.requests.SubscriptionDataRequest
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
@@ -46,15 +49,19 @@ class DueAndOverdueReturnsController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
+    (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request: SubscriptionDataRequest[AnyContent] =>
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
       val fromDate  = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
       val toDate    = LocalDate.now()
       val pillar2Id = request.subscriptionLocalData.plrReference
 
+      logger.info(s"isAgent: ${request.isAgent}")
+
       obligationsAndSubmissionsService
         .handleData(pillar2Id, fromDate, toDate)
         .map { data =>
-          Ok(view(data, fromDate, toDate))
+          Ok(view(data, fromDate, toDate, request.isAgent))
         }
         .recover { case e =>
           logger.error(s"Error calling obligationsAndSubmissionsService.handleData: ${e.getMessage}", e)
