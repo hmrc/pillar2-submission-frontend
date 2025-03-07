@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,339 +54,182 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
   }
 
   "DueAndOverdueReturnsView" when {
-    "there are no returns" when {
-      "not in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+    "there are no returns" must {
+      lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
 
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "show the 'no returns' message" in {
-          val noReturnsMessage = view.getElementsByClass("govuk-body").first()
-          noReturnsMessage.text mustEqual "Your group is up to date with their returns for this accounting period."
-        }
-
-        "not display any tables" in {
-          view.select("table.govuk-table").size mustEqual 0
-        }
+      "display the common page elements" in {
+        verifyCommonPageElements(view)
       }
 
-      "in agent view" must {
+      "show the 'no returns' message" in {
+        val noReturnsMessage = view.getElementsByClass("govuk-body").first()
+        noReturnsMessage.text mustEqual "Your group is up to date with their returns for this accounting period."
+      }
+
+      "not display any tables" in {
+        view.select("table.govuk-table").size mustEqual 0
+      }
+    }
+
+    "all returns are fulfilled" must {
+      lazy val view: Document = Jsoup.parse(page(allFulfilledResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+      "display the common page elements" in {
+        verifyCommonPageElements(view)
+      }
+
+      "show the 'no returns' message (since all are fulfilled)" in {
+        val noReturnsMessage = view.getElementsByClass("govuk-body").first()
+        noReturnsMessage.text mustEqual "Your group is up to date with their returns for this accounting period."
+      }
+
+      "not display any tables or accounting period headings" in {
+        view.select("table.govuk-table").size mustEqual 0
+        view.select("h2.govuk-heading-s").size mustEqual 0
+      }
+    }
+
+    "there are due returns" must {
+      lazy val view: Document = Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+      "display the common page elements" in {
+        verifyCommonPageElements(view)
+      }
+
+      "show the multiple returns information" in {
+        val infoMessages = view.select("p.govuk-body")
+        infoMessages.get(0).text mustEqual "If you have multiple returns due, they are separated by accounting periods."
+        infoMessages.get(1).text mustEqual "You must submit each return before its due date using your commercial software supplier."
+      }
+
+      "display the accounting period heading correctly" in {
+        val periodHeading = view.getElementsByTag("h2").first()
+        periodHeading.text mustEqual s"${fromDate.format(dateFormatter)} to ${toDate.format(dateFormatter)}"
+      }
+
+      "show a table with properly formatted due returns" in {
+        val tables = view.select("table.govuk-table")
+        tables.size mustEqual 1
+
+        verifyTableHeaders(tables)
+
+        val cells = tables.select("td")
+        cells.get(0).text mustEqual "UK Tax Return"
+        cells.get(1).text mustEqual futureDueDate.format(dateFormatter)
+
+        val statusTag = tables.select("td p.govuk-tag")
+        statusTag.text mustEqual "Due"
+        statusTag.attr("class") must include("govuk-tag--blue")
+      }
+    }
+
+    "there are overdue returns" must {
+      lazy val view: Document = Jsoup.parse(page(overdueReturnsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+      "display the common page elements" in {
+        verifyCommonPageElements(view)
+      }
+
+      "show a table with properly formatted overdue returns" in {
+        val tables = view.select("table.govuk-table")
+        tables.size mustEqual 1
+
+        verifyTableHeaders(tables)
+
+        val cells = tables.select("td")
+        cells.get(0).text mustEqual "UK Tax Return"
+        cells.get(1).text mustEqual pastDueDate.format(dateFormatter)
+
+        val statusTag = tables.select("td p.govuk-tag")
+        statusTag.size must be > 0
+        statusTag.text mustEqual "Overdue"
+        statusTag.attr("class") must include("govuk-tag--red")
+      }
+    }
+
+    "there is a mix of due and fulfilled returns" must {
+      lazy val view: Document = Jsoup.parse(page(mixedStatusResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+      "display the common page elements" in {
+        verifyCommonPageElements(view)
+      }
+
+      "only show due/open returns in the table (not fulfilled ones)" in {
+        val tables = view.select("table.govuk-table")
+        tables.size mustEqual 1
+
+        val rows = tables.select("tbody tr")
+        rows.size mustEqual 1
+
+        val cells = rows.first().select("td")
+        cells.get(0).text mustEqual "UK Tax Return"
+      }
+    }
+
+    "there are multiple accounting periods" must {
+      lazy val view: Document = Jsoup.parse(page(multiplePeriodsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+      "display the common page elements" in {
+        verifyCommonPageElements(view)
+      }
+
+      "show headings for each accounting period with open obligations" in {
+        val periodHeadings = view.select("h2.govuk-heading-s")
+        periodHeadings.size mustEqual 2
+
+        val expectedFirstPeriod =
+          s"${currentDate.minusYears(1).withMonth(1).withDayOfMonth(1).format(dateFormatter)} to ${currentDate.minusYears(1).withMonth(12).withDayOfMonth(31).format(dateFormatter)}"
+        val expectedSecondPeriod = s"${fromDate.format(dateFormatter)} to ${toDate.format(dateFormatter)}"
+
+        periodHeadings.get(0).text mustEqual expectedFirstPeriod
+        periodHeadings.get(1).text mustEqual expectedSecondPeriod
+      }
+
+      "display tables for each accounting period with open obligations" in {
+        val tables = view.select("table.govuk-table")
+        tables.size mustEqual 2
+
+        val firstTableRows = tables.get(0).select("tbody tr")
+        firstTableRows.size mustEqual 1
+
+        val firstTableStatusTag = firstTableRows.first().select("td p.govuk-tag")
+        firstTableStatusTag.size must be > 0
+        firstTableStatusTag.text mustEqual "Overdue"
+        firstTableStatusTag.attr("class") must include("govuk-tag--red")
+
+        val secondTableRows = tables.get(1).select("tbody tr")
+        secondTableRows.size mustEqual 2
+
+        val secondTableStatusTags = secondTableRows.select("td p.govuk-tag")
+        secondTableStatusTags.size mustEqual 2
+        secondTableStatusTags.get(0).text mustEqual "Due"
+        secondTableStatusTags.get(0).attr("class") must include("govuk-tag--blue")
+        secondTableStatusTags.get(1).text mustEqual "Due"
+        secondTableStatusTags.get(1).attr("class") must include("govuk-tag--blue")
+      }
+    }
+
+    "displaying agent-specific content" when {
+      "there are no returns" must {
         lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, true)(request, appConfig, messages).toString())
 
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "show the 'no returns' message for agents" in {
+        "show the correct 'no returns' message for agents" in {
           val noReturnsMessage = view.getElementsByClass("govuk-body").first()
           noReturnsMessage.text mustEqual "Your client is up to date with their returns for this accounting period."
         }
-
-        "not display any tables" in {
-          view.select("table.govuk-table").size mustEqual 0
-        }
-      }
-    }
-
-    "all returns are fulfilled" when {
-      "not in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(allFulfilledResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
-
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "show the 'no returns' message (since all are fulfilled)" in {
-          val noReturnsMessage = view.getElementsByClass("govuk-body").first()
-          noReturnsMessage.text mustEqual "Your group is up to date with their returns for this accounting period."
-        }
-
-        "not display any tables or accounting period headings" in {
-          view.select("table.govuk-table").size mustEqual 0
-          view.select("h2.govuk-heading-s").size mustEqual 0
-        }
       }
 
-      "in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(allFulfilledResponse, fromDate, toDate, true)(request, appConfig, messages).toString())
-
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "show the 'no returns' message for agents (since all are fulfilled)" in {
-          val noReturnsMessage = view.getElementsByClass("govuk-body").first()
-          noReturnsMessage.text mustEqual "Your client is up to date with their returns for this accounting period."
-        }
-
-        "not display any tables or accounting period headings" in {
-          view.select("table.govuk-table").size mustEqual 0
-          view.select("h2.govuk-heading-s").size mustEqual 0
-        }
-      }
-    }
-
-    "there are due returns" when {
-      "not in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
-
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "show the multiple returns information" in {
-          val infoMessages = view.select("p.govuk-body")
-          infoMessages.get(0).text mustEqual "If you have multiple returns due, they are separated by accounting periods."
-          infoMessages.get(1).text mustEqual "You must submit each return before its due date using your commercial software supplier."
-        }
-
-        "display the accounting period heading correctly" in {
-          val periodHeading = view.getElementsByTag("h2").first()
-          periodHeading.text mustEqual s"${fromDate.format(dateFormatter)} to ${toDate.format(dateFormatter)}"
-        }
-
-        "show a table with properly formatted due returns" in {
-          val tables = view.select("table.govuk-table")
-          tables.size mustEqual 1
-
-          verifyTableHeaders(tables)
-
-          val cells = tables.select("td")
-          cells.get(0).text mustEqual "UK Tax Return"
-          cells.get(1).text mustEqual futureDueDate.format(dateFormatter)
-
-          val statusTag = tables.select("td p.govuk-tag")
-          statusTag.text mustEqual "Due"
-          statusTag.attr("class") must include("govuk-tag--blue")
-        }
-      }
-
-      "in agent view" must {
+      "there are due returns" must {
         lazy val view: Document = Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, true)(request, appConfig, messages).toString())
 
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "show the multiple returns information for agents" in {
+        "show the correct multiple returns information for agents" in {
           val infoMessages = view.select("p.govuk-body")
           infoMessages.get(0).text mustEqual "If your client has multiple returns due, they will be separated by accounting periods."
           infoMessages.get(1).text mustEqual "You must submit each return before its due date using your clients commercial software supplier."
         }
-
-        "display the accounting period heading correctly" in {
-          val periodHeading = view.getElementsByTag("h2").first()
-          periodHeading.text mustEqual s"${fromDate.format(dateFormatter)} to ${toDate.format(dateFormatter)}"
-        }
-
-        "show a table with properly formatted due returns" in {
-          val tables = view.select("table.govuk-table")
-          tables.size mustEqual 1
-
-          verifyTableHeaders(tables)
-
-          val cells = tables.select("td")
-          cells.get(0).text mustEqual "UK Tax Return"
-          cells.get(1).text mustEqual futureDueDate.format(dateFormatter)
-
-          val statusTag = tables.select("td p.govuk-tag")
-          statusTag.text mustEqual "Due"
-          statusTag.attr("class") must include("govuk-tag--blue")
-        }
-      }
-    }
-
-    "there are overdue returns" when {
-      "not in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(overdueReturnsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
-
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "show a table with properly formatted overdue returns" in {
-          val tables = view.select("table.govuk-table")
-          tables.size mustEqual 1
-
-          verifyTableHeaders(tables)
-
-          val cells = tables.select("td")
-          cells.get(0).text mustEqual "UK Tax Return"
-          cells.get(1).text mustEqual pastDueDate.format(dateFormatter)
-
-          val statusTag = tables.select("td p.govuk-tag")
-          statusTag.size must be > 0
-          statusTag.text mustEqual "Overdue"
-          statusTag.attr("class") must include("govuk-tag--red")
-        }
       }
 
-      "in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(overdueReturnsResponse, fromDate, toDate, true)(request, appConfig, messages).toString())
-
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "show a table with properly formatted overdue returns" in {
-          val tables = view.select("table.govuk-table")
-          tables.size mustEqual 1
-
-          verifyTableHeaders(tables)
-
-          val cells = tables.select("td")
-          cells.get(0).text mustEqual "UK Tax Return"
-          cells.get(1).text mustEqual pastDueDate.format(dateFormatter)
-
-          val statusTag = tables.select("td p.govuk-tag")
-          statusTag.size must be > 0
-          statusTag.text mustEqual "Overdue"
-          statusTag.attr("class") must include("govuk-tag--red")
-        }
-      }
-    }
-
-    "there is a mix of due and fulfilled returns" when {
-      "not in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(mixedStatusResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
-
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "only show due/open returns in the table (not fulfilled ones)" in {
-          val tables = view.select("table.govuk-table")
-          tables.size mustEqual 1
-
-          val rows = tables.select("tbody tr")
-          rows.size mustEqual 1
-
-          val cells = rows.first().select("td")
-          cells.get(0).text mustEqual "UK Tax Return"
-        }
-      }
-
-      "in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(mixedStatusResponse, fromDate, toDate, true)(request, appConfig, messages).toString())
-
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "only show due/open returns in the table (not fulfilled ones)" in {
-          val tables = view.select("table.govuk-table")
-          tables.size mustEqual 1
-
-          val rows = tables.select("tbody tr")
-          rows.size mustEqual 1
-
-          val cells = rows.first().select("td")
-          cells.get(0).text mustEqual "UK Tax Return"
-        }
-      }
-    }
-
-    "there are multiple accounting periods" when {
-      "not in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(multiplePeriodsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
-
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "show headings for each accounting period with open obligations" in {
-          val periodHeadings = view.select("h2.govuk-heading-s")
-          periodHeadings.size mustEqual 2
-
-          val expectedFirstPeriod =
-            s"${currentDate.minusYears(1).withMonth(1).withDayOfMonth(1).format(dateFormatter)} to ${currentDate.minusYears(1).withMonth(12).withDayOfMonth(31).format(dateFormatter)}"
-          val expectedSecondPeriod = s"${fromDate.format(dateFormatter)} to ${toDate.format(dateFormatter)}"
-
-          periodHeadings.get(0).text mustEqual expectedFirstPeriod
-          periodHeadings.get(1).text mustEqual expectedSecondPeriod
-        }
-
-        "display tables for each accounting period with open obligations" in {
-          val tables = view.select("table.govuk-table")
-          tables.size mustEqual 2
-
-          val firstTableRows = tables.get(0).select("tbody tr")
-          firstTableRows.size mustEqual 1
-
-          val firstTableStatusTag = firstTableRows.first().select("td p.govuk-tag")
-          firstTableStatusTag.size must be > 0
-          firstTableStatusTag.text mustEqual "Overdue"
-          firstTableStatusTag.attr("class") must include("govuk-tag--red")
-
-          val secondTableRows = tables.get(1).select("tbody tr")
-          secondTableRows.size mustEqual 2
-
-          val secondTableStatusTags = secondTableRows.select("td p.govuk-tag")
-          secondTableStatusTags.size mustEqual 2
-          secondTableStatusTags.get(0).text mustEqual "Due"
-          secondTableStatusTags.get(0).attr("class") must include("govuk-tag--blue")
-          secondTableStatusTags.get(1).text mustEqual "Due"
-          secondTableStatusTags.get(1).attr("class") must include("govuk-tag--blue")
-        }
-      }
-
-      "in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(multiplePeriodsResponse, fromDate, toDate, true)(request, appConfig, messages).toString())
-
-        "display the common page elements" in {
-          verifyCommonPageElements(view)
-        }
-
-        "show headings for each accounting period with open obligations" in {
-          val periodHeadings = view.select("h2.govuk-heading-s")
-          periodHeadings.size mustEqual 2
-
-          val expectedFirstPeriod =
-            s"${currentDate.minusYears(1).withMonth(1).withDayOfMonth(1).format(dateFormatter)} to ${currentDate.minusYears(1).withMonth(12).withDayOfMonth(31).format(dateFormatter)}"
-          val expectedSecondPeriod = s"${fromDate.format(dateFormatter)} to ${toDate.format(dateFormatter)}"
-
-          periodHeadings.get(0).text mustEqual expectedFirstPeriod
-          periodHeadings.get(1).text mustEqual expectedSecondPeriod
-        }
-
-        "display tables for each accounting period with open obligations" in {
-          val tables = view.select("table.govuk-table")
-          tables.size mustEqual 2
-
-          val firstTableRows = tables.get(0).select("tbody tr")
-          firstTableRows.size mustEqual 1
-
-          val firstTableStatusTag = firstTableRows.first().select("td p.govuk-tag")
-          firstTableStatusTag.size must be > 0
-          firstTableStatusTag.text mustEqual "Overdue"
-          firstTableStatusTag.attr("class") must include("govuk-tag--red")
-
-          val secondTableRows = tables.get(1).select("tbody tr")
-          secondTableRows.size mustEqual 2
-
-          val secondTableStatusTags = secondTableRows.select("td p.govuk-tag")
-          secondTableStatusTags.size mustEqual 2
-          secondTableStatusTags.get(0).text mustEqual "Due"
-          secondTableStatusTags.get(0).attr("class") must include("govuk-tag--blue")
-          secondTableStatusTags.get(1).text mustEqual "Due"
-          secondTableStatusTags.get(1).attr("class") must include("govuk-tag--blue")
-        }
-      }
-    }
-
-    "displaying submission history section" when {
-      "not in agent view" must {
-        lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
-
-        "show the organisation-specific submission history description" in {
-          val submissionHistoryParagraph = view.select("p.govuk-body").stream.filter(p => p.text.contains("submission history")).findFirst().get()
-          submissionHistoryParagraph.text must include("You can find full details of your groups submitted returns on the submission history page.")
-        }
-      }
-
-      "in agent view" must {
+      "displaying submission history section" must {
         lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, true)(request, appConfig, messages).toString())
 
         "show the agent-specific submission history description" in {
