@@ -173,7 +173,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
         "show the multiple returns information for agents" in {
           val infoMessages = view.select("p.govuk-body")
           infoMessages.get(0).text mustEqual "If your client has multiple returns due, they will be separated by accounting periods."
-          infoMessages.get(1).text mustEqual "You must submit each return before its due date using your clients commencial software supplier."
+          infoMessages.get(1).text mustEqual "You must submit each return before its due date using your clients commercial software supplier."
         }
 
         "display the accounting period heading correctly" in {

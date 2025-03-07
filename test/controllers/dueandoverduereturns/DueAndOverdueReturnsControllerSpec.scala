@@ -35,7 +35,6 @@ import scala.concurrent.Future
 
 class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with ScalaFutures with DueAndOverdueReturnsDataFixture {
 
-  // Standard application with mocked service
   lazy val application: Application = applicationBuilder(
     subscriptionLocalData = Some(someSubscriptionLocalData),
     userAnswers = Some(emptyUserAnswers)
@@ -101,6 +100,29 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual baseRoutes.JourneyRecoveryController.onPageLoad().url
+      }
+
+      "display agent-specific content when isAgent is true" in {
+
+        val emptyContent = contentAsString(
+          view(emptyResponse, fromDate, toDate, true)(
+            FakeRequest(),
+            appConfig(application),
+            messages(application)
+          )
+        )
+
+        val dueContent = contentAsString(
+          view(dueReturnsResponse, fromDate, toDate, true)(
+            FakeRequest(),
+            appConfig(application),
+            messages(application)
+          )
+        )
+
+        emptyContent must include("Your client is up to date with their returns for this accounting period")
+        dueContent   must include("If your client has multiple returns due, they will be separated by accounting periods")
+        dueContent   must include("You must submit each return before its due date using your clients commercial software supplier")
       }
     }
   }

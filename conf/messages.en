@@ -312,7 +312,7 @@ dueAndOverdueReturns.submissionHistory.description1 = You can find full details 
 dueAndOverdueReturns.submissionHistory.link = submission history
 dueAndOverdueReturns.submissionHistory.description2 = page.
 dueAndOverdueReturns.agent.multipleReturns = If your client has multiple returns due, they will be separated by accounting periods.
-dueAndOverdueReturns.agent.commercialSoftware = You must submit each return before its due date using your clients commencial software supplier.
+dueAndOverdueReturns.agent.commercialSoftware = You must submit each return before its due date using your clients commercial software supplier.
 dueAndOverdueReturns.agent.noReturns = Your client is up to date with their returns for this accounting period.
 dueAndOverdueReturns.agent.submissionHistory.description1 = You can find full details of your clients submitted returns on the               
 ###############################################
