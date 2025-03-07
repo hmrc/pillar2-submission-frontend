@@ -25,7 +25,7 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
 
   val page: SubmissionHistoryNoSubmissionsView = inject[SubmissionHistoryNoSubmissionsView]
 
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
 
   "Transaction History View" should {
 
