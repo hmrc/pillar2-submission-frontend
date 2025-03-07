@@ -46,7 +46,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with SubmissionHistoryDataF
     }
 
     "have a paragraph detailing submission details" in {
-      var paragraph = organisationView.getElementsByTag("p")
+      val paragraph = organisationView.getElementsByTag("p")
       paragraph.get(1).text() must include(
         "You can find all submissions and amendments made by your group during this accounting period and the previous 6 accounting periods."
       )
@@ -98,7 +98,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with SubmissionHistoryDataF
   "Submisison History Agent View" should {
 
     "have a paragraph detailing submission details" in {
-      var paragraph = agentView.getElementsByTag("p")
+      val paragraph = agentView.getElementsByTag("p")
       paragraph.get(1).text() must include(
         "You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods."
       )
