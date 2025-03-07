@@ -57,7 +57,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(submissionHistoryResponse.accountingPeriodDetails)(
+        contentAsString(result) mustEqual view(submissionHistoryResponse.accountingPeriodDetails, isAgent = false)(
           request,
           appConfig(application),
           messages(application)
@@ -83,7 +83,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(isAgent = false)(request, appConfig(application), messages(application)).toString
       }
     }
 
