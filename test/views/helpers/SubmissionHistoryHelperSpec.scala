@@ -45,10 +45,12 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
 
       val obligation1 = Obligation(Pillar2TaxReturn, Open, canAmend = true, Seq(submission1, submission2))
       val obligation2 = Obligation(GlobeInformationReturn, Fulfilled, canAmend = false, Seq(submission1))
+      val obligation3 = Obligation(Pillar2TaxReturn, Open, canAmend = true, Seq.empty)
 
       val accountingPeriods = Seq(
         AccountingPeriodDetails(startDate1, endDate1, LocalDate.now, underEnquiry = false, Seq(obligation1)),
-        AccountingPeriodDetails(startDate2, endDate2, LocalDate.now, underEnquiry = false, Seq(obligation2))
+        AccountingPeriodDetails(startDate2, endDate2, LocalDate.now, underEnquiry = false, Seq(obligation2)),
+        AccountingPeriodDetails(startDate2, endDate2, LocalDate.now, underEnquiry = false, Seq(obligation3))
       )
 
       when(messages("submissionHistory.typeOfReturn")).thenReturn("Type of return")
