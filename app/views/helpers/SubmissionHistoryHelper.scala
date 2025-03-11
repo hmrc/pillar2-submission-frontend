@@ -29,10 +29,12 @@ object SubmissionHistoryHelper {
   def generateSubmissionHistoryTable(accountingPeriods: Seq[AccountingPeriodDetails])(implicit
     messages:                                           Messages
   ): Seq[Table] =
-    accountingPeriods.map { accountPeriod =>
-      val rows = accountPeriod.obligations.flatMap(_.submissions.map(submission => createTableRows(submission)))
-      createTable(accountPeriod.startDate, accountPeriod.endDate, rows)
-    }
+    accountingPeriods
+      .filter(accountPeriod => accountPeriod.obligations.flatMap(_.submissions).nonEmpty)
+      .map { periodsWithSubmissions =>
+        val rows = periodsWithSubmissions.obligations.flatMap(_.submissions).map(createTableRows)
+        createTable(periodsWithSubmissions.startDate, periodsWithSubmissions.endDate, rows)
+      }
 
   def createTable(startDate: LocalDate, endDate: LocalDate, rows: Seq[Seq[TableRow]])(implicit messages: Messages): Table = {
     val formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
