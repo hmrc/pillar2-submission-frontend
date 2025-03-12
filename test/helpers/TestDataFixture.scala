@@ -19,7 +19,7 @@ package helpers
 import models.btn.BTNStatus
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
 import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
-import models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.now
+import models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.testZonedDateTime
 import models.obligationsandsubmissions.SubmissionType.UKTR
 import models.obligationsandsubmissions._
 import models.subscription._
@@ -60,12 +60,12 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
     status:         ObligationStatus = Fulfilled,
     canAmend:       Boolean = true,
     submissionType: SubmissionType = UKTR,
-    receivedDate:   ZonedDateTime = now,
+    receivedDate:   ZonedDateTime = testZonedDateTime,
     country:        Option[String] = None
   ): ObligationsAndSubmissionsSuccessResponse =
     ObligationsAndSubmissionsSuccessResponse(
       ObligationsAndSubmissionsSuccess(
-        processingDate = now,
+        processingDate = testZonedDateTime,
         accountingPeriodDetails = Seq(
           AccountingPeriodDetails(
             startDate = localDateFrom,

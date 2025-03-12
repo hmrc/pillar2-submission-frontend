@@ -24,7 +24,7 @@ import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
 sealed trait ObligationsAndSubmissionsResponse
 
 object ObligationsAndSubmissionsResponse {
-  val now: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+  val testZonedDateTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
 
   implicit val writes: Writes[ObligationsAndSubmissionsResponse] = Writes {
     case s: ObligationsAndSubmissionsSuccessResponse       => Json.obj("success" -> s.success)
