@@ -18,14 +18,11 @@ package models.obligationsandsubmissions
 
 import play.api.libs.json.{Json, OFormat, Writes}
 
-import java.time.temporal.ChronoUnit
-import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
+import java.time.{LocalDate, ZonedDateTime}
 
 sealed trait ObligationsAndSubmissionsResponse
 
 object ObligationsAndSubmissionsResponse {
-  val testZonedDateTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
-
   implicit val writes: Writes[ObligationsAndSubmissionsResponse] = Writes {
     case s: ObligationsAndSubmissionsSuccessResponse       => Json.obj("success" -> s.success)
     case e: ObligationsAndSubmissionsSimpleErrorResponse   => Json.obj("errors" -> e.error)

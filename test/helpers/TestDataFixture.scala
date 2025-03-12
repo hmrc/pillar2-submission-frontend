@@ -19,7 +19,6 @@ package helpers
 import models.btn.BTNStatus
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
 import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
-import models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.testZonedDateTime
 import models.obligationsandsubmissions.SubmissionType.UKTR
 import models.obligationsandsubmissions._
 import models.subscription._
@@ -31,9 +30,12 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
 
 trait TestDataFixture extends SubscriptionLocalDataFixture {
+
+  lazy val testZonedDateTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
 
   lazy val obligationsAndSubmissionsSuccessResponseJson: JsValue = Json.toJson(obligationsAndSubmissionsSuccessResponse().success)
 
