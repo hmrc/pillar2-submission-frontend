@@ -262,7 +262,7 @@ btn.cannotReturn.link = Return to your group’s homepage
 
 ###############################################
 #
-# Obligations and submissions
+# Submission history
 #
 ###############################################
 
@@ -285,3 +285,31 @@ submissionHistoryNoSubmissions.h2 = Due and overdue returns
 submissionHistoryNoSubmissions.p3 = Information on your group’s
 submissionHistoryNoSubmissions.link = due and overdue returns
 ###############################################
+
+###############################################
+#
+# Due and Overdue Returns
+#
+###############################################
+dueAndOverdueReturns.title = Due and overdue returns
+dueAndOverdueReturns.heading = Due and overdue returns
+dueAndOverdueReturns.accountingPeriod = {0} to {1}
+dueAndOverdueReturns.noReturns = Your group is up to date with their returns for this accounting period.
+dueAndOverdueReturns.overdue = Your return is overdue. You must submit it as soon as possible.
+dueAndOverdueReturns.multipleReturns = If you have multiple returns due, they are separated by accounting periods.
+dueAndOverdueReturns.commercialSoftware = You must submit each return before its due date using your commercial software supplier.
+dueAndOverdueReturns.table.caption = Due and overdue returns
+dueAndOverdueReturns.table.returnType = Type of return
+dueAndOverdueReturns.table.dueDate = Due date
+dueAndOverdueReturns.table.status = Status
+dueAndOverdueReturns.table.action = Action
+dueAndOverdueReturns.obligationType.Pillar2TaxReturn = UK Tax Return
+dueAndOverdueReturns.obligationType.GlobeInformationReturn = Information return
+dueAndOverdueReturns.status.overdue = Overdue
+dueAndOverdueReturns.status.due = Due
+dueAndOverdueReturns.submissionHistory = Submission history
+dueAndOverdueReturns.submissionHistory.description1 = You can find full details of your group's submitted returns on the
+dueAndOverdueReturns.submissionHistory.link = submission history
+dueAndOverdueReturns.submissionHistory.description2 = page.
+###############################################
+

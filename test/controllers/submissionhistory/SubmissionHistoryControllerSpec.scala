@@ -40,7 +40,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
   "SubmissionHistoryController" must {
 
     "return OK and render the SubmissionHistoryView when submissions are present" in {
-      when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[String]))
+      when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
         .thenReturn(Future.successful(submissionHistoryResponse))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
@@ -66,7 +66,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
     }
 
     "return OK and render the submissionHistoryNoSubmissionsView when no submissions are present" in {
-      when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[String]))
+      when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
         .thenReturn(Future.successful(submissionHistoryResponse.copy(accountingPeriodDetails = Seq.empty)))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
@@ -88,7 +88,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
     }
 
     "redirect to JourneyRecoveryController on exception" in {
-      when(mockObligationsAndSubmissionsService.handleData(any(), any())(any(), any()))
+      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
         .thenReturn(Future.failed(new Exception("something went wrong")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))

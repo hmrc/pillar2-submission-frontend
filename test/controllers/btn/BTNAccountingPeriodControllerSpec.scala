@@ -78,7 +78,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
-      when(mockObligationsAndSubmissionsService.handleData(any(), any())(any(), any()))
+      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
         .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
 
       running(application) {
@@ -125,7 +125,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData.copy(accountStatus = Some(AccountStatus(true))))))
 
-      when(mockObligationsAndSubmissionsService.handleData(any(), any())(any(), any()))
+      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
         .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
 
       running(application) {
@@ -178,7 +178,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
-      when(mockObligationsAndSubmissionsService.handleData(any(), any())(any(), any()))
+      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
         .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
 
       running(application) {
