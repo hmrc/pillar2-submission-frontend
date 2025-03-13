@@ -52,8 +52,8 @@ class SubmissionHistoryController @Inject() (
       )
       .map {
         case success if success.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty)) =>
-          Ok(view(success.accountingPeriodDetails))
-        case _ => Ok(viewNoSubmissions())
+          Ok(view(success.accountingPeriodDetails, request.isAgent))
+        case _ => Ok(viewNoSubmissions(request.isAgent))
       }
       .recover { case _: Exception =>
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))

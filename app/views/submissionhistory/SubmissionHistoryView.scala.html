@@ -33,13 +33,19 @@
         govukTable: GovukTable
 )
 
-@(accountPeriods: Seq[AccountingPeriodDetails])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(accountPeriods: Seq[AccountingPeriodDetails],isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle    = titleNoForm(messages("submissionHistory.title"))
 ) {
     @heading(messages("submissionHistory.heading"), classes = "govuk-heading-l")
-    @p(messages("submissionHistory.p1"))
-    @p(messages("submissionHistory.p2"))
+    @if(isAgent) {
+    @p(messages("submissionHistory.agent.p1"))
+    @p(messages("submissionHistory.agent.p2"))
+    } else {
+    @p(messages("submissionHistory.group.p1"))
+    @p(messages("submissionHistory.group.p2"))
+    }
+
     @govukInsetText(InsetText(content = Text(messages("submissionHistory.insetText"))))
     <br>
     @tableScrollStyles()
@@ -50,5 +56,10 @@
     }
     <br>
     @h2(messages("submissionHistory.h2"), size = "m")
-    @paragraphMessageWithLink(Some(messages("submissionHistory.p3")), linkMessage = messages("submissionHistory.link"), linkUrl = "#", linkFullStop = true)
+    @if(isAgent){
+    @paragraphMessageWithLink(Some(messages("submissionHistory.agent.p3")), linkMessage = messages("submissionHistory.link"), linkUrl = "#", linkFullStop = true)
+    } else {
+    @paragraphMessageWithLink(Some(messages("submissionHistory.group.p3")), linkMessage = messages("submissionHistory.link"), linkUrl = "#", linkFullStop = true)
+    }
+
 }
