@@ -199,12 +199,27 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
         val firstTableRows = tables.get(0).select("tbody tr")
         firstTableRows.size mustEqual 1
 
+        // Check type of return and due date for first table (historic period)
+        val firstTableCells = firstTableRows.first().select("td")
+        firstTableCells.get(0).text mustEqual "UK Tax Return"
+        firstTableCells.get(1).text mustEqual pastDueDate.format(dateFormatter)
+
         val firstTableStatusTag = firstTableRows.first().select("td p.govuk-tag")
         firstTableStatusTag.size must be > 0
         firstTableStatusTag.text mustEqual "Overdue"
         firstTableStatusTag.attr("class") must include("govuk-tag--red")
         val secondTableRows = tables.get(1).select("tbody tr")
         secondTableRows.size mustEqual 2
+
+        // Check type of return and due date for second table (current period) - first row
+        val secondTableFirstRowCells = secondTableRows.get(0).select("td")
+        secondTableFirstRowCells.get(0).text mustEqual "UK Tax Return"
+        secondTableFirstRowCells.get(1).text mustEqual futureDueDate.format(dateFormatter)
+
+        // Check type of return and due date for second table (current period) - second row
+        val secondTableSecondRowCells = secondTableRows.get(1).select("td")
+        secondTableSecondRowCells.get(0).text mustEqual "Information return"
+        secondTableSecondRowCells.get(1).text mustEqual futureDueDate.format(dateFormatter)
 
         val secondTableStatusTags = secondTableRows.select("td p.govuk-tag")
         secondTableStatusTags.size mustEqual 2
