@@ -1,5 +1,4 @@
 /*
- * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +37,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
       headings.stream.filter(h => h.text.contains("Submission history")).findFirst()
     submissionHistoryHeading.isPresent() mustEqual true
 
+
     val submissionHistoryParagraph = view.select("p.govuk-body").stream.filter(p => p.text.contains("submission history")).findFirst()
     submissionHistoryParagraph.isPresent() mustEqual true
 
@@ -57,6 +57,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
     "there are no returns" must {
       lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
 
+
       "display the common page elements" in {
         verifyCommonPageElements(view)
       }
@@ -72,7 +73,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
     }
 
     "all returns are fulfilled" must {
+
       lazy val view: Document = Jsoup.parse(page(allFulfilledResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -85,12 +88,16 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
 
       "not display any tables or accounting period headings" in {
         view.select("table.govuk-table").size mustEqual 0
+
         view.select("h2.govuk-heading-s").size mustEqual 0
+
       }
     }
 
     "there are due returns" must {
+
       lazy val view: Document = Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -124,7 +131,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
     }
 
     "there are overdue returns" must {
+
       lazy val view: Document = Jsoup.parse(page(overdueReturnsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -148,7 +157,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
     }
 
     "there is a mix of due and fulfilled returns" must {
+
       lazy val view: Document = Jsoup.parse(page(mixedStatusResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -167,7 +178,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
     }
 
     "there are multiple accounting periods" must {
+
       lazy val view: Document = Jsoup.parse(page(multiplePeriodsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -196,7 +209,6 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
         firstTableStatusTag.size must be > 0
         firstTableStatusTag.text mustEqual "Overdue"
         firstTableStatusTag.attr("class") must include("govuk-tag--red")
-
         val secondTableRows = tables.get(1).select("tbody tr")
         secondTableRows.size mustEqual 2
 
