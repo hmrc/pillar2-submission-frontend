@@ -31,7 +31,9 @@ class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContex
   override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
     (request.maybeSubscriptionLocalData, request.maybeUserAnswers) match {
       case (Some(subscriptionData), Some(userAnswers)) =>
-        Future.successful(Right(SubscriptionDataRequest(request.request, request.userId, subscriptionData, userAnswers, request.enrolments)))
+        Future.successful(
+          Right(SubscriptionDataRequest(request.request, request.userId, subscriptionData, userAnswers, request.enrolments, request.isAgent))
+        )
       case (_, None) =>
         logger.warn(s"user answers not found")
         Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
