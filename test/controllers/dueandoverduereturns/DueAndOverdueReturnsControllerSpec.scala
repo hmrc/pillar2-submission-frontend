@@ -35,7 +35,6 @@ import scala.concurrent.Future
 
 class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with ScalaFutures with DueAndOverdueReturnsDataFixture {
 
-
   lazy val application: Application = applicationBuilder(
     subscriptionLocalData = Some(someSubscriptionLocalData),
     userAnswers = Some(emptyUserAnswers)
@@ -57,7 +56,6 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual view(emptyResponse, fromDate, toDate, false)(
-
           request,
           appConfig(application),
           messages(application)
@@ -74,7 +72,6 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual view(dueReturnsResponse, fromDate, toDate, false)(
-
           request,
           appConfig(application),
           messages(application)
@@ -91,7 +88,6 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual view(overdueReturnsResponse, fromDate, toDate, false)(
-
           request,
           appConfig(application),
           messages(application)
