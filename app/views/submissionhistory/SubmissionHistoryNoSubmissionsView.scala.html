@@ -27,15 +27,23 @@
         h2: HeadingH2
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle    = titleNoForm(messages("submissionHistoryNoSubmissions.title"))
 ) {
     @heading(messages("submissionHistoryNoSubmissions.heading"), classes = "govuk-heading-l")
-    @p(messages("submissionHistoryNoSubmissions.p1"))
+    @if(isAgent) {
+    @p(messages("submissionHistoryNoSubmissions.agent.p1"))
+    } else {
+    @p(messages("submissionHistoryNoSubmissions.group.p1"))
+    }
     <br>
     @p(messages("submissionHistoryNoSubmissions.p2"))
     <br>
     @h2(messages("submissionHistoryNoSubmissions.h2"), size = "m")
-    @paragraphMessageWithLink(Some(messages("submissionHistoryNoSubmissions.p3")), linkMessage = messages("submissionHistoryNoSubmissions.link"), linkUrl = "#", linkFullStop = true)
+    @if(isAgent) {
+    @paragraphMessageWithLink(Some(messages("submissionHistoryNoSubmissions.agent.p3")), linkMessage = messages("submissionHistoryNoSubmissions.link"), linkUrl = "#", linkFullStop = true)
+    } else {
+    @paragraphMessageWithLink(Some(messages("submissionHistoryNoSubmissions.group.p3")), linkMessage = messages("submissionHistoryNoSubmissions.link"), linkUrl = "#", linkFullStop = true)
+    }
 }

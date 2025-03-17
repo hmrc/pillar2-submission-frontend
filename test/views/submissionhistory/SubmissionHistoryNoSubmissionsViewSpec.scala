@@ -25,39 +25,64 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
 
   val page: SubmissionHistoryNoSubmissionsView = inject[SubmissionHistoryNoSubmissionsView]
 
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val organisationView: Document = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
+  val agentView:        Document = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
 
-  "Transaction History View" should {
+  "Submisison History with no submission organisation view" should {
 
     "have a title" in {
       val title = "Submission history - Report Pillar 2 top-up taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      organisationView.getElementsByTag("title").text must include(title)
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Submission history")
+      organisationView.getElementsByTag("h1").text must include("Submission history")
     }
 
     "have a first paragraph" in {
-      view.getElementsByTag("p").text must include(
+      organisationView.getElementsByTag("p").text must include(
         "You can find all submissions and amendments made by your group during this accounting period and the previous 6 accounting periods."
       )
     }
 
     "have a second paragraph" in {
-      view.getElementsByTag("p").text must include(
+      organisationView.getElementsByTag("p").text must include(
         "No submissions made."
       )
     }
 
     "have a sub heading" in {
-      view.getElementsByTag("h2").text must include("Due and overdue returns")
+      organisationView.getElementsByTag("h2").text must include("Due and overdue returns")
     }
 
     "have a paragraph with link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      view.getElementsByTag("p").text must include(
+      val link = organisationView.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      organisationView.getElementsByTag("p").text must include(
         "Information on your group’s"
+      )
+      link.text must include("due and overdue returns")
+      link.attr("href") mustEqual "#" //TODO: Change URL when due and overdue returns page is built
+    }
+  }
+
+  "Submisison History with no submission agent view" should {
+
+    "have a first paragraph" in {
+      agentView.getElementsByTag("p").text must include(
+        "You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods."
+      )
+    }
+
+    "have a second paragraph" in {
+      agentView.getElementsByTag("p").text must include(
+        "No submissions made."
+      )
+    }
+
+    "have a paragraph with link" in {
+      val link = agentView.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      agentView.getElementsByTag("p").text must include(
+        "Information on your client’s"
       )
       link.text must include("due and overdue returns")
       link.attr("href") mustEqual "#" //TODO: Change URL when due and overdue returns page is built
