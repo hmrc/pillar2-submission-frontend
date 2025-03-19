@@ -30,7 +30,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
   val dateFormatter: DateTimeFormatter        = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def verifyCommonPageElements(view: Document): Unit = {
-    view.getElementsByTag("title").get(0).text mustEqual "Due and overdue returns - Report Pillar 2 top-up taxes - GOV.UK"
+    view.getElementsByTag("title").get(0).text mustEqual "Due and overdue returns - Report Pillar 2 Top-up Taxes - GOV.UK"
     view.getElementsByTag("h1").get(0).text mustEqual "Due and overdue returns"
 
     val headings = view.getElementsByTag("h2")

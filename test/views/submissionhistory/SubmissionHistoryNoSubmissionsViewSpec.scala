@@ -31,7 +31,7 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
   "Submisison History with no submission organisation view" should {
 
     "have a title" in {
-      val title = "Submission history - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "Submission history - Report Pillar 2 Top-up Taxes - GOV.UK"
       organisationView.getElementsByTag("title").text must include(title)
     }
 

@@ -37,7 +37,7 @@ class UKTaxReturnStartViewSpec extends ViewSpecBase {
     "not have a notification banner" in {
       view.getElementsByClass("govuk-notification-banner__title").text() mustNot include("Important")
       view.getElementsByClass("govuk-notification-banner__heading").text() mustNot include(
-        "Your account has a Below Threshold Notification (BTN) and is inactive. " +
+        "Your account has a Below-Threshold Notification (BTN) and is inactive. " +
           "Submit a UK tax return (UKTR) to re-activate your account."
       )
     }
@@ -48,7 +48,7 @@ class UKTaxReturnStartViewSpec extends ViewSpecBase {
 
     "have paragraphs" in {
       view.getElementsByClass("govuk-body").get(0).text must include(
-        "A UKTR fulfills your obligation to submit Pillar 2 top-up taxes for your current accounting period. " +
+        "A UKTR fulfills your obligation to submit Pillar 2 Top-up Taxes for your current accounting period. " +
           "You can report both Domestic Top-up Tax and Multinational Top-up Tax liabilities."
       )
 
@@ -101,7 +101,7 @@ class UKTaxReturnStartViewSpec extends ViewSpecBase {
     "have a notification banner" in {
       view.getElementsByClass("govuk-notification-banner__title").text() must include("Important")
       view.getElementsByClass("govuk-notification-banner__heading").text() must include(
-        "Your account has a Below Threshold Notification (BTN) and is inactive. " +
+        "Your account has a Below-Threshold Notification (BTN) and is inactive. " +
           "Submit a UK tax return (UKTR) to re-activate your account."
       )
     }
@@ -112,7 +112,7 @@ class UKTaxReturnStartViewSpec extends ViewSpecBase {
 
     "have paragraphs" in {
       view.getElementsByClass("govuk-body").get(0).text must include(
-        "A UKTR fulfills your obligation to submit Pillar 2 top-up taxes for your current accounting period. " +
+        "A UKTR fulfills your obligation to submit Pillar 2 Top-up Taxes for your current accounting period. " +
           "You can report both Domestic Top-up Tax and Multinational Top-up Tax liabilities."
       )
 

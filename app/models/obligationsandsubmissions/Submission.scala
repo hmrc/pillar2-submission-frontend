@@ -41,7 +41,7 @@ object SubmissionType extends Enum[SubmissionType] with PlayJsonEnum[SubmissionT
     override val fullName: String = "Overseas Return Notification"
   }
   case object BTN extends SubmissionType {
-    override val fullName: String = "Below Threshold Notification"
+    override val fullName: String = "Below-Threshold Notification"
   }
   case object GIR extends SubmissionType {
     override val fullName: String = "Information Return"
