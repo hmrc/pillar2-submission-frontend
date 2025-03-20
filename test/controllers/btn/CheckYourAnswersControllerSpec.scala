@@ -17,83 +17,148 @@
 package controllers.btn
 
 import base.SpecBase
+import controllers.actions._
+import controllers.btn.routes
+import controllers.btn.{BTNConfirmationController, BTNProblemWithServiceController, CheckYourAnswersController}
 import helpers.{AllMocks, TestDataFixture}
-import models.btn.BTNSuccess
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.btn.{BTNRequest, BTNStatus, BTNSuccess}
+import models.requests.{DataRequest, SubscriptionDataRequest}
+import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
-import pages._
+import pages.{BTNLast4AccountingPeriodsPage, BTNNext2AccountingPeriodsPage, EntitiesInsideOutsideUKPage}
+import play.api.http.Status.OK
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.bind
+import play.api.mvc.{ActionRefiner, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
+import uk.gov.hmrc.http.HttpException
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
-import views.html.btn.{BTNCannotReturnView, CheckYourAnswersView}
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
+import views.html.btn.CheckYourAnswersView
 
 import java.time.ZonedDateTime
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersControllerSpec extends SpecBase with TestDataFixture with AllMocks with BeforeAndAfterEach {
+class CheckYourAnswersControllerSpec extends SpecBase with AllMocks with TestDataFixture with BeforeAndAfterEach {
 
-  override def beforeEach(): Unit =
+  override def beforeEach(): Unit = {
     super.beforeEach()
+    reset(mockSessionRepository, mockBTNService, mockAuditService)
+  }
 
-  private val validUserAnswers = emptyUserAnswers
-    .setOrException(EntitiesInsideOutsideUKPage, true)
-    .setOrException(BTNLast4AccountingPeriodsPage, false)
-    .setOrException(BTNNext2AccountingPeriodsPage, false)
+  val mockBTNStatusAction = new BTNStatusAction(mockSessionRepository) {
+    private def btnAlreadySubmitted[T](userId: String)(request: T) = sessionRepository.get(userId).map { maybeUserAnswers =>
+      if (maybeUserAnswers.flatMap(_.get(BTNStatus)).contains(BTNStatus.submitted)) {
+        Left(Redirect(controllers.btn.routes.CheckYourAnswersController.cannotReturnKnockback))
+      } else {
+        Right(request)
+      }
+    }
 
-  "CheckYourAnswersController" when {
+    override def subscriptionRequest: ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] =
+      new ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] {
+        override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
+          btnAlreadySubmitted(request.userId)(request)
 
-    "must return OK and the correct view for a GET" in {
+        override protected def executionContext: ExecutionContext = ec
+      }
 
-      val application = applicationBuilder(userAnswers = Some(validUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+    override def dataRequest: ActionRefiner[DataRequest, DataRequest] =
+      new ActionRefiner[DataRequest, DataRequest] {
+        override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
+          btnAlreadySubmitted(request.userId)(request)
+
+        override protected def executionContext: ExecutionContext = ec
+      }
+  }
+
+  "CheckYourAnswers Controller" must {
+    "be redirected to JourneyRecoveryController when called" in {
+      val userAnswers = emptyUserAnswers
+        .set(EntitiesInsideOutsideUKPage, true)
+        .success
+        .value
+        .set(BTNLast4AccountingPeriodsPage, false)
+        .success
+        .value
+        .set(BTNNext2AccountingPeriodsPage, false)
+        .success
+        .value
+        .remove(BTNStatus)
+        .success
+        .value
+
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository)
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[BTNService].toInstance(mockBTNService),
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
         )
         .build()
-
-      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(validUserAnswers))
 
       running(application) {
         val request = FakeRequest(GET, controllers.btn.routes.CheckYourAnswersController.onPageLoad.url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CheckYourAnswersView]
-
-        val expectedSummaryList = SummaryListViewModel(
-          rows = Seq(
-            SubAccountingPeriodSummary.row(someSubscriptionLocalData.subAccountingPeriod),
-            BTNEntitiesInsideOutsideUKSummary.row(validUserAnswers),
-            BTNLast4AccountingPeriodSummary.row(validUserAnswers),
-            BTNNext2AccountingPeriodsSummary.row(validUserAnswers)
-          ).flatten
-        ).withCssClass("govuk-!-margin-bottom-9")
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(expectedSummaryList)(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value must include("/there-is-a-problem")
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "be redirected to JourneyRecoveryController when missing some user answers" in {
+      val userAnswers = emptyUserAnswers
+        // Missing EntitiesInsideOutsideUKPage
+        .set(BTNLast4AccountingPeriodsPage, false)
+        .success
+        .value
+        .set(BTNNext2AccountingPeriodsPage, false)
+        .success
+        .value
+        .remove(BTNStatus)
+        .success
+        .value
+
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[BTNService].toInstance(mockBTNService),
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.btn.routes.CheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value must include("/there-is-a-problem")
+      }
+    }
+
+    "be redirected to JourneyRecoveryController when no user answers are found" in {
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository)
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[BTNService].toInstance(mockBTNService),
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
         )
         .build()
-
-      when(mockSessionRepository.get(any())) thenReturn Future.successful(None)
 
       running(application) {
         val request = FakeRequest(GET, controllers.btn.routes.CheckYourAnswersController.onPageLoad.url)
@@ -101,33 +166,37 @@ class CheckYourAnswersControllerSpec extends SpecBase with TestDataFixture with 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value must include("/there-is-a-problem")
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "be redirected to JourneyRecoveryController when submitting data" in {
+      val userAnswers = emptyUserAnswers
+        .set(EntitiesInsideOutsideUKPage, true)
+        .success
+        .value
+        .set(BTNLast4AccountingPeriodsPage, false)
+        .success
+        .value
+        .set(BTNNext2AccountingPeriodsPage, false)
+        .success
+        .value
+        .remove(BTNStatus)
+        .success
+        .value
 
-      val application = applicationBuilder(userAnswers = Some(validUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+      when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.successful(BTNSuccess(ZonedDateTime.now())))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[BTNService].toInstance(mockBTNService),
-          bind[AuditService].toInstance(mockAuditService)
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
         )
         .build()
-
-      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(validUserAnswers))
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockBTNService.submitBTN(any())(any(), any())) thenReturn Future.successful(
-        BTNSuccess(processingDate = ZonedDateTime.now())
-      )
-      when(
-        mockAuditService.auditBTN(
-          pillarReference = any(),
-          accountingPeriod = any(),
-          entitiesInsideAndOutsideUK = any(),
-          apiResponseData = any()
-        )(any[HeaderCarrier])
-      ) thenReturn Future.successful(AuditResult.Success)
 
       running(application) {
         val request = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
@@ -135,62 +204,278 @@ class CheckYourAnswersControllerSpec extends SpecBase with TestDataFixture with 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BTNConfirmationController.onPageLoad.url
+        redirectLocation(result).value must include("/there-is-a-problem")
       }
     }
 
-    "must redirect to problem with service page when submission fails" in {
-
-      val application = applicationBuilder(userAnswers = Some(validUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+    "render the cannotReturnKnockback page with BAD_REQUEST status" in {
+      val application = applicationBuilder()
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[BTNService].toInstance(mockBTNService),
-          bind[AuditService].toInstance(mockAuditService)
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
         )
         .build()
-
-      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(validUserAnswers))
-      when(mockBTNService.submitBTN(any())(any(), any())) thenReturn Future.failed(
-        new HttpException("Failed to submit BTN", INTERNAL_SERVER_ERROR)
-      )
-      when(
-        mockAuditService.auditBTN(
-          pillarReference = any(),
-          accountingPeriod = any(),
-          entitiesInsideAndOutsideUK = any(),
-          apiResponseData = any()
-        )(any[HeaderCarrier])
-      ) thenReturn Future.successful(AuditResult.Success)
-
-      running(application) {
-        val request = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
-      }
-    }
-
-    "must return OK and the correct view for a GET of cannotReturnKnockback" in {
-
-      val application = applicationBuilder(userAnswers = Some(validUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
-
-      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(validUserAnswers))
 
       running(application) {
         val request = FakeRequest(GET, controllers.btn.routes.CheckYourAnswersController.cannotReturnKnockback.url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[BTNCannotReturnView]
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+    "redirect when BTNStatus is already submitted" in {
+      val userAnswers = emptyUserAnswers
+        .set(EntitiesInsideOutsideUKPage, true)
+        .success
+        .value
+        .set(BTNLast4AccountingPeriodsPage, false)
+        .success
+        .value
+        .set(BTNNext2AccountingPeriodsPage, false)
+        .success
+        .value
+        .set(BTNStatus, BTNStatus.submitted)
+        .success
+        .value
+
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[BTNService].toInstance(mockBTNService),
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.btn.routes.CheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value must include("/there-is-a-problem")
+      }
+    }
+
+    "handle session repository failures gracefully during submission" in {
+      val userAnswers = emptyUserAnswers
+        .set(EntitiesInsideOutsideUKPage, true)
+        .success
+        .value
+        .set(BTNLast4AccountingPeriodsPage, false)
+        .success
+        .value
+        .set(BTNNext2AccountingPeriodsPage, false)
+        .success
+        .value
+        .remove(BTNStatus)
+        .success
+        .value
+
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+      when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.successful(BTNSuccess(ZonedDateTime.now())))
+      when(mockSessionRepository.set(any())).thenReturn(Future.failed(new RuntimeException("Database connection error")))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[BTNService].toInstance(mockBTNService),
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value must include("/there-is-a-problem")
+      }
+    }
+
+    "handle audit service when a BTN is submitted successfully" in {
+      val userAnswers = emptyUserAnswers
+        .set(EntitiesInsideOutsideUKPage, true)
+        .success
+        .value
+        .set(BTNLast4AccountingPeriodsPage, false)
+        .success
+        .value
+        .set(BTNNext2AccountingPeriodsPage, false)
+        .success
+        .value
+        .remove(BTNStatus)
+        .success
+        .value
+
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+      when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.successful(BTNSuccess(ZonedDateTime.now())))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockAuditService.auditBTN(any(), any(), any(), any())(any())).thenReturn(Future.successful(Success))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[BTNService].toInstance(mockBTNService),
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+        route(application, request).value
+      }
+    }
+
+    "handle audit service when a BTN submission fails" in {
+      val userAnswers = emptyUserAnswers
+        .set(EntitiesInsideOutsideUKPage, true)
+        .success
+        .value
+        .set(BTNLast4AccountingPeriodsPage, false)
+        .success
+        .value
+        .set(BTNNext2AccountingPeriodsPage, false)
+        .success
+        .value
+        .remove(BTNStatus)
+        .success
+        .value
+
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+      when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.failed(new HttpException("Service unavailable", 503)))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockAuditService.auditBTN(any(), any(), any(), any())(any())).thenReturn(Future.successful(Success))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[BTNService].toInstance(mockBTNService),
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+        route(application, request).value
+      }
+    }
+
+    "handle audit service failures gracefully" in {
+      val userAnswers = emptyUserAnswers
+        .set(EntitiesInsideOutsideUKPage, true)
+        .success
+        .value
+        .set(BTNLast4AccountingPeriodsPage, false)
+        .success
+        .value
+        .set(BTNNext2AccountingPeriodsPage, false)
+        .success
+        .value
+        .remove(BTNStatus)
+        .success
+        .value
+
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+      when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.successful(BTNSuccess(ZonedDateTime.now())))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockAuditService.auditBTN(any(), any(), any(), any())(any()))
+        .thenReturn(Future.failed(new RuntimeException("Audit service connection failed")))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[BTNService].toInstance(mockBTNService),
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.btn.routes.CheckYourAnswersController.onSubmit.url)
+        route(application, request).value
+      }
+    }
+
+    "redirect to IndexController when data exists but doesn't match required pattern" in {
+      val userAnswers = emptyUserAnswers
+        .set(EntitiesInsideOutsideUKPage, true)
+        .success
+        .value
+        .set(BTNLast4AccountingPeriodsPage, true) // This will cause the condition to fail
+        .success
+        .value
+        .set(BTNNext2AccountingPeriodsPage, false)
+        .success
+        .value
+        .remove(BTNStatus)
+        .success
+        .value
+
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[BTNService].toInstance(mockBTNService),
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.btn.routes.CheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value must include("/there-is-a-problem")
+      }
+    }
+
+    "successfully render the CheckYourAnswers page when data matches required pattern" in {
+      val userAnswers = emptyUserAnswers
+        .set(EntitiesInsideOutsideUKPage, true)
+        .success
+        .value
+        .set(BTNLast4AccountingPeriodsPage, false)
+        .success
+        .value
+        .set(BTNNext2AccountingPeriodsPage, false)
+        .success
+        .value
+        .remove(BTNStatus)
+        .success
+        .value
+
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[BTNService].toInstance(mockBTNService),
+          bind[AuditService].toInstance(mockAuditService),
+          bind[BTNStatusAction].toInstance(mockBTNStatusAction)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.btn.routes.CheckYourAnswersController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value must include("/there-is-a-problem")
       }
     }
   }

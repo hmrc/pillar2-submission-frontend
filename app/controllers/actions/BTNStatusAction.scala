@@ -31,24 +31,35 @@ class BTNStatusAction @Inject() (val sessionRepository: SessionRepository)(impli
 
   def subscriptionRequest: ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] =
     new ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] {
-      override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
+      override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] = {
+        println(s"DEBUG: BTNStatusAction.subscriptionRequest - userId=${request.userId}")
         btnAlreadySubmitted(request.userId)(request)
+      }
 
       override protected def executionContext: ExecutionContext = ec
     }
 
   def dataRequest: ActionRefiner[DataRequest, DataRequest] =
     new ActionRefiner[DataRequest, DataRequest] {
-      override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
+      override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
+        println(s"DEBUG: BTNStatusAction.dataRequest - userId=${request.userId}")
         btnAlreadySubmitted(request.userId)(request)
+      }
 
       override protected def executionContext: ExecutionContext = ec
     }
 
   private def btnAlreadySubmitted[T](userId: String)(request: T) = sessionRepository.get(userId).map { maybeUserAnswers =>
-    if (maybeUserAnswers.flatMap(_.get(BTNStatus)).contains(BTNStatus.submitted))
+    println(s"DEBUG: BTNStatusAction.btnAlreadySubmitted - userId=$userId, maybeUserAnswers=$maybeUserAnswers")
+    val btnStatus = maybeUserAnswers.flatMap(_.get(BTNStatus))
+    println(s"DEBUG: BTNStatusAction.btnAlreadySubmitted - btnStatus=$btnStatus")
+
+    if (btnStatus.contains(BTNStatus.submitted)) {
+      println(s"DEBUG: BTNStatusAction.btnAlreadySubmitted - Redirecting to cannotReturnKnockback")
       Left(Redirect(CheckYourAnswersController.cannotReturnKnockback))
-    else
+    } else {
+      println(s"DEBUG: BTNStatusAction.btnAlreadySubmitted - Allowing request to proceed")
       Right(request)
+    }
   }
 }

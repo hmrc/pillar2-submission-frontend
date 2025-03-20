@@ -38,6 +38,7 @@ import viewmodels.govuk.summarylist._
 import views.html.btn.{BTNCannotReturnView, CheckYourAnswersView}
 
 import scala.concurrent.{ExecutionContext, Future}
+import java.time.format.DateTimeFormatter
 
 class CheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
@@ -57,14 +58,24 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
+      println("DEBUG: CheckYourAnswersController.onPageLoad - Starting")
       sessionRepository.get(request.userId).map { maybeUserAnswers =>
+        println(s"DEBUG: CheckYourAnswersController.onPageLoad - Got user answers: $maybeUserAnswers")
         (for {
           userAnswers    <- maybeUserAnswers
           entitiesInOut  <- userAnswers.get(EntitiesInsideOutsideUKPage)
           last4Periods   <- userAnswers.get(BTNLast4AccountingPeriodsPage)
           nextTwoPeriods <- userAnswers.get(BTNNext2AccountingPeriodsPage)
-        } yield (entitiesInOut, last4Periods, nextTwoPeriods) match {
-          case (true, false, false) =>
+        } yield {
+          println(
+            s"DEBUG: CheckYourAnswersController.onPageLoad - entitiesInOut=$entitiesInOut, last4Periods=$last4Periods, nextTwoPeriods=$nextTwoPeriods"
+          )
+
+          val btnStatus = userAnswers.get(BTNStatus)
+          println(s"DEBUG: CheckYourAnswersController.onPageLoad - BTNStatus=$btnStatus")
+
+          if (entitiesInOut && !last4Periods && !nextTwoPeriods) {
+            println("DEBUG: CheckYourAnswersController.onPageLoad - Returning OK")
             val summaryList = SummaryListViewModel(
               rows = Seq(
                 SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod),
@@ -75,14 +86,18 @@ class CheckYourAnswersController @Inject() (
             ).withCssClass("govuk-!-margin-bottom-9")
 
             Ok(view(summaryList))
-
-          case _ => Redirect(IndexController.onPageLoad)
-
-        }).getOrElse(Redirect(JourneyRecoveryController.onPageLoad()))
+          } else {
+            println("DEBUG: CheckYourAnswersController.onPageLoad - Redirecting to IndexController")
+            Redirect(IndexController.onPageLoad)
+          }
+        }).getOrElse {
+          println("DEBUG: CheckYourAnswersController.onPageLoad - Redirecting to JourneyRecoveryController")
+          Redirect(JourneyRecoveryController.onPageLoad())
+        }
       }
     }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val subAccountingPeriod: AccountingPeriod = request.subscriptionLocalData.subAccountingPeriod
     val btnPayload = BTNRequest(
       accountingPeriodFrom = subAccountingPeriod.startDate,
@@ -101,8 +116,8 @@ class CheckYourAnswersController @Inject() (
              accountingPeriod = subAccountingPeriod.toString,
              entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
              apiResponseData = ApiResponseData(
-               statusCode = play.api.http.Status.CREATED,
-               processingDate = apiSuccessResponse.processingDate.toString,
+               statusCode = CREATED,
+               processingDate = apiSuccessResponse.processingDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                errorCode = None,
                responseMessage = "Success"
              )
@@ -120,7 +135,7 @@ class CheckYourAnswersController @Inject() (
                entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
                apiResponseData = ApiResponseData(
                  statusCode = e.responseCode,
-                 processingDate = java.time.LocalDateTime.now().toString,
+                 processingDate = java.time.LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                  errorCode = Some("InternalIssueError"),
                  responseMessage = e.message
                )
@@ -129,7 +144,5 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  def cannotReturnKnockback: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    Ok(cannotReturnView())
-  }
+  def cannotReturnKnockback: Action[AnyContent] = identify(implicit request => BadRequest(cannotReturnView()))
 }
