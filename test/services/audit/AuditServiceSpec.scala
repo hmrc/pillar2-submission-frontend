@@ -19,6 +19,7 @@ package services.audit
 import base.SpecBase
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.Application
 import play.api.inject.bind
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -29,7 +30,7 @@ class AuditServiceSpec extends SpecBase {
 
   override val mockAuditConnector: AuditConnector = mock[AuditConnector]
 
-  val application = applicationBuilder()
+  val application: Application = applicationBuilder()
     .overrides(
       bind[AuditConnector].toInstance(mockAuditConnector)
     )
