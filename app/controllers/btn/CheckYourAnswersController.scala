@@ -19,8 +19,8 @@ package controllers.btn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.btn.routes._
 import controllers.routes._
+import models.audit.ApiResponseData
 import models.btn.BTNStatus.submitted
 import models.btn.{BTNRequest, BTNStatus}
 import models.subscription.AccountingPeriod
@@ -30,6 +30,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.BTNService
+import services.audit.AuditService
+import uk.gov.hmrc.http.HttpException
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -46,7 +48,8 @@ class CheckYourAnswersController @Inject() (
   view:                     CheckYourAnswersView,
   cannotReturnView:         BTNCannotReturnView,
   btnService:               BTNService,
-  val controllerComponents: MessagesControllerComponents
+  val controllerComponents: MessagesControllerComponents,
+  auditService:             AuditService
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -79,24 +82,54 @@ class CheckYourAnswersController @Inject() (
       }
     }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    implicit val pillar2Id:  String           = request.subscriptionLocalData.plrReference
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
     val subAccountingPeriod: AccountingPeriod = request.subscriptionLocalData.subAccountingPeriod
     val btnPayload = BTNRequest(
       accountingPeriodFrom = subAccountingPeriod.startDate,
       accountingPeriodTo = subAccountingPeriod.endDate
     )
+
+    implicit val pillar2Id: String = request.subscriptionLocalData.plrReference
+
     (for {
-      apiSuccessResponse <- btnService
-                              .submitBTN(btnPayload)
-      updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
-      _              <- sessionRepository.set(updatedAnswers)
+      apiSuccessResponse <- btnService.submitBTN(btnPayload)
+      updatedAnswers     <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
+      _                  <- sessionRepository.set(updatedAnswers)
+
+      _ <- auditService.auditBTN(
+             pillarReference = request.subscriptionLocalData.plrReference,
+             accountingPeriod = subAccountingPeriod.toString,
+             entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
+             apiResponseData = ApiResponseData(
+               statusCode = play.api.http.Status.CREATED,
+               processingDate = apiSuccessResponse.processingDate.toString,
+               errorCode = None,
+               responseMessage = "Success"
+             )
+           )
+
       _ = logger.info(s"BTN Request Submission was successful. response.body= $apiSuccessResponse")
-    } yield Redirect(BTNConfirmationController.onPageLoad)).recover { case ex: Throwable =>
-      logger.error(s"BTN Request failed with error: ${ex.getMessage}")
-      Redirect(BTNProblemWithServiceController.onPageLoad)
+
+    } yield Redirect(controllers.btn.routes.BTNConfirmationController.onPageLoad)).recoverWith { case e: HttpException =>
+      logger.error(s"BTN Request Submission failed with status ${e.responseCode}: ${e.message}")
+
+      for {
+        _ <- auditService.auditBTN(
+               pillarReference = request.subscriptionLocalData.plrReference,
+               accountingPeriod = subAccountingPeriod.toString,
+               entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
+               apiResponseData = ApiResponseData(
+                 statusCode = e.responseCode,
+                 processingDate = java.time.LocalDateTime.now().toString,
+                 errorCode = Some("InternalIssueError"),
+                 responseMessage = e.message
+               )
+             )
+      } yield Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
     }
   }
 
-  def cannotReturnKnockback: Action[AnyContent] = identify(implicit request => BadRequest(cannotReturnView()))
+  def cannotReturnKnockback: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    Ok(cannotReturnView())
+  }
 }
