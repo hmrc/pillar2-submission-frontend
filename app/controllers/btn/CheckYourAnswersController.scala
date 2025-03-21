@@ -64,10 +64,7 @@ class CheckYourAnswersController @Inject() (
           entitiesInOut  <- userAnswers.get(EntitiesInsideOutsideUKPage)
           last4Periods   <- userAnswers.get(BTNLast4AccountingPeriodsPage)
           nextTwoPeriods <- userAnswers.get(BTNNext2AccountingPeriodsPage)
-        } yield {
-
-          userAnswers.get(BTNStatus)
-
+        } yield
           if (entitiesInOut && !last4Periods && !nextTwoPeriods) {
             val summaryList = SummaryListViewModel(
               rows = Seq(
@@ -81,8 +78,7 @@ class CheckYourAnswersController @Inject() (
             Ok(view(summaryList))
           } else {
             Redirect(IndexController.onPageLoad)
-          }
-        }).getOrElse {
+          }).getOrElse {
           Redirect(JourneyRecoveryController.onPageLoad())
         }
       }

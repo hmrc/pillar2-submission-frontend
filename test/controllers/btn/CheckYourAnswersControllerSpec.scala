@@ -19,10 +19,10 @@ package controllers.btn
 import base.SpecBase
 import controllers.btn.routes._
 import controllers.routes._
-import models.btn.BTNSuccess
 import models.UserAnswers
+import models.btn.BTNSuccess
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import pages._
 import play.api.Application
