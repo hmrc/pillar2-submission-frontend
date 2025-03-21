@@ -64,8 +64,8 @@ class CheckYourAnswersController @Inject() (
           entitiesInOut  <- userAnswers.get(EntitiesInsideOutsideUKPage)
           last4Periods   <- userAnswers.get(BTNLast4AccountingPeriodsPage)
           nextTwoPeriods <- userAnswers.get(BTNNext2AccountingPeriodsPage)
-        } yield
-          if (entitiesInOut && !last4Periods && !nextTwoPeriods) {
+        } yield (entitiesInOut, last4Periods, nextTwoPeriods) match {
+          case (true, false, false) =>
             val summaryList = SummaryListViewModel(
               rows = Seq(
                 SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod),
@@ -76,11 +76,10 @@ class CheckYourAnswersController @Inject() (
             ).withCssClass("govuk-!-margin-bottom-9")
 
             Ok(view(summaryList))
-          } else {
-            Redirect(IndexController.onPageLoad)
-          }).getOrElse {
-          Redirect(JourneyRecoveryController.onPageLoad())
-        }
+
+          case _ => Redirect(IndexController.onPageLoad)
+
+        }).getOrElse(Redirect(JourneyRecoveryController.onPageLoad()))
       }
     }
 
