@@ -96,69 +96,69 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     ".onSubmit" should {
-      // Helper method to create a result for the submitBTN scenario
+   
       def submitBTNResult(serviceResponse: Future[BTNSuccess]): Future[Result] = {
-        // Mock the service response
+  
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(serviceResponse)
 
-        // Run the testable handler directly
+     
         Future.successful(Redirect(BTNConfirmationController.onPageLoad))
       }
 
-      // Helper method to create a failing result
+    
       def submitFailingBTNResult(error: Throwable): Future[Result] = {
-        // Mock the service failure
+
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.failed(error))
 
-        // Return the error response directly
+ 
         Future.successful(Redirect(BTNProblemWithServiceController.onPageLoad))
       }
 
       "must redirect to Confirmation page on submission" in {
-        // Arrange
+        
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val successResponse = BTNSuccess(ZonedDateTime.now())
 
-        // Act
+      
         val result = submitBTNResult(Future.successful(successResponse))
 
-        // Assert
+      
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNConfirmationController.onPageLoad.url
       }
 
       "redirect to Problem with Service page when BTN submission throws an exception" in {
-        // Arrange
+      
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-        // Act
+      
         val result = submitFailingBTNResult(new RuntimeException("Test exception"))
 
-        // Assert
+        
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
       }
 
       "redirect to Problem with Service page when BTN submission returns Future.failed(ApiError)" in {
-        // Arrange
+        
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-        // Act
+      
         val result = submitFailingBTNResult(InternalIssueError)
 
-        // Assert
+        
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
       }
 
       "redirect to Problem with Service page for any other error" in {
-        // Arrange
+        
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-        // Act
+        
         val result = submitFailingBTNResult(ObligationNotFoundError)
 
-        // Assert
+        
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
       }
