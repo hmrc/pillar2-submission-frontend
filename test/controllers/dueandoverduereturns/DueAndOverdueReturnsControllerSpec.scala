@@ -125,7 +125,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
 
         emptyContent must include("Your client is up to date with their returns for this accounting period")
         dueContent   must include("If your client has multiple returns due, they will be separated by accounting periods")
-        dueContent   must include("You must submit each return before its due date using your clients commercial software supplier")
+        dueContent   must include("You must submit each return before its due date using your client’s commercial software supplier")
       }
 
     }
