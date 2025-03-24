@@ -60,8 +60,8 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
       organisationView.getElementsByTag("p").text must include(
         "Information on your group’s"
       )
-      link.text must include("due and overdue returns")
-      link.attr("href") mustEqual "#" //TODO: Change URL when due and overdue returns page is built
+      link.text         must include("due and overdue returns")
+      link.attr("href") must include("/due-and-overdue-returns")
     }
   }
 
@@ -84,8 +84,8 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
       agentView.getElementsByTag("p").text must include(
         "Information on your client’s"
       )
-      link.text must include("due and overdue returns")
-      link.attr("href") mustEqual "#" //TODO: Change URL when due and overdue returns page is built
+      link.text         must include("due and overdue returns")
+      link.attr("href") must include("/due-and-overdue-returns")
     }
   }
 }

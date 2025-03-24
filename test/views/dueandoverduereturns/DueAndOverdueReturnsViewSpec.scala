@@ -246,7 +246,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
         "show the correct multiple returns information for agents" in {
           val infoMessages = view.select("p.govuk-body")
           infoMessages.get(0).text mustEqual "If your client has multiple returns due, they will be separated by accounting periods."
-          infoMessages.get(1).text mustEqual "You must submit each return before its due date using your clients commercial software supplier."
+          infoMessages.get(1).text mustEqual "You must submit each return before its due date using your client’s commercial software supplier."
         }
       }
 
@@ -255,7 +255,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
 
         "show the agent-specific submission history description" in {
           val submissionHistoryParagraph = view.select("p.govuk-body").stream.filter(p => p.text.contains("submission history")).findFirst().get()
-          submissionHistoryParagraph.text must include("You can find full details of your clients submitted returns on the submission history page.")
+          submissionHistoryParagraph.text must include("You can find full details of your client’s submitted returns on the submission history page.")
         }
       }
     }
