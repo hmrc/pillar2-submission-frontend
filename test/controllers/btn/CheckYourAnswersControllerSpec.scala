@@ -21,8 +21,9 @@ import controllers.btn.routes._
 import controllers.routes._
 import models.InternalIssueError
 import models.UserAnswers
+import models.audit.ApiResponseData
 import models.btn.BTNSuccess
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import pages._
@@ -35,6 +36,7 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import viewmodels.govuk.SummaryListFluency
 import views.html.btn.CheckYourAnswersView
@@ -130,11 +132,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         redirectLocation(result).value mustEqual BTNConfirmationController.onPageLoad.url
 
         verify(mockAuditService).auditBTN(
-          pillarReference = any(),
-          accountingPeriod = any(),
-          entitiesInsideAndOutsideUK = any(),
-          apiResponseData = any()
-        )(any())
+          eqTo("Abc123"),
+          eqTo("AccountingPeriod(2024-10-24,2025-10-24,None)"),
+          eqTo(false),
+          any[ApiResponseData]
+        )(any[HeaderCarrier])
       }
 
       "redirect to Problem with Service page when BTN submission throws an exception" in {
@@ -144,11 +146,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
 
         verify(mockAuditService).auditBTN(
-          pillarReference = any(),
-          accountingPeriod = any(),
-          entitiesInsideAndOutsideUK = any(),
-          apiResponseData = any()
-        )(any())
+          eqTo("Abc123"),
+          eqTo("AccountingPeriod(2024-10-24,2025-10-24,None)"),
+          eqTo(false),
+          any[ApiResponseData]
+        )(any[HeaderCarrier])
       }
 
       "redirect to Problem with Service page when BTN submission returns Future.failed(ApiError)" in {
@@ -158,11 +160,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
 
         verify(mockAuditService).auditBTN(
-          pillarReference = any(),
-          accountingPeriod = any(),
-          entitiesInsideAndOutsideUK = any(),
-          apiResponseData = any()
-        )(any())
+          eqTo("Abc123"),
+          eqTo("AccountingPeriod(2024-10-24,2025-10-24,None)"),
+          eqTo(false),
+          any[ApiResponseData]
+        )(any[HeaderCarrier])
       }
 
       "redirect to Problem with Service page for any other error" in {
@@ -172,11 +174,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
 
         verify(mockAuditService).auditBTN(
-          pillarReference = any(),
-          accountingPeriod = any(),
-          entitiesInsideAndOutsideUK = any(),
-          apiResponseData = any()
-        )(any())
+          eqTo("Abc123"),
+          eqTo("AccountingPeriod(2024-10-24,2025-10-24,None)"),
+          eqTo(false),
+          any[ApiResponseData]
+        )(any[HeaderCarrier])
       }
     }
 
