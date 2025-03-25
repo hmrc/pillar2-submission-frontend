@@ -19,8 +19,8 @@ package controllers.btn
 import base.SpecBase
 import controllers.btn.routes._
 import controllers.routes._
+import models.UserAnswers
 import models.btn.BTNSuccess
-import models.{InternalIssueError, ObligationNotFoundError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -33,6 +33,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.BTNService
+import services.audit.AuditService
+import uk.gov.hmrc.http.HttpException
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import viewmodels.govuk.SummaryListFluency
 import views.html.btn.CheckYourAnswersView
 
@@ -43,11 +46,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
   override val mockBTNService:        BTNService        = mock[BTNService]
   override val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  override val mockAuditService:      AuditService      = mock[AuditService]
 
   def application: Application =
     applicationBuilder(userAnswers = Option(UserAnswers("id", JsObject.empty)), subscriptionLocalData = Some(someSubscriptionLocalData))
       .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
       .overrides(bind[BTNService].toInstance(mockBTNService))
+      .overrides(bind[AuditService].toInstance(mockAuditService))
       .build()
 
   def request(ua: UserAnswers = validBTNCyaUa): FakeRequest[AnyContentAsEmpty.type] = {
@@ -98,58 +103,80 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     ".onSubmit" should {
 
       def submitBTNResult(serviceResponse: Future[BTNSuccess]): Future[Result] = {
-
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(serviceResponse)
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockAuditService.auditBTN(any(), any(), any(), any())(any())).thenReturn(Future.successful(AuditResult.Success))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(validBTNCyaUa)))
 
-        Future.successful(Redirect(BTNConfirmationController.onPageLoad))
+        val request = FakeRequest(POST, CheckYourAnswersController.onSubmit.url)
+        route(application, request).value
       }
 
       def submitFailingBTNResult(error: Throwable): Future[Result] = {
-
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.failed(error))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockAuditService.auditBTN(any(), any(), any(), any())(any())).thenReturn(Future.successful(AuditResult.Success))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(validBTNCyaUa)))
 
-        Future.successful(Redirect(BTNProblemWithServiceController.onPageLoad))
+        val request = FakeRequest(POST, CheckYourAnswersController.onSubmit.url)
+        route(application, request).value
       }
 
       "must redirect to Confirmation page on submission" in {
-
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val successResponse = BTNSuccess(ZonedDateTime.now())
-
-        val result = submitBTNResult(Future.successful(successResponse))
+        val result          = submitBTNResult(Future.successful(successResponse))
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNConfirmationController.onPageLoad.url
+
+        verify(mockAuditService).auditBTN(
+          pillarReference = any(),
+          accountingPeriod = any(),
+          entitiesInsideAndOutsideUK = any(),
+          apiResponseData = any()
+        )(any())
       }
 
       "redirect to Problem with Service page when BTN submission throws an exception" in {
-
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-
-        val result = submitFailingBTNResult(new RuntimeException("Test exception"))
+        val result = submitFailingBTNResult(new HttpException("Test exception", INTERNAL_SERVER_ERROR))
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
+
+        verify(mockAuditService).auditBTN(
+          pillarReference = any(),
+          accountingPeriod = any(),
+          entitiesInsideAndOutsideUK = any(),
+          apiResponseData = any()
+        )(any())
       }
 
       "redirect to Problem with Service page when BTN submission returns Future.failed(ApiError)" in {
-
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-
-        val result = submitFailingBTNResult(InternalIssueError)
+        val result = submitFailingBTNResult(new HttpException("Internal server error", INTERNAL_SERVER_ERROR))
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
+
+        verify(mockAuditService).auditBTN(
+          pillarReference = any(),
+          accountingPeriod = any(),
+          entitiesInsideAndOutsideUK = any(),
+          apiResponseData = any()
+        )(any())
       }
 
       "redirect to Problem with Service page for any other error" in {
-
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-
-        val result = submitFailingBTNResult(ObligationNotFoundError)
+        val result = submitFailingBTNResult(new HttpException("Not found", NOT_FOUND))
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
+
+        verify(mockAuditService).auditBTN(
+          pillarReference = any(),
+          accountingPeriod = any(),
+          entitiesInsideAndOutsideUK = any(),
+          apiResponseData = any()
+        )(any())
       }
     }
 
