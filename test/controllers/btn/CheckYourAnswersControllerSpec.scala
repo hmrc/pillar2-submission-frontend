@@ -19,6 +19,7 @@ package controllers.btn
 import base.SpecBase
 import controllers.btn.routes._
 import controllers.routes._
+import models.InternalIssueError
 import models.UserAnswers
 import models.btn.BTNSuccess
 import org.mockito.ArgumentMatchers.any
@@ -34,7 +35,6 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService
-import uk.gov.hmrc.http.HttpException
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import viewmodels.govuk.SummaryListFluency
 import views.html.btn.CheckYourAnswersView
@@ -138,7 +138,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
 
       "redirect to Problem with Service page when BTN submission throws an exception" in {
-        val result = submitFailingBTNResult(new HttpException("Test exception", INTERNAL_SERVER_ERROR))
+        val result = submitFailingBTNResult(InternalIssueError)
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
@@ -152,7 +152,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
 
       "redirect to Problem with Service page when BTN submission returns Future.failed(ApiError)" in {
-        val result = submitFailingBTNResult(new HttpException("Internal server error", INTERNAL_SERVER_ERROR))
+        val result = submitFailingBTNResult(InternalIssueError)
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url
@@ -166,7 +166,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
 
       "redirect to Problem with Service page for any other error" in {
-        val result = submitFailingBTNResult(new HttpException("Not found", NOT_FOUND))
+        val result = submitFailingBTNResult(InternalIssueError)
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNProblemWithServiceController.onPageLoad.url

@@ -31,7 +31,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService
-import uk.gov.hmrc.http.HttpException
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -111,8 +110,8 @@ class CheckYourAnswersController @Inject() (
 
       _ = logger.info(s"BTN Request Submission was successful. response.body= $apiSuccessResponse")
 
-    } yield Redirect(controllers.btn.routes.BTNConfirmationController.onPageLoad)).recoverWith { case e: HttpException =>
-      logger.error(s"BTN Request Submission failed with status ${e.responseCode}: ${e.message}")
+    } yield Redirect(controllers.btn.routes.BTNConfirmationController.onPageLoad)).recoverWith { case e: Throwable =>
+      logger.error(s"BTN Request Submission failed with error: ${e.getMessage}")
 
       for {
         _ <- auditService.auditBTN(
@@ -120,10 +119,10 @@ class CheckYourAnswersController @Inject() (
                accountingPeriod = subAccountingPeriod.toString,
                entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
                apiResponseData = ApiResponseData(
-                 statusCode = e.responseCode,
+                 statusCode = INTERNAL_SERVER_ERROR,
                  processingDate = java.time.LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                  errorCode = Some("InternalIssueError"),
-                 responseMessage = e.message
+                 responseMessage = e.getMessage
                )
              )
       } yield Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
