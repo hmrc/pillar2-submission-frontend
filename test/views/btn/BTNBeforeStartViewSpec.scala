@@ -30,11 +30,11 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
   "BTNBeforeStartView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Below Threshold Notification")
+      view.getElementsByTag("title").text must include("Below-Threshold Notification")
     }
 
     "have a h1 heading" in {
-      view.getElementsByTag("h1").text must include("Below Threshold Notification")
+      view.getElementsByTag("h1").text must include("Below-Threshold Notification")
     }
 
     "have two h2 headings" in {
