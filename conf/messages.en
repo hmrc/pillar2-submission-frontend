@@ -1,4 +1,4 @@
-service.name = Report Pillar 2 top-up taxes
+service.name = Report Pillar 2 Top-up Taxes
 
 site.back = Back
 site.remove = Remove
@@ -42,8 +42,8 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = Welcome to Report Pillar 2 top-up taxes
-index.heading = Welcome to Report Pillar 2 top-up taxes
+index.title = Welcome to Report Pillar 2 Top-up Taxes
+index.heading = Welcome to Report Pillar 2 Top-up Taxes
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
 under_construction.heading = Under Construction
@@ -64,89 +64,89 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 unauthorised.guidance = You need to {0} to access this page.
-unauthorised.guidance.link = register to report Pillar 2 top-up taxes
+unauthorised.guidance.link = register to report Pillar 2 Top-up Taxes
 
 unauthorised.individual.heading = Sorry, you’re unable to use this service
 unauthorised.individual.message = You’ve signed in with an individual account. Only users with an organisation account can register to use this service.
 unauthorised.individual.message2 = If the group still needs to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
-unauthorised.individual.hyper2 = Find out more about who can report for Pillar 2 top-up taxes
+unauthorised.individual.hyper2 = Find out more about who can report for Pillar 2 Top-up Taxes
 
 unauthorised.org.standard.heading = Sorry, you’re unable to use this service
 unauthorised.org.standard.message = You’ve signed in with a standard organisation account.
 unauthorised.org.standard.message2 = Only Government Gateway accounts with an administrator role can register to use this service.
-unauthorised.org.standard.message3 = You need to find someone with an administrator’s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
-unauthorised.org.standard.hyperlink = Find out more about who can report for Pillar 2 top-up taxes
+unauthorised.org.standard.message3 = You need to find someone with an administrator’s Government Gateway user ID who can register and then give you authority to report and manage Pillar 2 Top-up Taxes.
+unauthorised.org.standard.hyperlink = Find out more about who can report for Pillar 2 Top-up Taxes
 
 unauthorised.agent.heading = Sorry, you’re unable to use this service
 unauthorised.agent.message = You’ve signed in using an agent’s Government Gateway user ID. Only groups can register to use this service.
-unauthorised.agent.message2 = If you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+unauthorised.agent.message2 = If you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must
 unauthorised.agent.hyper1 = sign in via Agent Services.
-unauthorised.agent.message3 = If you need to request authorisation to report Pillar 2 top-up taxes, you must
+unauthorised.agent.message3 = If you need to request authorisation to report Pillar 2 Top-up Taxes, you must
 unauthorised.agent.hyper2 = request authorisation via Agent services.
-unauthorised.agent.hyper3 = Find out more about who can report for Pillar 2 top-up taxes
+unauthorised.agent.hyper3 = Find out more about who can report for Pillar 2 Top-up Taxes
 
 ###############################################
 #
 # Agent Services
 #
 ###############################################
-agent.pillar2Ref.title = What is your client’s Pillar 2 top-up taxes ID?
-agent.pillar2Ref.heading = What is your client’s Pillar 2 top-up taxes ID?
-agent.pillar2Ref.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage.
-agent.pillar2Ref.error.required = Enter your client’s Pillar 2 top-up taxes ID
-agent.pillar2Ref.error.format = Enter a Pillar 2 top-up taxes ID in the correct format, like XMPLR0123456789
-agent.pillar2Ref.error.length = Pillar 2 top-up taxes ID must be 15 characters
+agent.pillar2Ref.title = What is your client’s Pillar 2 Top-up Taxes ID?
+agent.pillar2Ref.heading = What is your client’s Pillar 2 Top-up Taxes ID?
+agent.pillar2Ref.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 Top-up Taxes homepage.
+agent.pillar2Ref.error.required = Enter your client’s Pillar 2 Top-up Taxes ID
+agent.pillar2Ref.error.format = Enter a Pillar 2 Top-up Taxes ID in the correct format, like XMPLR0123456789
+agent.pillar2Ref.error.length = Pillar 2 Top-up Taxes ID must be 15 characters
 
 agent.clientConfirm.title = Confirm your client’s details
 agent.clientConfirm.heading = Confirm your client’s details
-agent.clientConfirm.h2.upe = Client’s ultimate parent
-agent.clientConfirm.h2.id = Client’s Pillar 2 top-up taxes ID
-agent.clientConfirm.link = Enter a different client’s Pillar 2 top-up taxes ID
+agent.clientConfirm.h2.upe = Client’s Ultimate Parent Entity
+agent.clientConfirm.h2.id = Client’s Pillar 2 Top-up Taxes ID
+agent.clientConfirm.link = Enter a different client’s Pillar 2 Top-up Taxes ID
 
 agent.noMatch.title = Your client’s details did not match HMRC records
 agent.noMatch.heading = Your client’s details did not match HMRC records
 agent.noMatch.p1 = We could not match the details you entered with records held by HMRC.
-agent.noMatch.link = Re-enter your client’s Pillar 2 top-up taxes ID to try again
+agent.noMatch.link = Re-enter your client’s Pillar 2 Top-up Taxes ID to try again
 
 agent.error.title = Sorry, there is a problem with the service
 agent.error.heading = Sorry, there is a problem with the service
 agent.error.p1 = Please try again later.
 agent.error.link = Return to your Agent Services Account
 
-agent.unauthorised.title = You have not been authorised to report this client’s Pillar 2 top-up taxes
-agent.unauthorised.heading = You have not been authorised to report this client’s Pillar 2 top-up taxes
+agent.unauthorised.title = You have not been authorised to report this client’s Pillar 2 Top-up Taxes
+agent.unauthorised.heading = You have not been authorised to report this client’s Pillar 2 Top-up Taxes
 agent.unauthorised.p1 = You need to
-agent.unauthorised.link = request authorisation to report and manage this client’s Pillar 2 top-up taxes
+agent.unauthorised.link = request authorisation to report and manage this client’s Pillar 2 Top-up Taxes
 
 agent.individual.title = Sorry, you’re unable to use this service
 agent.individual.heading = Sorry, you’re unable to use this service
 agent.individual.p1 = You’ve signed in with an individual account.
 agent.individual.p2 = Only users with an agent services account can use this service.
-agent.individual.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+agent.individual.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must
 agent.individual.bullet.p1.link = sign in via agent services
-agent.individual.bullet.p2 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+agent.individual.bullet.p2 = if you need to request authorisation to report Pillar 2 Top-up Taxes, you must
 agent.individual.bullet.p2.link = request authorisation on agent services
-agent.individual.link = Find out more about who can report for Pillar 2 top-up taxes
+agent.individual.link = Find out more about who can report for Pillar 2 Top-up Taxes
 
 agent.organisation.title = Sorry, you’re unable to use this service
 agent.organisation.heading = Sorry, you’re unable to use this service
 agent.organisation.p1 = You’ve signed in with an organisations account.
 agent.organisation.p2 = Only users with an agent services account can use this service.
-agent.organisation.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+agent.organisation.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must
 agent.organisation.bullet.p1.link = sign in via agent services
-agent.organisation.bullet.p2 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+agent.organisation.bullet.p2 = if you need to request authorisation to report Pillar 2 Top-up Taxes, you must
 agent.organisation.bullet.p2.link = request authorisation on agent services
-agent.organisation.link = Find out more about who can report for Pillar 2 top-up taxes
+agent.organisation.link = Find out more about who can report for Pillar 2 Top-up Taxes
 
-asa.agent.title = ASA Home page for Pillar 2 top-up taxes screen
-asa.agent.heading = ASA Home page for Pillar 2 top-up taxes screen
+asa.agent.title = ASA Home page for Pillar 2 Top-up Taxes screen
+asa.agent.heading = ASA Home page for Pillar 2 Top-up Taxes screen
 asa.agent.p1 = This screen is  home page in development and local for ASA, but  for QA, staging  and production, ASA has it own pages.
 ###############################################
 
 uktr.ukTaxReturnStart.title = UK Tax Return (UKTR)
 uktr.ukTaxReturnStart.header = UK Tax Return (UKTR)
-uktr.ukTaxReturnStart.p1 = A UKTR fulfills your obligation to submit Pillar 2 top-up taxes for your current accounting period. You can report both Domestic Top-up Tax and Multinational Top-up Tax liabilities.
+uktr.ukTaxReturnStart.p1 = A UKTR fulfills your obligation to submit Pillar 2 Top-up Taxes for your current accounting period. You can report both Domestic Top-up Tax and Multinational Top-up Tax liabilities.
 uktr.ukTaxReturnStart.p2 = If your group only has entities located in the UK, your return will include Domestic Top-up Tax.
 uktr.ukTaxReturnStart.p3 = If your group has entities located both inside and outside the UK, your return will include both Domestic Top-up Tax and Multinational Top-up Tax.
 uktr.ukTaxReturnStart.subheading = How to submit a UKTR
@@ -155,16 +155,16 @@ uktr.ukTaxReturnStart.p4.link = ensure your group’s details are updated
 uktr.ukTaxReturnStart.p5 = HMRC cannot recommend or endorse any one service over another and will not be responsible for any loss, damage, cost or expense in connection with using the software.
 uktr.ukTaxReturnStart.p6.link = Choose a supplier to submit your UKTR from this list
 uktr.ukTaxReturnStart.inactive.subheading = Important
-uktr.ukTaxReturnStart.inactive.p1 = Your account has a Below Threshold Notification (BTN) and is inactive. Submit a UK tax return (UKTR) to re-activate your account.
+uktr.ukTaxReturnStart.inactive.p1 = Your account has a Below-Threshold Notification (BTN) and is inactive. Submit a UK tax return (UKTR) to re-activate your account.
 
 ###############################################
 #
-# Below Threshold Notification
+# Below-Threshold Notification
 #
 ###############################################
 
-btn.beforeStart.title = Below Threshold Notification
-btn.beforeStart.header = Below Threshold Notification
+btn.beforeStart.title = Below-Threshold Notification
+btn.beforeStart.header = Below-Threshold Notification
 btn.beforeStart.p1 = A Below-Threshold Notification removes your group’s obligation to submit a UKTR for the current accounting period and all future ones.
 btn.beforeStart.header2 = Who can submit a Below-Threshold Notification
 btn.beforeStart.p2 = You can submit a Below-Threshold Notification if the group:
@@ -232,7 +232,7 @@ btn.submitUKTR.p2 = You can submit a nil return UK Tax Return if your group is n
 btn.submitUKTR.link = Find out more about submitting a late or new UK Tax Return
 
 btn.cya.heading = Check your answers to submit your Below-Threshold Notification
-btn.cya.p1 = Now submit your Below Threshold Notification
+btn.cya.p1 = Now submit your Below-Threshold Notification
 btn.cya.p2 = By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge.
 
 btn.thresholdMet.title = Based on your answer, your group must submit a UK Tax Return
