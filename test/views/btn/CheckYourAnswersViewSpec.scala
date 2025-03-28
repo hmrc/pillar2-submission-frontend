@@ -29,7 +29,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
   "CheckYourAnswersView" must {
 
     "have a title" in {
-      view.getElementsByTag("title").get(0).text mustEqual "Check Your Answers - Report Pillar 2 top-up taxes - GOV.UK"
+      view.getElementsByTag("title").get(0).text mustEqual "Check Your Answers - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a H1 heading" in {
@@ -37,7 +37,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph with a H2 heading" in {
-      view.getElementsByTag("h3").get(0).text mustEqual "Now submit your Below Threshold Notification"
+      view.getElementsByTag("h3").get(0).text mustEqual "Now submit your Below-Threshold Notification"
       view.getElementsByClass("govuk-body").get(0).text mustEqual
         "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
     }
