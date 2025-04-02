@@ -30,11 +30,11 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
   "BTNBeforeStartView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Below-Threshold Notification")
+      view.getElementsByTag("title").text must include("Below-Threshold Notification (BTN)")
     }
 
     "have a h1 heading" in {
-      view.getElementsByTag("h1").text must include("Below-Threshold Notification")
+      view.getElementsByTag("h1").text must include("Below-Threshold Notification (BTN)")
     }
 
     "have two h2 headings" in {
@@ -44,7 +44,7 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
 
     "have following contents" in {
       view.getElementsByClass("govuk-body").text must include(
-        "A Below-Threshold Notification removes your group’s obligation to submit a UKTR for the current accounting period and all future ones."
+        "A Below-Threshold Notification (BTN) removes your group’s obligation to submit a UKTR for the current and future accounting periods. HMRC will not expect to receive an information return while your group is below-threshold."
       )
 
       view.getElementsByClass("govuk-body").text must include(
@@ -61,11 +61,12 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
         "is not expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods"
       )
       view.getElementsByTag("li").text must include("the start and end date of the group’s accounting period")
-      view.getElementsByTag("li").text must include(
-        "whether the group’s consolidated annual revenues have been €750 million or more in at least 2 of the previous 4 accounting periods"
+      view.getElementsByTag("li").text must include("whether the group has entities located in the UK")
+      view.getElementsByClass("govuk-body").text must include(
+        "If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed."
       )
-      view.getElementsByTag("li").text must include(
-        "whether the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods "
+      view.getElementsByClass("govuk-inset-text").text must include(
+        "If you need to submit a UK tax return for this accounting period you do not qualify for a Below-Threshold Notification."
       )
     }
 
