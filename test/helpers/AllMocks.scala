@@ -25,6 +25,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import repositories.SessionRepository
+import services.audit.AuditService
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import services.{BTNService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AuthConnector
@@ -48,6 +49,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockAgentIdentifierAction:              AgentIdentifierAction             = mock[AgentIdentifierAction]
   val mockBTNConnector:                       BTNConnector                      = mock[BTNConnector]
   val mockBTNService:                         BTNService                        = mock[BTNService]
+  val mockAuditService:                       AuditService                      = mock[AuditService]
   val mockObligationsAndSubmissionsConnector: ObligationAndSubmissionsConnector = mock[ObligationAndSubmissionsConnector]
   val mockObligationsAndSubmissionsService:   ObligationsAndSubmissionsService  = mock[ObligationsAndSubmissionsService]
 
@@ -66,6 +68,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockSubscriptionService,
       mockAgentIdentifierAction,
       mockBTNConnector,
-      mockBTNService
+      mockBTNService,
+      mockAuditService
     ).foreach(Mockito.reset(_))
 }
