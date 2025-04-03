@@ -175,7 +175,7 @@ btn.beforeStart.header3 = Before you start
 btn.beforeStart.p3 = To submit a Below-Threshold Notification you will need to tell us:
 btn.beforeStart.li3 = the start and end date of the group’s accounting period
 btn.beforeStart.li4 = whether the group has entities located in the UK
-btn.beforeStart.p4 = If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed.
+btn.beforeStart.p4 = If you submit a Below-Threshold Notification, this will replace any returns you’ve submitted for that period. It will also replace any returns you have already submitted for your most recent account periods.
 
 btn.accountingPeriod.title = Submit a Below-Threshold Notification for your group’s current accounting period
 btn.accountingPeriod.header = Submit a Below-Threshold Notification for your group’s current accounting period

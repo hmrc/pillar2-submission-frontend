@@ -63,7 +63,7 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
       view.getElementsByTag("li").text must include("the start and end date of the group’s accounting period")
       view.getElementsByTag("li").text must include("whether the group has entities located in the UK")
       view.getElementsByClass("govuk-body").text must include(
-        "If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed."
+        "If you submit a Below-Threshold Notification, this will replace any returns you’ve submitted for that period. It will also replace any returns you have already submitted for your most recent account periods."
       )
       view.getElementsByClass("govuk-inset-text").text must include(
         "If you need to submit a UK tax return for this accounting period you do not qualify for a Below-Threshold Notification."
