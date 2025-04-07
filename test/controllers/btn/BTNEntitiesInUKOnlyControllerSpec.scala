@@ -79,7 +79,7 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the CheckYourAnswers page when answer is Yes and valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -100,7 +100,7 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual BTNLast4AccountingPeriodsController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual CheckYourAnswersController.onPageLoad.url
       }
     }
 
