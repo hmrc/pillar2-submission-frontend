@@ -40,7 +40,6 @@ POST        /below-threshold-notification/accounting-period                     
 GET         /below-threshold-notification/change-accounting-period                controllers.btn.BTNAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
 POST        /below-threshold-notification/change-accounting-period                controllers.btn.BTNAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
 
-
 GET         /below-threshold-notification/domestic-or-multinational               controllers.btn.BTNEntitiesInsideOutsideUKController.onPageLoad(mode: Mode = NormalMode)
 POST        /below-threshold-notification/domestic-or-multinational               controllers.btn.BTNEntitiesInsideOutsideUKController.onSubmit(mode: Mode = NormalMode)
 GET         /below-threshold-notification/change-domestic-or-multinational        controllers.btn.BTNEntitiesInsideOutsideUKController.onPageLoad(mode: Mode = CheckMode)
@@ -51,19 +50,6 @@ GET         /below-threshold-notification/domestic                              
 POST        /below-threshold-notification/domestic                                controllers.btn.BTNEntitiesInUKOnlyController.onSubmit(mode: Mode = NormalMode)
 GET         /below-threshold-notification/change-domestic                         controllers.btn.BTNEntitiesInUKOnlyController.onPageLoad(mode: Mode = CheckMode)
 POST        /below-threshold-notification/change-domestic                         controllers.btn.BTNEntitiesInUKOnlyController.onSubmit(mode: Mode = CheckMode)
-
-
-GET         /below-threshold-notification/annual-revenues                         controllers.btn.BTNLast4AccountingPeriodsController.onPageLoad(mode: Mode = NormalMode)
-POST        /below-threshold-notification/annual-revenues                         controllers.btn.BTNLast4AccountingPeriodsController.onSubmit(mode: Mode = NormalMode)
-GET         /below-threshold-notification/change-annual-revenues                  controllers.btn.BTNLast4AccountingPeriodsController.onPageLoad(mode: Mode = CheckMode)
-POST        /below-threshold-notification/change-annual-revenues                  controllers.btn.BTNLast4AccountingPeriodsController.onSubmit(mode: Mode = CheckMode)
-GET         /below-threshold-notification/threshold-met                           controllers.btn.BTNLast4AccountingPeriodsController.onPageLoadThresholdMet
-
-GET         /below-threshold-notification/future-annual-revenues                  controllers.btn.BTNNext2AccountingPeriodsController.onPageLoad(mode: Mode = NormalMode)
-POST        /below-threshold-notification/future-annual-revenues                  controllers.btn.BTNNext2AccountingPeriodsController.onSubmit(mode: Mode = NormalMode)
-GET         /below-threshold-notification/change-future-annual-revenues           controllers.btn.BTNNext2AccountingPeriodsController.onPageLoad(mode: Mode = CheckMode)
-POST        /below-threshold-notification/change-future-annual-revenues           controllers.btn.BTNNext2AccountingPeriodsController.onSubmit(mode: Mode = CheckMode)
-GET         /below-threshold-notification/nil-return                              controllers.btn.BTNNext2AccountingPeriodsController.submitUKTRKnockback
 
 GET         /below-threshold-notification/submit                                  controllers.btn.CheckYourAnswersController.onPageLoad
 POST        /below-threshold-notification/submit                                  controllers.btn.CheckYourAnswersController.onSubmit

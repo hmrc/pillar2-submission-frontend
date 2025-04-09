@@ -59,26 +59,21 @@ class CheckYourAnswersController @Inject() (
     (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
       sessionRepository.get(request.userId).map { maybeUserAnswers =>
         (for {
-          userAnswers    <- maybeUserAnswers
-          entitiesInOut  <- userAnswers.get(EntitiesInsideOutsideUKPage)
-          last4Periods   <- userAnswers.get(BTNLast4AccountingPeriodsPage)
-          nextTwoPeriods <- userAnswers.get(BTNNext2AccountingPeriodsPage)
-        } yield (entitiesInOut, last4Periods, nextTwoPeriods) match {
-          case (true, false, false) =>
+          userAnswers   <- maybeUserAnswers
+          entitiesInOut <- userAnswers.get(EntitiesInsideOutsideUKPage)
+        } yield
+          if (entitiesInOut) {
             val summaryList = SummaryListViewModel(
               rows = Seq(
                 SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod),
-                BTNEntitiesInsideOutsideUKSummary.row(userAnswers),
-                BTNLast4AccountingPeriodSummary.row(userAnswers),
-                BTNNext2AccountingPeriodsSummary.row(userAnswers)
+                BTNEntitiesInsideOutsideUKSummary.row(userAnswers)
               ).flatten
             ).withCssClass("govuk-!-margin-bottom-9")
 
             Ok(view(summaryList))
-
-          case _ => Redirect(IndexController.onPageLoad)
-
-        }).getOrElse(Redirect(JourneyRecoveryController.onPageLoad()))
+          } else {
+            Redirect(IndexController.onPageLoad)
+          }).getOrElse(Redirect(JourneyRecoveryController.onPageLoad()))
       }
     }
 

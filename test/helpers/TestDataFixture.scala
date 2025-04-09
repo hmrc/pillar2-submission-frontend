@@ -44,15 +44,11 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
   lazy val validBTNCyaUa: UserAnswers = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(EntitiesInsideOutsideUKPage, true)
-    .setOrException(BTNLast4AccountingPeriodsPage, false)
-    .setOrException(BTNNext2AccountingPeriodsPage, false)
 
   def btnCyaSummaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(
     rows = Seq(
       SubAccountingPeriodSummary.row(accountingPeriod),
-      BTNEntitiesInsideOutsideUKSummary.row(validBTNCyaUa),
-      BTNLast4AccountingPeriodSummary.row(validBTNCyaUa),
-      BTNNext2AccountingPeriodsSummary.row(validBTNCyaUa)
+      BTNEntitiesInsideOutsideUKSummary.row(validBTNCyaUa)
     ).flatten
   ).withCssClass("govuk-!-margin-bottom-9")
 

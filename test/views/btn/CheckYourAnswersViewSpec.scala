@@ -47,20 +47,11 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
         view.getElementsByClass("govuk-summary-list__key").get(0).text mustEqual "Group’s accounting period"
         view.getElementsByClass("govuk-summary-list__key").get(1).text mustEqual
           "Are the entities still located in both the UK and outside the UK?"
-
-        view.getElementsByClass("govuk-summary-list__key").get(2).text mustEqual
-          "Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
-
-        view.getElementsByClass("govuk-summary-list__key").get(3).text mustEqual
-          "Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?"
-
       }
 
       "have a summary list items" in {
         view.getElementsByClass("govuk-summary-list__value").get(0).text mustEqual "Start date: 24 October 2024 End date: 24 October 2025"
         view.getElementsByClass("govuk-summary-list__value").get(1).text mustEqual "Yes"
-        view.getElementsByClass("govuk-summary-list__value").get(2).text mustEqual "No"
-        view.getElementsByClass("govuk-summary-list__value").get(3).text mustEqual "No"
       }
     }
 
