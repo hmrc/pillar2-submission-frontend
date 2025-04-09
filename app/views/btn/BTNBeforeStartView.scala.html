@@ -24,6 +24,7 @@
         p: ParagraphBody,
         heading: Heading,
         bulletList: BulletList,
+        govukInsetText: GovukInsetText
 )
 
 @(mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -41,15 +42,17 @@
         Html(messages("btn.beforeStart.li2")),
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses=Some("govuk-!-margin-bottom-3"))
 
+    @govukInsetText(InsetText(content = Text(messages("btn.beforeStart.insetText"))))
+
     @h2(messages("btn.beforeStart.header3"), size = "m")
     @p(messages("btn.beforeStart.p3"))
 
     @bulletList(items = List(
         Html(messages("btn.beforeStart.li3")),
-        Html(messages("btn.beforeStart.li4")),
-        Html(messages("btn.beforeStart.li5")),
-        Html(messages("btn.beforeStart.li6")),
+        Html(messages("btn.beforeStart.li4"))
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses=Some("govuk-!-margin-bottom-3"))
+
+    @p(messages("btn.beforeStart.p4"))
 
     @govukButton(
         ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode).url)
