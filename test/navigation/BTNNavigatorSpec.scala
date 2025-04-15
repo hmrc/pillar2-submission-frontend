@@ -36,49 +36,14 @@ class BTNNavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
 
-      "go from EntitiesInsideOutsideUKPage period page to BTNIn2AccountingPeriod page " in {
+      "go from EntitiesInsideOutsideUKPage period page to CheckYourAnswersPage page when answer is Yes" in {
         navigator.nextPage(EntitiesInsideOutsideUKPage, NormalMode, emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, true)) mustBe
-          BTNLast4AccountingPeriodsController.onPageLoad(NormalMode)
+          CheckYourAnswersController.onPageLoad
       }
 
       "go from EntitiesInsideOutsideUKPage period page to amend group details page when answer is No" in {
         navigator.nextPage(EntitiesInsideOutsideUKPage, NormalMode, emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, false)) mustBe
           BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails()
-      }
-
-      "go from  BTNLast4AccountingPeriodsPage period page to UnderConstruction  page " in {
-        navigator.nextPage(
-          BTNLast4AccountingPeriodsPage,
-          NormalMode,
-          emptyUserAnswers.setOrException(BTNLast4AccountingPeriodsPage, true)
-        ) mustBe
-          BTNLast4AccountingPeriodsController.onPageLoadThresholdMet
-      }
-
-      "go from BTNLast4AccountingPeriodsPage period page to UnderConstruction page " in {
-        navigator.nextPage(
-          BTNLast4AccountingPeriodsPage,
-          NormalMode,
-          emptyUserAnswers.setOrException(BTNLast4AccountingPeriodsPage, false)
-        ) mustBe
-          BTNNext2AccountingPeriodsController.onPageLoad(NormalMode)
-      }
-
-      "go from BTNNext2AccountingPeriodsPage to BTNSubmitUKTRController page when the answer is true" in {
-        navigator.nextPage(
-          BTNNext2AccountingPeriodsPage,
-          NormalMode,
-          emptyUserAnswers.setOrException(BTNNext2AccountingPeriodsPage, true)
-        ) mustBe
-          BTNNext2AccountingPeriodsController.submitUKTRKnockback
-      }
-
-      "go from BTNNext2AccountingPeriodsPage to CYA page when the answer is false" in {
-        navigator.nextPage(
-          BTNNext2AccountingPeriodsPage,
-          NormalMode,
-          emptyUserAnswers.setOrException(BTNNext2AccountingPeriodsPage, false)
-        ) mustBe CheckYourAnswersController.onPageLoad
       }
 
     }
