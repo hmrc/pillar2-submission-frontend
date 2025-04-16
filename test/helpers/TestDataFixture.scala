@@ -19,6 +19,7 @@ package helpers
 import models.btn.BTNStatus
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
+import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions._
 import models.subscription._
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}
