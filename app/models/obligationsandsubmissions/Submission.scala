@@ -34,10 +34,16 @@ sealed trait SubmissionType extends EnumEntry {
 object SubmissionType extends Enum[SubmissionType] with PlayJsonEnum[SubmissionType] {
   val values: IndexedSeq[SubmissionType] = findValues
 
-  case object UKTR extends SubmissionType {
+  case object UKTR_CREATE extends SubmissionType {
     override val fullName: String = "UK Tax Return"
   }
-  case object ORN extends SubmissionType {
+  case object UKTR_AMEND extends SubmissionType {
+    override val fullName: String = "UK Tax Return Amend"
+  }
+  case object ORN_CREATE extends SubmissionType {
+    override val fullName: String = "Overseas Return Notification Create"
+  }
+  case object ORN_AMEND extends SubmissionType {
     override val fullName: String = "Overseas Return Notification"
   }
   case object BTN extends SubmissionType {
