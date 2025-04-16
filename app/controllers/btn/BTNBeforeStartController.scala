@@ -26,7 +26,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.btn.BTNBeforeStartView
 
 import javax.inject.Inject
@@ -45,6 +47,7 @@ class BTNBeforeStartController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     for {
       mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
       userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
@@ -53,7 +56,7 @@ class BTNBeforeStartController @Inject() (
         OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, maybeSubscriptionLocalData.plrReference)))
       _ <- OptionT.liftF(sessionRepository.set(updatedAnswers))
     } yield (): Unit
-    Ok(view(mode))
+    Ok(view(request.isAgent, mode))
   }
 
 }

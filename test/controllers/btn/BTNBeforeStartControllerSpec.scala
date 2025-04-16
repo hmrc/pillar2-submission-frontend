@@ -39,7 +39,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(isAgent = false, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
   }

@@ -57,7 +57,7 @@ class AuthenticatedIdentifierAction @Inject() (
         case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) =>
           Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
         case Some(internalId) ~ enrolments ~ Some(Agent) ~ Some(User) =>
-          Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments)))
+          Future.successful(Right(IdentifierRequest(request, internalId, enrolments = enrolments.enrolments, isAgent = true)))
         case _ ~ _ ~ Some(Organisation) ~ Some(Assistant) =>
           Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
         case _ ~ _ ~ Some(Individual) ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
