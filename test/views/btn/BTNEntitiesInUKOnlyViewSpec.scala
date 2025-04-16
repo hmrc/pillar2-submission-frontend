@@ -17,14 +17,14 @@
 package views.btn
 
 import base.ViewSpecBase
-import forms.BTNLast4AccountingPeriodFormProvider
+import forms.BTNEntitiesInUKOnlyFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.btn.BTNEntitiesInUKOnlyView
 
 class BTNEntitiesInUKOnlyViewSpec extends ViewSpecBase {
-  val formProvider = new BTNLast4AccountingPeriodFormProvider
+  val formProvider = new BTNEntitiesInUKOnlyFormProvider
   val page: BTNEntitiesInUKOnlyView = inject[BTNEntitiesInUKOnlyView]
   val view: Document                = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 

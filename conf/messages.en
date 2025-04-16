@@ -216,33 +216,9 @@ btn.entitiesInsideOutsideUK.amend.p2 = If this has changed, you must
 btn.entitiesInsideOutsideUK.amend.p2.link = amend your group’s details
 btn.entitiesInsideOutsideUK.amend.p2.end = to update the location of your entities before submitting a BTN.
 
-btn.last4AccountingPeriods.title = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-btn.last4AccountingPeriods.heading = Did the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-btn.last4AccountingPeriods.checkYourAnswersLabel = Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-btn.last4AccountingPeriods.error.required = Select yes if the group has consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
-btn.last4AccountingPeriods.change.hidden = Does the group have consolidated revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-
-btn.next2AccountingPeriods.title = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
-btn.next2AccountingPeriods.heading = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
-btn.next2AccountingPeriods.checkYourAnswersLabel = Is the group expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods?
-btn.next2AccountingPeriods.error.required = Select yes if the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
-btn.next2AccountingPeriods.change.hidden = Is the group expected to make consolidated annual revenues of €750 million or more in the next 2 accounting periods?
-
-btn.submitUKTR.title = Based on your answer, your group must submit a UK Tax Return
-btn.submitUKTR.heading = Based on your answer, your group must submit a UK Tax Return
-btn.submitUKTR.p1 = Based on your answer, you cannot submit a Below-Threshold Notification as the group is expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods.
-btn.submitUKTR.p2 = You can submit a nil return UK Tax Return if your group is not due to pay any Domestic Top-up Tax for their current accounting period.
-btn.submitUKTR.link = Find out more about submitting a late or new UK Tax Return
-
 btn.cya.heading = Check your answers to submit your Below-Threshold Notification
 btn.cya.p1 = Now submit your Below-Threshold Notification
 btn.cya.p2 = By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge.
-
-btn.thresholdMet.title = Based on your answer, your group must submit a UK Tax Return
-btn.thresholdMet.heading = Based on your answer, your group must submit a UK Tax Return
-btn.thresholdMet.p1 = Based on your answer, you cannot submit a Below-Threshold Notification as your group has made consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
-btn.thresholdMet.p2 = Your group must still submit a UK Tax Return.
-btn.thresholdMet.link = Find out more about submitting a UKTR
 
 btn.confirmation.title = Below-Threshold Notification successful
 btn.confirmation.heading = Below-Threshold Notification successful
