@@ -23,6 +23,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.{Mode, UserAnswers}
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
@@ -56,7 +57,10 @@ class BTNBeforeStartController @Inject() (
         OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, maybeSubscriptionLocalData.plrReference)))
       _ <- OptionT.liftF(sessionRepository.set(updatedAnswers))
     } yield (): Unit
-    Ok(view(request.isAgent, mode))
+    (request.isAgent, appConfig.asaAccessEnabled) match {
+      case (true, false) => Redirect(controllers.routes.UnauthorisedController.onPageLoad)
+      case _             => Ok(view(request.isAgent, mode))
+    }
   }
 
 }
