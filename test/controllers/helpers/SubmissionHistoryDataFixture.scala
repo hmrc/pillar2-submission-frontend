@@ -17,8 +17,8 @@
 package controllers.helpers
 
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
-import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
-import models.obligationsandsubmissions.SubmissionType.UKTR
+import models.obligationsandsubmissions.ObligationType.UKTR
+import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import models.obligationsandsubmissions._
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -35,17 +35,17 @@ trait SubmissionHistoryDataFixture {
         underEnquiry = false,
         Seq(
           Obligation(
-            Pillar2TaxReturn,
+            UKTR,
             Fulfilled,
             canAmend = true,
             Seq(
               Submission(
-                UKTR,
+                UKTR_CREATE,
                 ZonedDateTime.now,
                 None
               ),
               Submission(
-                UKTR,
+                UKTR_CREATE,
                 ZonedDateTime.now,
                 None
               )
@@ -60,12 +60,12 @@ trait SubmissionHistoryDataFixture {
         underEnquiry = false,
         Seq(
           Obligation(
-            Pillar2TaxReturn,
+            UKTR,
             Fulfilled,
             canAmend = true,
             Seq(
               Submission(
-                UKTR,
+                UKTR_CREATE,
                 ZonedDateTime.now,
                 None
               )

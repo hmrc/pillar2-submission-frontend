@@ -17,8 +17,8 @@
 package views.helpers
 
 import models.obligationsandsubmissions.ObligationStatus.{Fulfilled, Open}
-import models.obligationsandsubmissions.ObligationType.{GlobeInformationReturn, Pillar2TaxReturn}
-import models.obligationsandsubmissions.SubmissionType.{GIR, UKTR}
+import models.obligationsandsubmissions.ObligationType
+import models.obligationsandsubmissions.SubmissionType
 import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, Submission}
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers
@@ -40,12 +40,12 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
       val startDate2 = LocalDate.of(2023, 1, 1)
       val endDate2   = LocalDate.of(2023, 12, 31)
 
-      val submission1 = Submission(UKTR, ZonedDateTime.now, None)
-      val submission2 = Submission(GIR, ZonedDateTime.now, None)
+      val submission1 = Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now, None)
+      val submission2 = Submission(SubmissionType.GIR, ZonedDateTime.now, None)
 
-      val obligation1 = Obligation(Pillar2TaxReturn, Open, canAmend = true, Seq(submission1, submission2))
-      val obligation2 = Obligation(GlobeInformationReturn, Fulfilled, canAmend = false, Seq(submission1))
-      val obligation3 = Obligation(Pillar2TaxReturn, Open, canAmend = true, Seq.empty)
+      val obligation1 = Obligation(ObligationType.UKTR, Open, canAmend = true, Seq(submission1, submission2))
+      val obligation2 = Obligation(ObligationType.GIR, Fulfilled, canAmend = false, Seq(submission1))
+      val obligation3 = Obligation(ObligationType.UKTR, Open, canAmend = true, Seq.empty)
 
       val accountingPeriods = Seq(
         AccountingPeriodDetails(startDate1, endDate1, LocalDate.now, underEnquiry = false, Seq(obligation1)),
@@ -75,7 +75,7 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
     "create table rows correctly" in {
       val submissionDate = ZonedDateTime.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
 
-      val submission = Submission(UKTR, ZonedDateTime.now, None)
+      val submission = Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now, None)
       val rows       = SubmissionHistoryHelper.createTableRows(submission)
       rows                should have length 2
       rows.head.content shouldBe Text("UK Tax Return")
