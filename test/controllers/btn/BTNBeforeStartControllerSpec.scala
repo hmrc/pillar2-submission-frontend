@@ -18,7 +18,6 @@ package controllers.btn
 
 import base.SpecBase
 import models.NormalMode
-import models.requests.OptionalDataRequest
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.btn.BTNBeforeStartView
@@ -63,7 +62,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
     "must return OK and the correct agent view for a GET when agent journey enabled" in {
 
-      val application = applicationBuilder(userAnswers = None, additionalData = Map("features.asaAccessEnabled" -> true)).build()
+      val application = applicationBuilder(userAnswers = None, additionalData = Map("features.asaAccessEnabled" -> true), isAgent = true).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
@@ -80,7 +79,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
     "must redirect an agent to unauthorised page when agent journey disabled" in {
 
-      val application = applicationBuilder(userAnswers = None, additionalData = Map("features.asaAccessEnabled" -> false)).build()
+      val application = applicationBuilder(userAnswers = None, additionalData = Map("features.asaAccessEnabled" -> false), isAgent = true).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)

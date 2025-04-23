@@ -23,7 +23,6 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.{Mode, UserAnswers}
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService

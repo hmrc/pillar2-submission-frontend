@@ -170,7 +170,8 @@ trait SpecBase
     userAnswers:           Option[UserAnswers] = None,
     enrolments:            Set[Enrolment] = Set.empty,
     additionalData:        Map[String, Any] = Map.empty,
-    subscriptionLocalData: Option[SubscriptionLocalData] = None
+    subscriptionLocalData: Option[SubscriptionLocalData] = None,
+    isAgent:               Boolean = false
   ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
@@ -188,7 +189,7 @@ trait SpecBase
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[IdentifierAction].qualifiedWith("EnrolmentIdentifier").to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, isAgent)),
         bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData, userAnswers))
       )
 
