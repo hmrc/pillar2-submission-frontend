@@ -19,7 +19,7 @@ package helpers
 import config.FrontendAppConfig
 import connectors.obligationsandsubmissions.ObligationAndSubmissionsConnector
 import connectors.{BTNConnector, SubscriptionConnector}
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AgentAccessFilterAction, AgentIdentifierAction, DataRequiredAction, DataRetrievalAction}
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -52,6 +52,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockAuditService:                       AuditService                      = mock[AuditService]
   val mockObligationsAndSubmissionsConnector: ObligationAndSubmissionsConnector = mock[ObligationAndSubmissionsConnector]
   val mockObligationsAndSubmissionsService:   ObligationsAndSubmissionsService  = mock[ObligationsAndSubmissionsService]
+  val mockAgentAccessFilterAction:            AgentAccessFilterAction           = mock[AgentAccessFilterAction]
 
   override protected def beforeEach(): Unit =
     Seq(
@@ -69,6 +70,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockAgentIdentifierAction,
       mockBTNConnector,
       mockBTNService,
-      mockAuditService
+      mockAuditService,
+      mockAgentAccessFilterAction
     ).foreach(Mockito.reset(_))
 }

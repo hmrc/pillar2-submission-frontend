@@ -19,7 +19,7 @@ package controllers.btn
 import cats.data.OptionT
 import cats.implicits.catsStdInstancesForFuture
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{AgentAccessFilterAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{Mode, UserAnswers}
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
@@ -38,6 +38,7 @@ class BTNBeforeStartController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     BTNBeforeStartView,
   identify:                 IdentifierAction,
+  agentAccess:              AgentAccessFilterAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
   subscriptionService:      SubscriptionService,
@@ -46,7 +47,7 @@ class BTNBeforeStartController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen agentAccess.filter andThen getData andThen requireData) { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     for {
       mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
@@ -56,10 +57,7 @@ class BTNBeforeStartController @Inject() (
         OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, maybeSubscriptionLocalData.plrReference)))
       _ <- OptionT.liftF(sessionRepository.set(updatedAnswers))
     } yield (): Unit
-    (request.isAgent, appConfig.asaAccessEnabled) match {
-      case (true, false) => Redirect(controllers.routes.UnauthorisedController.onPageLoad)
-      case _             => Ok(view(request.isAgent, mode))
-    }
+    Ok(view(request.isAgent, mode))
   }
 
 }
