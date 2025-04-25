@@ -47,7 +47,7 @@ class BTNBeforeStartController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen agentAccess.filter andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen agentAccess andThen getData andThen requireData) { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     for {
       mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))

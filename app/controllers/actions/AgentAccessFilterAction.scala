@@ -27,14 +27,13 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AgentAccessFilterAction @Inject() (appConfig: FrontendAppConfig)(implicit ec: ExecutionContext) extends ActionFilter[IdentifierRequest] {
 
-  override def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] = {
+  override def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
     Future.successful {
       (request.isAgent, appConfig.asaAccessEnabled) match {
         case (true, false) => Some(Redirect(controllers.routes.UnauthorisedController.onPageLoad))
         case _             => None
       }
     }
-  }
 
   override protected def executionContext: ExecutionContext = ec
 }

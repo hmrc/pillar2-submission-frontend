@@ -23,7 +23,7 @@ import models.NormalMode
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{ActionFilter, AnyContent, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.btn.BTNBeforeStartView
@@ -35,7 +35,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
   "BTNBeforeStartController" when {
 
-    "must redirect an agent to unauthorised page when agent journey disabled" in {
+    "must redirect to unauthorised page when AgentAccessFilterAction returns a request block/redirect" in {
       val application = applicationBuilder()
         .overrides(
           bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction)
@@ -43,8 +43,11 @@ class BTNBeforeStartControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockFrontendAppConfig.asaAccessEnabled).thenReturn(false)
-        when(mockAgentAccessFilterAction.filter(any[IdentifierRequest[AnyContent]]))
+//        when(mockFrontendAppConfig.asaAccessEnabled).thenReturn(false)
+//        when(mockAgentAccessFilterAction.filter(any[IdentifierRequest[AnyContent]]))
+//          .thenReturn(Future.successful(Some(Redirect(controllers.routes.UnauthorisedController.onPageLoad))))
+
+        when(mockAgentAccessFilterAction.refine(any[IdentifierRequest[AnyContent]]))
           .thenReturn(Future.successful(Some(Redirect(controllers.routes.UnauthorisedController.onPageLoad))))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
