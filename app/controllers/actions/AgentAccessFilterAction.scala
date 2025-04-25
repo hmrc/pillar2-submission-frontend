@@ -25,7 +25,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AgentAccessFilterAction @Inject() (appConfig: FrontendAppConfig)(implicit ec: ExecutionContext) extends ActionFilter[IdentifierRequest] {
+class AgentAccessFilterAction @Inject() (appConfig: FrontendAppConfig)(implicit val executionContext: ExecutionContext)
+    extends ActionFilter[IdentifierRequest] {
 
   override def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
     Future.successful {
@@ -34,6 +35,4 @@ class AgentAccessFilterAction @Inject() (appConfig: FrontendAppConfig)(implicit 
         case _             => None
       }
     }
-
-  override protected def executionContext: ExecutionContext = ec
 }

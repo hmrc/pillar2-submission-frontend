@@ -17,37 +17,28 @@
 package controllers.btn
 
 import base.SpecBase
-import config.FrontendAppConfig
-import controllers.actions.{AgentAccessFilterAction, IdentifierAction}
-import models.NormalMode
-import models.requests.IdentifierRequest
+import controllers.actions.AgentAccessFilterAction
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.mvc.{ActionFilter, AnyContent, Request, Result}
+import play.api.Application
+import play.api.inject.bind
+import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.btn.BTNBeforeStartView
-import play.api.inject.bind
 
 import scala.concurrent.Future
 
 class BTNBeforeStartControllerSpec extends SpecBase {
 
+  def application: Application = applicationBuilder()
+    .overrides(bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction))
+    .build()
+
   "BTNBeforeStartController" when {
-
     "must redirect to unauthorised page when AgentAccessFilterAction returns a request block/redirect" in {
-      val application = applicationBuilder()
-        .overrides(
-          bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction)
-        )
-        .build()
-
       running(application) {
-//        when(mockFrontendAppConfig.asaAccessEnabled).thenReturn(false)
-//        when(mockAgentAccessFilterAction.filter(any[IdentifierRequest[AnyContent]]))
-//          .thenReturn(Future.successful(Some(Redirect(controllers.routes.UnauthorisedController.onPageLoad))))
-
-        when(mockAgentAccessFilterAction.refine(any[IdentifierRequest[AnyContent]]))
+        when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
+        when(mockAgentAccessFilterAction.filter[AnyContent](any()))
           .thenReturn(Future.successful(Some(Redirect(controllers.routes.UnauthorisedController.onPageLoad))))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
@@ -55,6 +46,19 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.UnauthorisedController.onPageLoad.url
+      }
+    }
+
+    "must redirect to start page when AgentAccessFilterAction check passes" in {
+      running(application) {
+        when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
+        when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
+
+        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+        // add more checks ...
       }
     }
   }
