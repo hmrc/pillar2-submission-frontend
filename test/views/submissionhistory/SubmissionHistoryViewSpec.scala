@@ -57,7 +57,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with SubmissionHistoryDataF
 
     "have a inset text" in {
       organisationView.getElementsByClass("govuk-inset-text").text must include(
-        "You can amend your submissions at any time, except for the UK Tax Return, which must be updated within 12 months of the submission deadline."
+        "You can amend submissions at any time, except for the UK Tax Return, which must be updated within 12 months of the submission deadline."
       )
     }
 
@@ -103,7 +103,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with SubmissionHistoryDataF
         "You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods."
       )
       paragraph.get(2).text must include(
-        "When your client makes changes to a tax return or information return, we’ll list these as individual submissions."
+        "Where your client makes changes to a tax return or information return, we’ll list these as individual submissions."
       )
     }
 
