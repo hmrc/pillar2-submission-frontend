@@ -18,6 +18,7 @@ package controllers.btn
 
 import base.SpecBase
 import controllers.actions.AgentAccessFilterAction
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
@@ -25,6 +26,7 @@ import play.api.inject.bind
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.btn.BTNBeforeStartView
 
 import scala.concurrent.Future
 
@@ -49,7 +51,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to start page when AgentAccessFilterAction check passes" in {
+    "must allow access to start page when AgentAccessFilterAction check passes" in {
       running(application) {
         when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
         when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
@@ -57,8 +59,11 @@ class BTNBeforeStartControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
         val result  = route(application, request).value
 
+        val view = application.injector.instanceOf[BTNBeforeStartView]
+
         status(result) mustEqual OK
-        // add more checks ...
+
+        contentAsString(result) mustEqual view(isAgent = false, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
   }
