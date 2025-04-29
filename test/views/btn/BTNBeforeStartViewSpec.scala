@@ -72,7 +72,7 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
 
     "have the following common content" in {
       view().getElementsByClass("govuk-body").text must include(
-        "To submit a Below-Threshold Notification you will need to tell us:"
+        "To submit a Below-Threshold Notification you’ll need to tell us:"
       )
       view().getElementsByTag("li").text must include(
         "does not have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods"
