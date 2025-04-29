@@ -17,29 +17,53 @@
 package controllers.btn
 
 import base.SpecBase
+import controllers.actions.AgentAccessFilterAction
 import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.Application
+import play.api.inject.bind
+import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.btn.BTNBeforeStartView
 
+import scala.concurrent.Future
+
 class BTNBeforeStartControllerSpec extends SpecBase {
 
+  def application: Application = applicationBuilder()
+    .overrides(bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction))
+    .build()
+
   "BTNBeforeStartController" when {
-
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
+    "must redirect to unauthorised page when AgentAccessFilterAction returns a request block/redirect" in {
       running(application) {
-        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+        when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
+        when(mockAgentAccessFilterAction.filter[AnyContent](any()))
+          .thenReturn(Future.successful(Some(Redirect(controllers.routes.UnauthorisedController.onPageLoad))))
 
-        val result = route(application, request).value
+        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UnauthorisedController.onPageLoad.url
+      }
+    }
+
+    "must allow access to start page when AgentAccessFilterAction check passes" in {
+      running(application) {
+        when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
+        when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
+
+        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+        val result  = route(application, request).value
 
         val view = application.injector.instanceOf[BTNBeforeStartView]
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(isAgent = false, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
   }

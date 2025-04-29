@@ -28,6 +28,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val host:    String = configuration.get[String]("host")
   val appName: String = configuration.get[String]("appName")
 
+  val asaAccessEnabled: Boolean = configuration.get[Boolean]("features.asaAccessEnabled")
+
   private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "pillar2-submission-frontend"
 
