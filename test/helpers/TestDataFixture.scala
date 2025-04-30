@@ -18,8 +18,7 @@ package helpers
 
 import models.btn.BTNStatus
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
-import models.obligationsandsubmissions.ObligationType.Pillar2TaxReturn
-import models.obligationsandsubmissions.SubmissionType.UKTR
+import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import models.obligationsandsubmissions._
 import models.subscription._
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}
@@ -54,10 +53,10 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
 
   def obligationsAndSubmissionsSuccessResponse(
     underEnquiry:   Boolean = false,
-    obligationType: ObligationType = Pillar2TaxReturn,
+    obligationType: ObligationType = ObligationType.UKTR,
     status:         ObligationStatus = Fulfilled,
     canAmend:       Boolean = true,
-    submissionType: SubmissionType = UKTR,
+    submissionType: SubmissionType = UKTR_CREATE,
     receivedDate:   ZonedDateTime = testZonedDateTime,
     country:        Option[String] = None
   ): ObligationsAndSubmissionsSuccessResponse =

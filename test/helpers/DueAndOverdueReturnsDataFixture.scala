@@ -33,7 +33,7 @@ trait DueAndOverdueReturnsDataFixture {
   val futureDueDate: LocalDate = currentDate.plusDays(30) // Always due
 
   def createObligation(
-    obligationType: ObligationType = ObligationType.Pillar2TaxReturn,
+    obligationType: ObligationType = ObligationType.UKTR,
     status:         ObligationStatus = ObligationStatus.Open,
     canAmend:       Boolean = true
   ): Obligation =
@@ -72,7 +72,7 @@ trait DueAndOverdueReturnsDataFixture {
         obligations = Seq(
           createObligation(status = ObligationStatus.Fulfilled),
           createObligation(
-            obligationType = ObligationType.GlobeInformationReturn,
+            obligationType = ObligationType.GIR,
             status = ObligationStatus.Fulfilled
           )
         )
@@ -112,7 +112,7 @@ trait DueAndOverdueReturnsDataFixture {
         obligations = Seq(
           createObligation(),
           createObligation(
-            obligationType = ObligationType.GlobeInformationReturn,
+            obligationType = ObligationType.GIR,
             status = ObligationStatus.Fulfilled
           )
         )
@@ -136,7 +136,7 @@ trait DueAndOverdueReturnsDataFixture {
         obligations = Seq(
           createObligation(),
           createObligation(
-            obligationType = ObligationType.GlobeInformationReturn
+            obligationType = ObligationType.GIR
           )
         )
       )

@@ -96,7 +96,7 @@ trait SpecBase
         underEnquiry = false,
         obligations = Seq(
           Obligation(
-            obligationType = ObligationType.Pillar2TaxReturn,
+            obligationType = ObligationType.UKTR,
             status = status,
             canAmend = false,
             submissions = Seq.empty

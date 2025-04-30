@@ -37,6 +37,6 @@ sealed trait ObligationType extends EnumEntry
 object ObligationType extends Enum[ObligationType] with PlayJsonEnum[ObligationType] {
   val values: IndexedSeq[ObligationType] = findValues
 
-  case object Pillar2TaxReturn extends ObligationType
-  case object GlobeInformationReturn extends ObligationType
+  case object UKTR extends ObligationType
+  case object GIR extends ObligationType
 }
