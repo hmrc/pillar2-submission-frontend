@@ -38,13 +38,13 @@ object SubmissionType extends Enum[SubmissionType] with PlayJsonEnum[SubmissionT
     override val fullName: String = "UK Tax Return"
   }
   case object UKTR_AMEND extends SubmissionType {
-    override val fullName: String = "UK Tax Return Amend"
+    override val fullName: String = "UK Tax Return amendment"
   }
   case object ORN_CREATE extends SubmissionType {
-    override val fullName: String = "Overseas Return Notification Create"
+    override val fullName: String = "Overseas Return Notification"
   }
   case object ORN_AMEND extends SubmissionType {
-    override val fullName: String = "Overseas Return Notification Amend"
+    override val fullName: String = "Overseas Return Notification amendment"
   }
   case object BTN extends SubmissionType {
     override val fullName: String = "Below-Threshold Notification"

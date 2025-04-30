@@ -250,8 +250,8 @@ submissionHistory.heading = Submission history
 submissionHistory.group.p1 = You can find all submissions and amendments made by your group during this accounting period and the previous 6 accounting periods.
 submissionHistory.group.p2 = Where you’ve made changes to a tax return or information return, we’ll list these as individual submissions.
 submissionHistory.agent.p1 = You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods.
-submissionHistory.agent.p2 = When your client makes changes to a tax return or information return, we’ll list these as individual submissions.
-submissionHistory.insetText = You can amend your submissions at any time, except for the UK Tax Return, which must be updated within 12 months of the submission deadline.
+submissionHistory.agent.p2 = Where your client makes changes to a tax return or information return, we’ll list these as individual submissions.
+submissionHistory.insetText = You can amend submissions at any time, except for the UK Tax Return, which must be updated within 12 months of the submission deadline.
 submissionHistory.typeOfReturn = Type of return
 submissionHistory.submissionDate = Submission date
 submissionHistory.h2 = Due and overdue returns
@@ -302,4 +302,5 @@ dueAndOverdueReturns.agent.noReturns = Your client is up to date with their retu
 dueAndOverdueReturns.agent.submissionHistory.description1 = You can find full details of your client’s submitted returns on the
 
 ###############################################
+
 
