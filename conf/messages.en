@@ -222,12 +222,12 @@ btn.cya.p2 = By submitting these details, you are confirming that the informatio
 
 btn.confirmation.title = Below-Threshold Notification successful
 btn.confirmation.heading = Below-Threshold Notification successful
-btn.confirmation.p1 = You have submitted a Below-Threshold Notification on {0}. This will be effective from {1}.
+btn.confirmation.group.p1 = You have submitted a Below-Threshold Notification on {0}.
+btn.confirmation.p2 = This is effective from the start of the accounting period you selected, {0}.
 btn.confirmation.subheading = What happens next
-btn.confirmation.p2 = HMRC has removed your group’s obligation to submit a UK Tax Return for this current accounting period and any future ones.
-btn.confirmation.p3 = If your group becomes liable for a UK Tax Return in the future, you must let HMRC know by submitting a UK Tax Return to remove the Below-Threshold Notification from your account. You can
-btn.confirmation.p3.link = find out more about submitting a UKTR
-btn.confirmation.p4.link = View account homepage
+btn.confirmation.group.p3 = This Below-Threshold Notification satisfies your group’s obligation to submit a UKTR for the current and future accounting periods. HMRC will not expect to receive an information return while your group remains below-threshold.
+btn.confirmation.group.p4 = You must submit a UK Tax Return if your group meets the threshold conditions in the future.
+btn.confirmation.p5.group.link = Back to group’s homepage
 
 btn.error.title = Sorry, there is a problem with the service
 btn.error.heading = Sorry, there is a problem with the service
