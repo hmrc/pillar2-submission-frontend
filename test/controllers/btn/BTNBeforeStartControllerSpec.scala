@@ -17,23 +17,40 @@
 package controllers.btn
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import controllers.actions.AgentAccessFilterAction
 import models.NormalMode
+import models.obligationsandsubmissions.ObligationStatus
+import models.subscription.{AccountingPeriod, SubscriptionLocalData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.{PlrReferencePage, SubAccountingPeriodPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.obligationsandsubmissions.ObligationsAndSubmissionsService
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.btn.BTNBeforeStartView
 
-import scala.concurrent.Future
+import java.time.LocalDate
+import scala.concurrent.{ExecutionContext, Future}
 
 class BTNBeforeStartControllerSpec extends SpecBase {
 
-  def application: Application = applicationBuilder()
-    .overrides(bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction))
+  val plrReference = "testPlrRef"
+  val dates: AccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
+
+  val ua: SubscriptionLocalData =
+    emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
+
+  def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
+    .overrides(
+      bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction),
+      bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+      bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+    )
     .build()
 
   "BTNBeforeStartController" when {
@@ -55,6 +72,10 @@ class BTNBeforeStartControllerSpec extends SpecBase {
       running(application) {
         when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
         when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
+        when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
         val result  = route(application, request).value
@@ -63,7 +84,25 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(isAgent = false, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = false, NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "redirect to JourneyRecoveryController when no subscription data is found" in {
+      running(application) {
+        when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
+        when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+
+        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }
