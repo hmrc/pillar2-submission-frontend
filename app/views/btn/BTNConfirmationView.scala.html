@@ -41,14 +41,15 @@
         attributes = Map("id" -> "plr2-banner")
     ))
 
-    @p(messages("btn.confirmation.p1", submissionDate, accountingPeriodStartDate))
+    @p(messages("btn.confirmation.group.p1", submissionDate))
+    @p(messages("btn.confirmation.p2", accountingPeriodStartDate))
 
     @printLink(messages("site.print"))
     @pdfLink(messages("site.pdf"), controllers.btn.routes.BTNConfirmationController.onDownloadConfirmation.url)
 
     @h2(messages("btn.confirmation.subheading"))
-    @p(messages("btn.confirmation.p2"))
-    @paragraphMessageWithLink(message1 = Some(messages("btn.confirmation.p3")), linkMessage = messages("btn.confirmation.p3.link"), linkUrl = controllers.uktr.routes.UKTaxReturnStartController.onPageLoad.url, linkFullStop = true, classes = "govuk-body hmrc-!-js-visible")
-    @paragraphMessageWithLink(linkMessage = messages("btn.confirmation.p4.link"), linkUrl = appConfig.pillar2FrontendUrl, classes = "govuk-body govuk-!-display-none-print")
+    @p(messages("btn.confirmation.group.p3"))
+    @p(messages("btn.confirmation.group.p4"))
 
+    @paragraphMessageWithLink(linkMessage = messages("btn.confirmation.p5.group.link"), linkUrl = appConfig.pillar2FrontendUrl, classes = "govuk-body govuk-!-display-none-print")
 }
