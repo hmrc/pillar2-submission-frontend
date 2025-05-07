@@ -59,14 +59,16 @@
                 </fo:block-container>
 
                 <!-- First paragraph -->
-                <fo:block id="more-info-date" margin-bottom="5mm">@messages("btn.confirmation.p1", currentDate, startDate)</fo:block>
+                <fo:block id="more-info-current-date" margin-bottom="5mm">@messages("btn.confirmation.group.p1", currentDate)</fo:block>
+                <!-- Second paragraph -->
+                <fo:block id="more-info-start-date" margin-bottom="5mm">@messages("btn.confirmation.p2", startDate)</fo:block>
                 <!-- What happens next -->
                 <fo:block role="H2"  id="what-happens-next" font-size="14pt" font-weight="bold" margin-bottom="5mm">@messages("btn.confirmation.subheading")</fo:block>
 
-                <!-- Second paragraph -->
-                <fo:block id="removed-group-info" margin-bottom="5mm">@messages("btn.confirmation.p2")</fo:block>
                 <!-- Third paragraph -->
-                <fo:block id="submit-additional-info" margin-bottom="5mm">@messages("btn.confirmation.p3") @messages("btn.confirmation.p3.link").</fo:block>
+                <fo:block id="removed-group-info" margin-bottom="5mm">@messages("btn.confirmation.group.p3")</fo:block>
+                <!-- Fourth paragraph -->
+                <fo:block id="submit-additional-info" margin-bottom="5mm">@messages("btn.confirmation.group.p4")</fo:block>
 
             </fo:block-container>
         </fo:flow>
