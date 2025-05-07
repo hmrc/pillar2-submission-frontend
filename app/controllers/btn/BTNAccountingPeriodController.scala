@@ -32,6 +32,7 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.btn.{BTNAccountingPeriodView, BTNReturnSubmittedView}
 
+import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -75,7 +76,7 @@ class BTNAccountingPeriodController @Inject() (
       }
 
       obligationsAndSubmissionsService
-        .handleData(pillar2Id, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
+        .handleData(pillar2Id, subAccountingPeriod.startDate, LocalDate.now)
         .map {
           case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Fulfilled)) =>
             Ok(viewReturnSubmitted(accountingPeriods))

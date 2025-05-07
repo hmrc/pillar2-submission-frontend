@@ -33,6 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.btn.BTNBeforeStartView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -65,7 +66,7 @@ class BTNBeforeStartController @Inject() (
       ).value
         .flatMap {
           case Some(subscriptionData) =>
-            multipleAccountPeriods(
+            multipleAccountingPeriods(
               subscriptionData.subAccountingPeriod,
               subscriptionData.plrReference,
               subscriptionData.accountStatus.forall(_.inactive)
@@ -80,14 +81,17 @@ class BTNBeforeStartController @Inject() (
         }
     }
 
-  private def multipleAccountPeriods(
+  private def multipleAccountingPeriods(
     subAccountPeriod: AccountingPeriod,
     pillar2Id:        String,
     accountStatus:    Boolean
-  )(implicit hc:      HeaderCarrier): Future[Boolean] =
+  )(implicit hc:      HeaderCarrier): Future[Boolean] = {
+    val now: LocalDate = LocalDate.now()
+
     obligationsAndSubmissionsService
-      .handleData(pillar2Id, subAccountPeriod.startDate, subAccountPeriod.endDate)
+      .handleData(pillar2Id, subAccountPeriod.startDate, now)
       .map { success =>
-        !accountStatus && success.accountingPeriodDetails.size > 1
+        !accountStatus && success.accountingPeriodDetails.filterNot(_.startDate.isAfter(now)).filterNot(_.dueDate.isBefore(now)).size > 1
       }
+  }
 }
