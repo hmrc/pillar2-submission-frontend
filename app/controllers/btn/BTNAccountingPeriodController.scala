@@ -19,6 +19,7 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions._
 import models.obligationsandsubmissions.ObligationStatus
+import models.obligationsandsubmissions.SubmissionType.BTN
 import models.{MneOrDomestic, Mode}
 import pages.SubMneOrDomesticPage
 import play.api.i18n.I18nSupport
@@ -30,7 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-import views.html.btn.{BTNAccountingPeriodView, BTNReturnSubmittedView}
+import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Named}
@@ -43,8 +44,9 @@ class BTNAccountingPeriodController @Inject() (
   btnStatus:                              BTNStatusAction,
   obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
   dateHelper:                             ViewHelpers,
-  view:                                   BTNAccountingPeriodView,
+  accountingPeriodView:                   BTNAccountingPeriodView,
   viewReturnSubmitted:                    BTNReturnSubmittedView,
+  btnAlreadyInPlaceView:                  BTNAlreadyInPlaceView,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -78,10 +80,19 @@ class BTNAccountingPeriodController @Inject() (
       obligationsAndSubmissionsService
         .handleData(pillar2Id, subAccountingPeriod.startDate, LocalDate.now)
         .map {
+          case success
+              if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.exists(_.submissionType == BTN))) =>
+            Ok(btnAlreadyInPlaceView())
           case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Fulfilled)) =>
-            Ok(viewReturnSubmitted(accountingPeriods))
+            Ok(
+              viewReturnSubmitted(
+                accountingPeriods,
+                false,
+                success.accountingPeriodDetails.head
+              )
+            )
           case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Open)) =>
-            Ok(view(accountingPeriods, mode, changeAccountingPeriodUrl))
+            Ok(accountingPeriodView(accountingPeriods, mode, changeAccountingPeriodUrl, request.isAgent, false))
           case _ =>
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
         }

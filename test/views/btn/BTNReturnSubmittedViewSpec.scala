@@ -17,6 +17,10 @@
 package views.btn
 
 import base.ViewSpecBase
+import models.obligationsandsubmissions.ObligationStatus.Fulfilled
+import models.obligationsandsubmissions.ObligationType.UKTR
+import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
+import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, Submission}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.HtmlFormat
@@ -25,6 +29,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.btn.BTNReturnSubmittedView
+
+import java.time.{LocalDate, ZonedDateTime}
 
 class BTNReturnSubmittedViewSpec extends ViewSpecBase {
   val list: SummaryList = SummaryListViewModel(
@@ -37,8 +43,16 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
     )
   )
 
+  val accountingPeriodDetails: AccountingPeriodDetails = AccountingPeriodDetails(
+    LocalDate.now().minusYears(1),
+    LocalDate.now(),
+    LocalDate.now().plusYears(1),
+    underEnquiry = false,
+    Seq(Obligation(UKTR, Fulfilled, canAmend = true, Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None))))
+  )
+
   val page: BTNReturnSubmittedView = inject[BTNReturnSubmittedView]
-  val view: Document               = Jsoup.parse(page(list)(request, appConfig, messages).toString())
+  val view: Document               = Jsoup.parse(page(list, isAgent = false, accountingPeriodDetails)(request, appConfig, messages).toString())
 
   "BTNAccountingPeriodView" should {
 

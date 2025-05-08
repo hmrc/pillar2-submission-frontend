@@ -20,7 +20,10 @@ import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.btn.routes._
 import models.NormalMode
-import models.obligationsandsubmissions.ObligationStatus
+import models.obligationsandsubmissions.ObligationStatus.Fulfilled
+import models.obligationsandsubmissions.ObligationType.UKTR
+import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
+import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, Submission}
 import models.subscription.{AccountStatus, AccountingPeriod, SubscriptionLocalData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -39,7 +42,7 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.btn.{BTNAccountingPeriodView, BTNReturnSubmittedView}
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.{ExecutionContext, Future}
 
 class BTNAccountingPeriodControllerSpec extends SpecBase {
@@ -86,7 +89,13 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[BTNAccountingPeriodView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list, NormalMode, appConfig.changeAccountingPeriodUrl)(
+        contentAsString(result) mustEqual view(
+          list,
+          NormalMode,
+          appConfig.changeAccountingPeriodUrl,
+          isAgent = false,
+          hasMultipleAccountingPeriods = false
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -175,6 +184,14 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         )
       )
 
+      val accountingPeriodDetails = AccountingPeriodDetails(
+        LocalDate.now().minusYears(1),
+        LocalDate.now(),
+        LocalDate.now().plusYears(1),
+        underEnquiry = false,
+        Seq(Obligation(UKTR, Fulfilled, canAmend = true, Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None))))
+      )
+
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
@@ -186,7 +203,11 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[BTNReturnSubmittedView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(list, isAgent = false, accountingPeriodDetails)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
   }
