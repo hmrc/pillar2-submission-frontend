@@ -59,9 +59,10 @@ class BTNBeforeStartController @Inject() (
         for {
           maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
           userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))
-          maybeSubscriptionData <- OptionT.liftF(subscriptionService.getSubscriptionCache(request.userId))
-          updatedAnswers        <- OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, maybeSubscriptionData.plrReference)))
-          _                     <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+          maybeSubscriptionData         <- OptionT.liftF(subscriptionService.getSubscriptionCache(request.userId))
+          obligationsAndSubmissionsData <- OptionT.liftF(subscriptionService.readSubscription(maybeSubscriptionData.plrReference))
+          updatedAnswers                <- OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, maybeSubscriptionData.plrReference)))
+          _                             <- OptionT.liftF(sessionRepository.set(updatedAnswers))
         } yield maybeSubscriptionData
       ).value
         .flatMap {

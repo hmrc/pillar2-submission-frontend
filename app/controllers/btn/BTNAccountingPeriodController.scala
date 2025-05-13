@@ -21,7 +21,7 @@ import controllers.actions._
 import models.obligationsandsubmissions.ObligationStatus
 import models.obligationsandsubmissions.SubmissionType.BTN
 import models.{MneOrDomestic, Mode}
-import pages.SubMneOrDomesticPage
+import pages.{BTNChooseAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -59,26 +59,31 @@ class BTNAccountingPeriodController @Inject() (
       val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
       val accountStatus             = request.subscriptionLocalData.accountStatus.forall(_.inactive)
 
-      val accountingPeriods = {
-        val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
-        val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
+      def accountingPeriods(startDate: LocalDate, endDate: LocalDate) = {
+        val start = HtmlFormat.escape(dateHelper.formatDateGDS(startDate))
+        val end   = HtmlFormat.escape(dateHelper.formatDateGDS(endDate))
 
         SummaryListViewModel(
           rows = Seq(
             SummaryListRowViewModel(
               key = "btn.returnSubmitted.startAccountDate",
-              value = ValueViewModel(HtmlContent(startDate))
+              value = ValueViewModel(HtmlContent(start))
             ),
             SummaryListRowViewModel(
               key = "btn.returnSubmitted.endAccountDate",
-              value = ValueViewModel(HtmlContent(endDate))
+              value = ValueViewModel(HtmlContent(end))
             )
           )
         )
       }
 
+      val accountingPeriodDates: (LocalDate, LocalDate) = request.userAnswers.get(BTNChooseAccountingPeriodPage) match {
+        case Some(details) => (details.startDate, details.endDate)
+        case None          => (request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now())
+      }
+
       obligationsAndSubmissionsService
-        .handleData(pillar2Id, subAccountingPeriod.startDate, LocalDate.now)
+        .handleData(pillar2Id, accountingPeriodDates._1, accountingPeriodDates._2)
         .map {
           case success
               if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.exists(_.submissionType == BTN))) =>
@@ -86,13 +91,22 @@ class BTNAccountingPeriodController @Inject() (
           case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Fulfilled)) =>
             Ok(
               viewReturnSubmitted(
-                accountingPeriods,
+                accountingPeriods(success.accountingPeriodDetails.head.startDate, success.accountingPeriodDetails.head.endDate),
                 false,
                 success.accountingPeriodDetails.head
               )
             )
           case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Open)) =>
-            Ok(accountingPeriodView(accountingPeriods, mode, changeAccountingPeriodUrl, request.isAgent, false))
+            Ok(
+              accountingPeriodView(
+                accountingPeriods(success.accountingPeriodDetails.head.startDate, success.accountingPeriodDetails.head.endDate),
+                mode,
+                changeAccountingPeriodUrl,
+                request.isAgent,
+                request.organisationName,
+                false
+              )
+            )
           case _ =>
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
         }

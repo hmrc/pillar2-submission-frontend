@@ -74,6 +74,8 @@ class BTNBeforeStartControllerSpec extends SpecBase {
         when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
         when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+        when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(subscriptionData)))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
 

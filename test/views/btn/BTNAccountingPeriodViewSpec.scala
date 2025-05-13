@@ -40,7 +40,9 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
 
   val page: BTNAccountingPeriodView = inject[BTNAccountingPeriodView]
   def view(isAgent: Boolean = false, hasMultipleAccountingPeriods: Boolean = false): Document =
-    Jsoup.parse(page(list, NormalMode, "test-url", isAgent, hasMultipleAccountingPeriods)(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(list, NormalMode, "test-url", isAgent, "orgName", hasMultipleAccountingPeriods)(request, appConfig, messages).toString()
+    )
 
   "BTNAccountingPeriodView" when {
     "it's an organisation" should {
@@ -68,8 +70,8 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         val link = view(hasMultipleAccountingPeriods = true).getElementsByClass("govuk-body").get(1).getElementsByTag("a")
         link.text must include("Select different accounting period")
         link.attr("href") must include(
-          controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url
-        ) //TODO: Change link when page built
+          controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
+        )
       }
 
       "have a paragraph with link" in {
@@ -91,6 +93,10 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
     }
 
     "it's an agent" should {
+      "have a caption" in {
+        view(isAgent = true).getElementsByClass("govuk-caption-m").text must include("orgName")
+      }
+
       "have a title" in {
         view(isAgent = true).getElementsByTag("title").text must include("Confirm account period for Below-Threshold Notification")
       }
@@ -115,8 +121,8 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         val link = view(isAgent = true, hasMultipleAccountingPeriods = true).getElementsByClass("govuk-body").get(1).getElementsByTag("a")
         link.text must include("Select different accounting period")
         link.attr("href") must include(
-          controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url
-        ) //TODO: Change link when page built
+          controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
+        )
       }
 
       "have a paragraph with link" in {

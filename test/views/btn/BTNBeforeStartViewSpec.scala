@@ -98,9 +98,9 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
 
       "links to the choose accounting period page when there are multiple accounting periods present" in {
         view(hasMultipleAccountPeriods = true).getElementsByClass("govuk-button").text must include("Continue")
-//        view(hasMultipleAccountPeriods = true)
-//          .getElementsByClass("govuk-button")
-//          .attr("href") mustBe "???" //TODO: Change to new choose accounting period page when built
+        view(hasMultipleAccountPeriods = true)
+          .getElementsByClass("govuk-button")
+          .attr("href") mustBe controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
       }
     }
 

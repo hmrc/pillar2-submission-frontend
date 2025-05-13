@@ -18,6 +18,7 @@ package models.obligationsandsubmissions
 
 import play.api.libs.json.{Json, OFormat, Writes}
 
+import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 
 sealed trait ObligationsAndSubmissionsResponse
@@ -48,7 +49,10 @@ case class AccountingPeriodDetails(
   dueDate:      LocalDate,
   underEnquiry: Boolean,
   obligations:  Seq[Obligation]
-)
+) {
+  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  def formattedDates = s"${startDate.format(formatter)} to ${endDate.format(formatter)}"
+}
 
 object AccountingPeriodDetails {
   implicit val format: OFormat[AccountingPeriodDetails] = Json.format[AccountingPeriodDetails]

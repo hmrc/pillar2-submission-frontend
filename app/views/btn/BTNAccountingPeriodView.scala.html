@@ -24,12 +24,13 @@
         paragraphMessageWithLink : ParagraphMessageWithLink,
         p: ParagraphBody,
         heading: Heading,
+        htmlHeading: HtmlHeading,
         govukSummaryList: GovukSummaryList,
         govukLink: GovUkLink,
         formHelper: FormWithCSRF,
 )
 
-@(list: SummaryList, mode: Mode, changeAccountingPeriodUrl: String, isAgent: Boolean, hasMultipleAccountingPeriods: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList, mode: Mode, changeAccountingPeriodUrl: String, isAgent: Boolean, organisationName: String, hasMultipleAccountingPeriods: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle = if(isAgent) {
       titleNoForm(messages("btn.accountingPeriod.agent.title"))
@@ -38,6 +39,10 @@
     }
 ) {
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(isAgent) {
+          <span class="govuk-caption-m">@organisationName<span>
+        }
 
         @if(isAgent) {
           @heading(messages("btn.accountingPeriod.agent.header"), classes = "govuk-heading-l")
@@ -54,7 +59,7 @@
         @govukSummaryList(list)
 
         @if(hasMultipleAccountingPeriods) {
-          @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.selectAccountingPeriodLink"), linkUrl = controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url)
+          @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.selectAccountingPeriodLink"), linkUrl = controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url)
         }
 
         @if(isAgent) {

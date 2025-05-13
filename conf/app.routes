@@ -35,6 +35,12 @@ GET         /asa/home                                                           
 GET         /uk-tax-return                                                        controllers.uktr.UKTaxReturnStartController.onPageLoad
 GET         /below-threshold-notification/start                                   controllers.btn.BTNBeforeStartController.onPageLoad(mode: Mode = NormalMode)
 
+GET         /below-threshold-notification/choose-accounting-period                controllers.btn.BTNChooseAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
+POST        /below-threshold-notification/choose-accounting-period                controllers.btn.BTNChooseAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
+GET         /below-threshold-notification/change-choose-accounting-period         controllers.btn.BTNChooseAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST        /below-threshold-notification/change-choose-accounting-period         controllers.btn.BTNChooseAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+
+
 GET         /below-threshold-notification/accounting-period                       controllers.btn.BTNAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
 POST        /below-threshold-notification/accounting-period                       controllers.btn.BTNAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
 GET         /below-threshold-notification/change-accounting-period                controllers.btn.BTNAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)

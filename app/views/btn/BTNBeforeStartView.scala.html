@@ -71,7 +71,7 @@
 
     @if(hasMultipleAccountingPeriods) {
       @govukButton(
-        ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+        ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
       )
     } else {
       @govukButton(

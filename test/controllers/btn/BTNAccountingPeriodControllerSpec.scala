@@ -94,6 +94,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
           NormalMode,
           appConfig.changeAccountingPeriodUrl,
           isAgent = false,
+          "organisationName",
           hasMultipleAccountingPeriods = false
         )(
           request,
