@@ -17,6 +17,7 @@
 package controllers.dueandoverduereturns
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import controllers.{routes => baseRoutes}
 import helpers.DueAndOverdueReturnsDataFixture
 import org.mockito.ArgumentMatchers.any
@@ -128,6 +129,22 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
         dueContent   must include("You must submit each return before its due date using your client’s commercial software supplier")
       }
 
+      "must redirect to general error page when subscription data is not returned" in {
+        val application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
+        }
+      }
     }
   }
 }

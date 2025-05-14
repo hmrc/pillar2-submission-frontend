@@ -44,6 +44,10 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
           Future.failed(InternalIssueError)
       }
+      .recoverWith { case ex: Throwable =>
+        logger.warn(s"Connection issue when calling read subscription due to: ${ex.getMessage}")
+        Future.failed(InternalIssueError)
+      }
   }
 
   def getSubscriptionCache(
@@ -57,6 +61,10 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
           None
+      }
+      .recoverWith { case ex: Throwable =>
+        logger.warn(s"Connection issue when calling read subscription due to: ${ex.getMessage}")
+        Future.successful(None)
       }
 
 }
