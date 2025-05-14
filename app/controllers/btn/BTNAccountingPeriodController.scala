@@ -82,10 +82,10 @@ class BTNAccountingPeriodController @Inject() (
           case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Open)) =>
             Ok(view(accountingPeriods, mode, changeAccountingPeriodUrl))
           case _ =>
-            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+            Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
         }
         .recover { case _ =>
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+          Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
         }
     }
 
@@ -99,6 +99,6 @@ class BTNAccountingPeriodController @Inject() (
           Future.successful(Redirect(controllers.btn.routes.BTNEntitiesInUKOnlyController.onPageLoad(mode)))
         }
       }
-      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
+      .getOrElse(Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)))
   }
 }
