@@ -34,7 +34,8 @@ class BTNChooseAccountingPeriodViewSpec extends ViewSpecBase {
 
   val formProvider = new BTNChooseAccountingPeriodFormProvider
   val page: BTNChooseAccountingPeriodView = inject[BTNChooseAccountingPeriodView]
-  def view(isAgent: Boolean = false): Document = Jsoup.parse(page(formProvider(), NormalMode, isAgent, "orgName", accountingPeriodDetails)(request, appConfig, messages).toString())
+  def view(isAgent: Boolean = false): Document =
+    Jsoup.parse(page(formProvider(), NormalMode, isAgent, "orgName", accountingPeriodDetails)(request, appConfig, messages).toString())
 
   "BTNChooseAccountingPeriodView" should {
 

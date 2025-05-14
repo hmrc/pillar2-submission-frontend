@@ -48,6 +48,8 @@ class BTNChooseAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
+  //!accountStatus && success.accountingPeriodDetails.filterNot(_.startDate.isAfter(now)).filterNot(_.dueDate.isBefore(now))
+
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
       obligationsAndSubmissionsService
@@ -71,9 +73,8 @@ class BTNChooseAccountingPeriodController @Inject() (
           case _ =>
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
         }
-        .recover {
-          case _ =>
-            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+        .recover { case _ =>
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
         }
     }
 
@@ -117,9 +118,8 @@ class BTNChooseAccountingPeriodController @Inject() (
           case _ =>
             Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None)))
         }
-        .recover {
-          case _ =>
-            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+        .recover { case _ =>
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
         }
     }
 }

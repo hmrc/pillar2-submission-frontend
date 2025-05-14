@@ -18,6 +18,7 @@ package base
 import config.FrontendAppConfig
 import controllers.actions._
 import helpers._
+import models.obligationsandsubmissions.ObligationStatus.Open
 import models.obligationsandsubmissions._
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import models.subscription.{AccountStatus, SubscriptionLocalData}
@@ -98,6 +99,40 @@ trait SpecBase
           Obligation(
             obligationType = ObligationType.UKTR,
             status = status,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+      )
+    )
+  )
+
+  def obligationsAndSubmissionsSuccessResponseMultipleAccounts(): ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+    processingDate = ZonedDateTime.now(),
+    accountingPeriodDetails = Seq(
+      AccountingPeriodDetails(
+        startDate = LocalDate.now.minusYears(1),
+        endDate = LocalDate.now(),
+        dueDate = LocalDate.now().plusYears(1),
+        underEnquiry = false,
+        obligations = Seq(
+          Obligation(
+            obligationType = ObligationType.UKTR,
+            status = Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+      ),
+      AccountingPeriodDetails(
+        startDate = LocalDate.now.minusYears(2),
+        endDate = LocalDate.now.minusYears(1),
+        dueDate = LocalDate.now(),
+        underEnquiry = false,
+        obligations = Seq(
+          Obligation(
+            obligationType = ObligationType.UKTR,
+            status = Open,
             canAmend = false,
             submissions = Seq.empty
           )

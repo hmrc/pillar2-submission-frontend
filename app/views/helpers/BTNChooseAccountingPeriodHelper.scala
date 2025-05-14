@@ -26,12 +26,11 @@ object BTNChooseAccountingPeriodHelper {
   def radioButtons(form: Form[Int], indexedAccountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)]): List[RadioItem] =
     indexedAccountingPeriodDetails.map(radioButton(form, _)).toList
 
-  private def radioButton(form: Form[Int], indexedAccountingPeriod: (AccountingPeriodDetails, Int)): RadioItem = {
+  private def radioButton(form: Form[Int], indexedAccountingPeriod: (AccountingPeriodDetails, Int)): RadioItem =
     RadioItem(
       id = Some(s"radio_${indexedAccountingPeriod._2}"),
       value = Some(indexedAccountingPeriod._2.toString),
       content = Text(indexedAccountingPeriod._1.formattedDates),
       checked = form("chooseAccountingPeriod").value.contains(indexedAccountingPeriod._2.toString)
     )
-  }
 }
