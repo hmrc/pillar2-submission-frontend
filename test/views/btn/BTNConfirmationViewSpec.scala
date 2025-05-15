@@ -47,29 +47,29 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       view.getElementsByTag("h2").text() must include("What happens next")
     }
 
-    "have paragraph content" in {
+    "in an organisation flow have paragraph content" in {
       view.getElementsByClass("govuk-body").text must include(
-        s"You have submitted a Below-Threshold Notification on $currentDate. This will be effective from $startDate."
+        s"You have submitted a Below-Threshold Notification on $currentDate."
       )
 
       view.getElementsByClass("govuk-body").text must include(
-        "HMRC has removed your group’s obligation to submit a UK Tax Return for this current accounting period and any future ones."
+        s"This is effective from the start of the accounting period you selected, $startDate."
       )
 
       view.getElementsByClass("govuk-body").text must include(
-        "If your group becomes liable for a UK Tax Return in the future, you must let HMRC know by submitting a UK Tax Return to remove the Below-Threshold Notification from your account."
+        "This Below-Threshold Notification satisfies your group’s obligation to submit a UKTR for the current and future accounting periods. HMRC will not expect to receive an information return while your group remains below-threshold."
+      )
+
+      view.getElementsByClass("govuk-body").text must include(
+        "You must submit a UK Tax Return if your group meets the threshold conditions in the future."
       )
     }
 
     "have links" in {
-      val linkOne = view.getElementsByClass("govuk-body").get(2).getElementsByTag("a")
-      val linkTwo = view.getElementsByClass("govuk-body").get(3).getElementsByTag("a")
+      val linkOne = view.getElementsByClass("govuk-body").get(4).getElementsByTag("a")
 
-      linkOne.text         must include("find out more about submitting a UKTR")
-      linkOne.attr("href") must include("/uk-tax-return")
-
-      linkTwo.text()       must include("View account homepage")
-      linkTwo.attr("href") must include("/report-pillar2-top-up-taxes")
+      linkOne.text()       must include("Back to group’s homepage")
+      linkOne.attr("href") must include("/report-pillar2-top-up-taxes")
     }
   }
 }

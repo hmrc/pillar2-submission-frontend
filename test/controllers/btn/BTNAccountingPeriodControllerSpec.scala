@@ -193,6 +193,23 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to BTN specific error page when subscription data is not returned" in {
+      val application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, btnAccountingPeriodRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
+      }
+    }
+
     "must redirect to the next page when valid data is submitted" in {
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
