@@ -61,3 +61,5 @@ GET         /below-threshold-notification/confirmation/download-pdf             
 
 GET         /submission-history                                                   controllers.submissionhistory.SubmissionHistoryController.onPageLoad
 GET         /due-and-overdue-returns                                              controllers.dueandoverduereturns.DueAndOverdueReturnsController.onPageLoad
+
+GET         /below-threshold-notification/processing-submission                   controllers.btn.BTNWaitingRoomController.onPageLoad
