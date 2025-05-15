@@ -99,6 +99,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
 
       "must redirect to a knockback page when a BTN is submitted" in {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(submittedBTNRecord)))
+
         val application = applicationBuilder(userAnswers = Some(submittedBTNRecord), subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
@@ -114,6 +116,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "must redirect to waiting room when a submission is processing" in {
         val processingUa = validBTNCyaUa.set(BTNStatus, BTNStatus.processing).get
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(processingUa)))
+
         val application = applicationBuilder(userAnswers = Some(processingUa), subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
