@@ -43,7 +43,8 @@ final case class OptionalSubscriptionDataRequest[A](
   maybeSubscriptionLocalData: Option[SubscriptionLocalData],
   maybeUserAnswers:           Option[UserAnswers],
   enrolments:                 Set[Enrolment],
-  isAgent:                    Boolean = false
+  isAgent:                    Boolean = false,
+  organisationName:           Option[String]
 ) extends WrappedRequest[A](request)
 
 final case class SubscriptionDataRequest[A](
@@ -52,7 +53,8 @@ final case class SubscriptionDataRequest[A](
   subscriptionLocalData: SubscriptionLocalData,
   userAnswers:           UserAnswers,
   enrolments:            Set[Enrolment],
-  isAgent:               Boolean = false
+  isAgent:               Boolean = false,
+  organisationName:      String
 ) extends WrappedRequest[A](request)
 
 final case class SessionDataRequest[A](

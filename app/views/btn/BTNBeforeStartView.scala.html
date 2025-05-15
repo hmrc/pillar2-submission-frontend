@@ -27,7 +27,7 @@
         govukInsetText: GovukInsetText
 )
 
-@(isAgent: Boolean, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(isAgent: Boolean, hasMultipleAccountingPeriods: Boolean, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("btn.beforeStart.title"))
@@ -69,7 +69,13 @@
 
     @p(messages("btn.beforeStart.p4"))
 
-    @govukButton(
+    @if(hasMultipleAccountingPeriods) {
+      @govukButton(
+        ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
+      )
+    } else {
+      @govukButton(
         ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode).url)
-    )
+      )
+    }
 }

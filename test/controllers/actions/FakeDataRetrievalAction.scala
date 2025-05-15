@@ -22,7 +22,7 @@ import models.subscription.SubscriptionLocalData
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers], isAgent: Boolean = false) extends DataRetrievalAction {
+class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers], isAgent: Boolean) extends DataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
     Future(OptionalDataRequest(request.request, request.userId, dataToReturn, isAgent = isAgent))
@@ -31,11 +31,24 @@ class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers], isAgent: Boolea
     scala.concurrent.ExecutionContext.Implicits.global
 }
 
-class FakeSubscriptionDataRetrievalAction(subscriptionData: Option[SubscriptionLocalData], userAnswers: Option[UserAnswers])
-    extends SubscriptionDataRetrievalAction {
+class FakeSubscriptionDataRetrievalAction(
+  subscriptionData: Option[SubscriptionLocalData],
+  userAnswers:      Option[UserAnswers],
+  organisationName: Option[String]
+) extends SubscriptionDataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalSubscriptionDataRequest[A]] =
-    Future(OptionalSubscriptionDataRequest(request.request, request.userId, subscriptionData, userAnswers, request.enrolments))
+    Future(
+      OptionalSubscriptionDataRequest(
+        request.request,
+        request.userId,
+        subscriptionData,
+        userAnswers,
+        request.enrolments,
+        request.isAgent,
+        organisationName
+      )
+    )
 
   override protected implicit val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global

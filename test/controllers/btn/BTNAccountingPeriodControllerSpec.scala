@@ -19,12 +19,15 @@ package controllers.btn
 import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.btn.routes._
-import models.NormalMode
-import models.obligationsandsubmissions.ObligationStatus
+import models.obligationsandsubmissions.ObligationStatus.{Fulfilled, Open}
+import models.obligationsandsubmissions.ObligationType.UKTR
+import models.obligationsandsubmissions.SubmissionType.{BTN, UKTR_CREATE}
+import models.obligationsandsubmissions._
 import models.subscription.{AccountStatus, AccountingPeriod, SubscriptionLocalData}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{PlrReferencePage, SubAccountingPeriodPage}
+import pages.{BTNChooseAccountingPeriodPage, PlrReferencePage, SubAccountingPeriodPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -33,13 +36,14 @@ import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-import views.html.btn.{BTNAccountingPeriodView, BTNReturnSubmittedView}
+import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.{ExecutionContext, Future}
 
 class BTNAccountingPeriodControllerSpec extends SpecBase {
@@ -49,6 +53,15 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
   val plrReference = "testPlrRef"
   val dates: AccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
   val dateHelper = new ViewHelpers()
+
+  val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, Seq.empty))
+  val chosenAccountPeriod: AccountingPeriodDetails = AccountingPeriodDetails(
+    LocalDate.now.minusYears(2),
+    LocalDate.now.minusYears(1),
+    LocalDate.now.plusYears(1),
+    underEnquiry = false,
+    obligationData
+  )
 
   val ua: SubscriptionLocalData =
     emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
@@ -61,36 +74,79 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
     .build()
 
   "BTNAccountingPeriodController" when {
-    "must return OK and the correct view if PlrReference in session and obligation is not fulfilled and account status is false" in {
-      val list = SummaryListViewModel(
+    "must return OK and the correct view if PlrReference in session, obligation is not fulfilled, account is not inactive" when {
+      def list(startDate: LocalDate, endDate: LocalDate): SummaryList = SummaryListViewModel(
         rows = Seq(
           SummaryListRowViewModel(
             "btn.accountingPeriod.startAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(LocalDate.now))))
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(startDate))))
           ),
           SummaryListRowViewModel(
             "btn.accountingPeriod.endAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(LocalDate.now.plusYears(1)))))
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(endDate))))
           )
         )
       )
+      "one single accounting period present" in {
 
-      when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+        when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
-      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-        .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
 
-      running(application) {
-        val request = FakeRequest(GET, btnAccountingPeriodRoute)
-        val result  = route(application, request).value
-        val view    = application.injector.instanceOf[BTNAccountingPeriodView]
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list, NormalMode, appConfig.changeAccountingPeriodUrl)(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
+        running(application) {
+          val request = FakeRequest(GET, btnAccountingPeriodRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[BTNAccountingPeriodView]
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(
+            list(LocalDate.now(), LocalDate.now.plusYears(1)),
+            NormalMode,
+            appConfig.changeAccountingPeriodUrl,
+            isAgent = false,
+            "orgName",
+            hasMultipleAccountingPeriods = false
+          )(
+            request,
+            appConfig(application),
+            messages(application)
+          ).toString
+        }
+      }
+
+      "one accounting period has been chosen from multiple" in {
+
+        val userAnswers = UserAnswers(userAnswersId).set(BTNChooseAccountingPeriodPage, chosenAccountPeriod).success.value
+
+        def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
+
+        when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+
+        running(application) {
+          val request = FakeRequest(GET, btnAccountingPeriodRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[BTNAccountingPeriodView]
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(
+            list(chosenAccountPeriod.startDate, chosenAccountPeriod.endDate),
+            NormalMode,
+            appConfig.changeAccountingPeriodUrl,
+            isAgent = false,
+            "orgName",
+            hasMultipleAccountingPeriods = true
+          )(
+            request,
+            appConfig(application),
+            messages(application)
+          ).toString
+        }
       }
     }
 
@@ -192,6 +248,14 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         )
       )
 
+      val accountingPeriodDetails = AccountingPeriodDetails(
+        LocalDate.now().minusYears(1),
+        LocalDate.now(),
+        LocalDate.now().plusYears(1),
+        underEnquiry = false,
+        Seq(Obligation(UKTR, Fulfilled, canAmend = true, Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None))))
+      )
+
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
@@ -203,7 +267,46 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[BTNReturnSubmittedView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(list, isAgent = false, accountingPeriodDetails)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view for BTN submitted page" in {
+      when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+
+      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(submissionType = BTN).success))
+
+      running(application) {
+        val request = FakeRequest(GET, btnAccountingPeriodRoute)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[BTNAlreadyInPlaceView]
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must redirect to BTN error page if the obligations and submissions service call results in an exception" in {
+      when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new Exception("Service failed")))
+
+      running(application) {
+        val request = FakeRequest(GET, btnAccountingPeriodRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
       }
     }
   }
