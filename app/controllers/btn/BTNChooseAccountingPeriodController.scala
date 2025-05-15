@@ -72,7 +72,7 @@ class BTNChooseAccountingPeriodController @Inject() (
           Ok(view(preparedForm, mode, request.isAgent, request.organisationName, accountingPeriods))
         }
         .recover { case _ =>
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+          Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
         }
     }
 
@@ -111,12 +111,12 @@ class BTNChooseAccountingPeriodController @Inject() (
                       _              <- sessionRepository.set(updatedAnswers)
                     } yield Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
                   case None =>
-                    Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+                    Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
                 }
             )
         }
         .recover { case _ =>
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+          Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
         }
     }
 }

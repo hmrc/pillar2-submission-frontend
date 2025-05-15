@@ -295,7 +295,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to JourneyRecovery if the obligations and submissions service call results in an exception" in {
+    "must redirect to BTN error page if the obligations and submissions service call results in an exception" in {
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
       when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
@@ -306,7 +306,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
       }
     }
   }

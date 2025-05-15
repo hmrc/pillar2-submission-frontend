@@ -74,10 +74,10 @@ class BTNBeforeStartController @Inject() (
               Ok(view(request.isAgent, hasMultipleAccountingPeriods, mode))
             }
           case None =>
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+            Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
         }
         .recover { case _ =>
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
         }
     }
 

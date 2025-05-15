@@ -119,7 +119,15 @@ class BTNBeforeStartControllerSpec extends SpecBase {
         ).toString
       }
 
-      "redirect to JourneyRecoveryController when no subscription data is found" in {
+      "redirect to BTN error page when no subscription data is found" in {
+        def application: Application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction),
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
+
         running(application) {
           when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
           when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
@@ -130,22 +138,24 @@ class BTNBeforeStartControllerSpec extends SpecBase {
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
         }
       }
 
-      "redirect to JourneyRecoveryController when no obligation data is found" in {
+      "redirect to BTN error page when no obligation data is found" in {
         running(application) {
           when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
           when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
           when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(Some(subscriptionData)))
+          when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+            .thenReturn(Future.failed(new Exception("Service failed")))
 
           val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
         }
       }
     }

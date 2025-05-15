@@ -17,10 +17,11 @@
 package controllers.btn
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.obligationsandsubmissions.ObligationStatus.Open
 import models.obligationsandsubmissions.ObligationType.UKTR
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationsAndSubmissionsSuccess}
+import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, ObligationsAndSubmissionsSuccess}
 import models.{Mode, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -182,7 +183,27 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to JourneyRecoveryController if obligations service fails" in {
+    "redirect to BTN error page when no subscription data is found" in {
+      def application: Application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
+
+        val request = FakeRequest(GET, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
+      }
+    }
+
+    "redirect to BTN error page if obligations service fails" in {
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -193,7 +214,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
       }
     }
   }
