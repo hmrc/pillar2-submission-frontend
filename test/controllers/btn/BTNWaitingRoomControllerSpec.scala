@@ -17,19 +17,13 @@
 package controllers.btn
 
 import base.SpecBase
-import models.UserAnswers
 import models.btn.BTNStatus
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.btn.BTNWaitingRoomView
-
-import scala.concurrent.Future
 
 class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
 
@@ -47,7 +41,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.BTNConfirmationController.onPageLoad.url
@@ -62,7 +56,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.BTNProblemWithServiceController.onPageLoad.url
@@ -79,7 +73,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
             .withSession("btn_submission_initiated" -> "true")
           val result = route(application, request).value
-          val view = application.injector.instanceOf[BTNWaitingRoomView]
+          val view   = application.injector.instanceOf[BTNWaitingRoomView]
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
@@ -94,8 +88,8 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
-          val result = route(application, request).value
-          val view = application.injector.instanceOf[BTNWaitingRoomView]
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[BTNWaitingRoomView]
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
@@ -109,7 +103,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad.url
@@ -117,4 +111,4 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
       }
     }
   }
-} 
+}

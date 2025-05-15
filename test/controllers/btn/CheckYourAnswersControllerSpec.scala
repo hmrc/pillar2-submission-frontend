@@ -30,7 +30,6 @@ import pages._
 import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.JsObject
-import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
@@ -83,7 +82,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "must redirect to IndexController on disqualifying answers" in {
         val emptyUa = validBTNCyaUa.setOrException(EntitiesInsideOutsideUKPage, false)
-  
+
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUa)))
 
         val application = applicationBuilder(userAnswers = Some(emptyUa), subscriptionLocalData = Some(someSubscriptionLocalData))
@@ -162,17 +161,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val request = FakeRequest(POST, CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
 
-
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
 
-   
           verify(mockSessionRepository).set(any())
         }
       }
 
       "must update the status after a successful API call completes" in {
-  
+
         val successPromise = Promise[BTNSuccess]()
         val successFuture  = successPromise.future
 
@@ -193,13 +190,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
 
-   
           successPromise.success(BTNSuccess(ZonedDateTime.now()))
 
-       
           Thread.sleep(200)
 
-       
           verify(mockSessionRepository, times(2)).set(any())
           verify(mockAuditService).auditBTN(
             eqTo("Abc123"),
@@ -211,7 +205,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
 
       "must update the status after a failed API call" in {
-     
+
         val failPromise = Promise[BTNSuccess]()
         val failFuture  = failPromise.future
 
@@ -232,13 +226,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
 
-   
           failPromise.failure(InternalIssueError)
 
-     
           Thread.sleep(200)
 
-   
           verify(mockSessionRepository, times(2)).set(any())
           verify(mockAuditService).auditBTN(
             eqTo("Abc123"),

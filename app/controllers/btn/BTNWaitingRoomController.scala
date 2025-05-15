@@ -30,37 +30,37 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BTNWaitingRoomController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  getData: SubscriptionDataRetrievalAction,
-  requireData: SubscriptionDataRequiredAction,
-  view: BTNWaitingRoomView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  getData:                  SubscriptionDataRetrievalAction,
+  requireData:              SubscriptionDataRequiredAction,
+  view:                     BTNWaitingRoomView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val status = request.userAnswers.get(BTNStatus)
-    
+
     status match {
       case Some(BTNStatus.submitted) =>
         Future.successful(Redirect(routes.BTNConfirmationController.onPageLoad))
-        
+
       case Some(BTNStatus.error) =>
         Future.successful(Redirect(routes.BTNProblemWithServiceController.onPageLoad))
-        
+
       case Some(BTNStatus.processing) =>
         request.session.get("btn_submission_initiated") match {
           case Some(_) =>
             Future.successful(Ok(view()))
-            
+
           case None =>
             Future.successful(Ok(view()))
         }
-        
+
       case _ =>
         logger.warn("User navigated to waiting room without a valid BTN status")
         Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad))
     }
   }
-} 
+}
