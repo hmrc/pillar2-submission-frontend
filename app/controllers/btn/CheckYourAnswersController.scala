@@ -97,33 +97,34 @@ class CheckYourAnswersController @Inject() (
 
     implicit val pillar2Id: String = request.subscriptionLocalData.plrReference
 
-    val redirectFuture = for {
+    val redirectResult = for {
       processingStatus <- Future.fromTry(request.userAnswers.set(BTNStatus, BTNStatus.processing))
       _                <- sessionRepository.set(processingStatus)
     } yield Redirect(routes.BTNWaitingRoomController.onPageLoad)
       .addingToSession("btn_submission_initiated" -> "true")
 
-    val _ = btnService.submitBTN(btnPayload).foreach { apiSuccessResponse =>
-      val _ = for {
-        updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
-        _              <- sessionRepository.set(updatedAnswers)
-        _ <- auditService.auditBTN(
-               pillarReference = request.subscriptionLocalData.plrReference,
-               accountingPeriod = subAccountingPeriod.toString,
-               entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-               apiResponseData = ApiResponseData(
-                 statusCode = CREATED,
-                 processingDate = apiSuccessResponse.processingDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                 errorCode = None,
-                 responseMessage = "Success"
-               )
-             )
-      } yield logger.info(s"BTN Request Submission was successful. response.body= $apiSuccessResponse")
-    }
+    val _ = (for {
+      apiSuccessResponse <- btnService.submitBTN(btnPayload)
+      updatedAnswers     <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
+      _                  <- sessionRepository.set(updatedAnswers)
 
-    val _ = btnService.submitBTN(btnPayload).failed.foreach { e: Throwable =>
+      _ <- auditService.auditBTN(
+             pillarReference = request.subscriptionLocalData.plrReference,
+             accountingPeriod = subAccountingPeriod.toString,
+             entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
+             apiResponseData = ApiResponseData(
+               statusCode = CREATED,
+               processingDate = apiSuccessResponse.processingDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+               errorCode = None,
+               responseMessage = "Success"
+             )
+           )
+
+      _ = logger.info(s"BTN Request Submission was successful. response.body= $apiSuccessResponse")
+    } yield ()).recoverWith { case e: Throwable =>
       logger.error(s"BTN Request Submission failed with error: ${e.getMessage}")
-      val _ = for {
+
+      for {
         errorStatus <- Future.fromTry(request.userAnswers.set(BTNStatus, BTNStatus.error))
         _           <- sessionRepository.set(errorStatus)
         _ <- auditService.auditBTN(
@@ -140,7 +141,7 @@ class CheckYourAnswersController @Inject() (
       } yield ()
     }
 
-    redirectFuture
+    redirectResult
   }
 
   def cannotReturnKnockback: Action[AnyContent] = identify(implicit request => BadRequest(cannotReturnView()))
