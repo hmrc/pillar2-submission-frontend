@@ -21,7 +21,7 @@ import connectors.SubscriptionConnector
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.obligationsandsubmissions.ObligationStatus.Open
 import models.obligationsandsubmissions.ObligationType.UKTR
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, ObligationsAndSubmissionsSuccess}
+import models.obligationsandsubmissions._
 import models.{Mode, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
