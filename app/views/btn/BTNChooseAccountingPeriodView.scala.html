@@ -51,9 +51,9 @@
 
         @govukRadios(
             Radios(
-                name = "chooseAccountingPeriod",
+                name = form("value").name,
                 items = BTNChooseAccountingPeriodHelper.radioButtons(form, accountingPeriodDetails),
-                errorMessage = form("chooseAccountingPeriod").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+                errorMessage = form("value").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
             )
         )
 

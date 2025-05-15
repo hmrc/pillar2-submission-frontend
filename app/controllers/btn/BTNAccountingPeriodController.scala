@@ -111,7 +111,7 @@ class BTNAccountingPeriodController @Inject() (
                 changeAccountingPeriodUrl,
                 request.isAgent,
                 request.organisationName,
-                false
+                request.userAnswers.get(BTNChooseAccountingPeriodPage).isDefined
               )
             )
           case _ =>

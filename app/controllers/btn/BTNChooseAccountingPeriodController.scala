@@ -29,6 +29,7 @@ import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BTNChooseAccountingPeriodView
 
+import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,8 +49,6 @@ class BTNChooseAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  //!accountStatus && success.accountingPeriodDetails.filterNot(_.startDate.isAfter(now)).filterNot(_.dueDate.isBefore(now))
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
       obligationsAndSubmissionsService
@@ -59,16 +58,18 @@ class BTNChooseAccountingPeriodController @Inject() (
           request.subscriptionLocalData.subAccountingPeriod.endDate
         )
         .map { success =>
-          val form = formProvider()
+          val now               = LocalDate.now
+          val accountingPeriods = success.accountingPeriodDetails.filterNot(_.startDate.isAfter(now)).filterNot(_.dueDate.isBefore(now)).zipWithIndex
+          val form              = formProvider()
           val preparedForm = request.userAnswers
             .get(BTNChooseAccountingPeriodPage)
             .flatMap { chosenPeriod =>
-              success.accountingPeriodDetails.zipWithIndex.find(_._1 == chosenPeriod).map { case (_, index) =>
+              accountingPeriods.find(_._1 == chosenPeriod).map { case (_, index) =>
                 form.fill(index)
               }
             }
             .getOrElse(form)
-          Ok(view(preparedForm, mode, request.isAgent, request.organisationName, success.accountingPeriodDetails.zipWithIndex))
+          Ok(view(preparedForm, mode, request.isAgent, request.organisationName, accountingPeriods))
         }
         .recover { case _ =>
           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
@@ -84,7 +85,9 @@ class BTNChooseAccountingPeriodController @Inject() (
           request.subscriptionLocalData.subAccountingPeriod.endDate
         )
         .flatMap { success =>
-          val form = formProvider()
+          val now               = LocalDate.now
+          val accountingPeriods = success.accountingPeriodDetails.filterNot(_.startDate.isAfter(now)).filterNot(_.dueDate.isBefore(now)).zipWithIndex
+          val form              = formProvider()
           form
             .bindFromRequest()
             .fold(
@@ -96,12 +99,12 @@ class BTNChooseAccountingPeriodController @Inject() (
                       mode,
                       request.isAgent,
                       request.organisationName,
-                      success.accountingPeriodDetails.zipWithIndex
+                      accountingPeriods
                     )
                   )
                 ),
               value =>
-                success.accountingPeriodDetails.zipWithIndex.find { case (_, index) => index == value } match {
+                accountingPeriods.find { case (_, index) => index == value } match {
                   case Some((chosenPeriod, _)) =>
                     for {
                       updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))

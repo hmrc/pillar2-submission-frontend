@@ -105,11 +105,15 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" ignore {
+    "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId).set(BTNChooseAccountingPeriodPage, chosenAccountingPeriod._1).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      def application: Application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(userAnswers))
+        .overrides(
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
 
       running(application) {
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
@@ -136,18 +140,11 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the AccountingPeriod page when a valid answer is submitted" ignore {
+    "must redirect to the AccountingPeriod page when a valid answer is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
 
       running(application) {
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
