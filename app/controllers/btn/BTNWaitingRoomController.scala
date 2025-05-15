@@ -40,23 +40,42 @@ class BTNWaitingRoomController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val status = request.userAnswers.get(BTNStatus)
+    val status              = request.userAnswers.get(BTNStatus)
+    val submissionInitiated = request.session.get("btn_submission_initiated").isDefined
+    val submissionTimestamp = request.session.get("btn_submission_timestamp").map(_.toLong).getOrElse(0L)
+    val currentTime         = System.currentTimeMillis()
+    val timeElapsed         = currentTime - submissionTimestamp
+    val minimumWaitTimeMs   = 4000 
+
+    logger.info(
+      s"BTNWaitingRoomController.onPageLoad: Current BTN status = $status, Session has btn_submission_initiated = $submissionInitiated, timeElapsed = ${timeElapsed}ms"
+    )
 
     status match {
-      case Some(BTNStatus.submitted) =>
-        Future.successful(Redirect(routes.BTNConfirmationController.onPageLoad))
+      case Some(BTNStatus.submitted) if !submissionInitiated || timeElapsed > minimumWaitTimeMs =>
 
-      case Some(BTNStatus.error) =>
-        Future.successful(Redirect(routes.BTNProblemWithServiceController.onPageLoad))
+        logger.info(s"BTNWaitingRoomController: Status is submitted, timeElapsed = ${timeElapsed}ms, redirecting to confirmation page")
+        Future.successful(
+          Redirect(routes.BTNConfirmationController.onPageLoad)
+            .removingFromSession("btn_submission_initiated")
+            .removingFromSession("btn_submission_timestamp")
+        )
+
+      case Some(BTNStatus.error) if !submissionInitiated || timeElapsed > minimumWaitTimeMs =>
+        logger.info(s"BTNWaitingRoomController: Status is error, timeElapsed = ${timeElapsed}ms, redirecting to problem page")
+        Future.successful(
+          Redirect(routes.BTNProblemWithServiceController.onPageLoad)
+            .removingFromSession("btn_submission_initiated")
+            .removingFromSession("btn_submission_timestamp")
+        )
 
       case Some(BTNStatus.processing) =>
-        request.session.get("btn_submission_initiated") match {
-          case Some(_) =>
-            Future.successful(Ok(view()))
+        logger.info("BTNWaitingRoomController: Status is processing, showing waiting room")
+        Future.successful(Ok(view()))
 
-          case None =>
-            Future.successful(Ok(view()))
-        }
+      case Some(BTNStatus.submitted) if submissionInitiated && timeElapsed <= minimumWaitTimeMs =>
+        logger.info(s"BTNWaitingRoomController: Status is submitted, but only ${timeElapsed}ms elapsed, still showing waiting room")
+        Future.successful(Ok(view()))
 
       case _ =>
         logger.warn("User navigated to waiting room without a valid BTN status")

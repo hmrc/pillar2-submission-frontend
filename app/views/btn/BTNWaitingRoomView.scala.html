@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import models.btn.BTNStatus
 @import views.html.components.gds._
+@import controllers.btn.routes
 
 @this(
     layout: templates.Layout,
@@ -26,7 +27,7 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = messages("btn.waitingRoom.title"), showSignOut = false, showBackLink = false, timeout = false) {
-  <meta http-equiv="refresh" content="2" />
+  <meta http-equiv="refresh" content="1" />
   
   <div class="hods-loading-spinner">
     <div

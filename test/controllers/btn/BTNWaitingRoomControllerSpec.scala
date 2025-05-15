@@ -33,7 +33,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
 
     ".onPageLoad" should {
 
-      "redirect to confirmation page when status is submitted" in {
+      "redirect to confirmation page when status is submitted and no submission is initiated" in {
         val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.submitted).get
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -48,7 +48,50 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "redirect to error page when status is error" in {
+      "redirect to confirmation page when status is submitted and minimum wait time has passed" in {
+        val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.submitted).get
+        val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+      
+          val timestamp = System.currentTimeMillis() - 5000
+          val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
+            .withSession(
+              "btn_submission_initiated" -> "true",
+              "btn_submission_timestamp" -> timestamp.toString
+            )
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.BTNConfirmationController.onPageLoad.url
+        }
+      }
+
+      "show waiting room when status is submitted but minimum wait time hasn't passed" in {
+        val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.submitted).get
+        val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+      
+          val timestamp = System.currentTimeMillis() - 1000
+          val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
+            .withSession(
+              "btn_submission_initiated" -> "true",
+              "btn_submission_timestamp" -> timestamp.toString
+            )
+          val result = route(application, request).value
+          val view   = application.injector.instanceOf[BTNWaitingRoomView]
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        }
+      }
+
+      "redirect to error page when status is error and no submission is initiated" in {
         val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.error).get
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -63,7 +106,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "show waiting room page when status is processing and submission is initiated" in {
+      "show waiting room page when status is processing" in {
         val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.processing).get
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -74,22 +117,6 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
             .withSession("btn_submission_initiated" -> "true")
           val result = route(application, request).value
           val view   = application.injector.instanceOf[BTNWaitingRoomView]
-
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
-        }
-      }
-
-      "show waiting room page when status is processing and no submission marker in session" in {
-        val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.processing).get
-        val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
-          val result  = route(application, request).value
-          val view    = application.injector.instanceOf[BTNWaitingRoomView]
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
