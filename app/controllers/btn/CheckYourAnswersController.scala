@@ -56,24 +56,35 @@ class CheckYourAnswersController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
-      sessionRepository.get(request.userId).map { maybeUserAnswers =>
-        (for {
-          userAnswers   <- maybeUserAnswers
-          entitiesInOut <- userAnswers.get(EntitiesInsideOutsideUKPage)
-        } yield
-          if (entitiesInOut) {
-            val summaryList = SummaryListViewModel(
-              rows = Seq(
-                SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod),
-                BTNEntitiesInsideOutsideUKSummary.row(userAnswers)
-              ).flatten
-            ).withCssClass("govuk-!-margin-bottom-9")
+    (identify andThen getData andThen requireData).async { implicit request =>
+      val status = request.userAnswers.get(BTNStatus)
 
-            Ok(view(summaryList))
-          } else {
-            Redirect(IndexController.onPageLoad)
-          }).getOrElse(Redirect(JourneyRecoveryController.onPageLoad()))
+      status match {
+        case Some(BTNStatus.processing) =>
+          Future.successful(Redirect(controllers.btn.routes.BTNWaitingRoomController.onPageLoad))
+
+        case Some(BTNStatus.submitted) =>
+          Future.successful(Redirect(routes.CheckYourAnswersController.cannotReturnKnockback))
+
+        case _ =>
+          sessionRepository.get(request.userId).map { maybeUserAnswers =>
+            (for {
+              userAnswers   <- maybeUserAnswers
+              entitiesInOut <- userAnswers.get(EntitiesInsideOutsideUKPage)
+            } yield
+              if (entitiesInOut) {
+                val summaryList = SummaryListViewModel(
+                  rows = Seq(
+                    SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod),
+                    BTNEntitiesInsideOutsideUKSummary.row(userAnswers)
+                  ).flatten
+                ).withCssClass("govuk-!-margin-bottom-9")
+
+                Ok(view(summaryList))
+              } else {
+                Redirect(IndexController.onPageLoad)
+              }).getOrElse(Redirect(JourneyRecoveryController.onPageLoad()))
+          }
       }
     }
 
@@ -86,7 +97,13 @@ class CheckYourAnswersController @Inject() (
 
     implicit val pillar2Id: String = request.subscriptionLocalData.plrReference
 
-    (for {
+    val redirectResult = for {
+      processingStatus <- Future.fromTry(request.userAnswers.set(BTNStatus, BTNStatus.processing))
+      _                <- sessionRepository.set(processingStatus)
+    } yield Redirect(routes.BTNWaitingRoomController.onPageLoad)
+      .addingToSession("btn_submission_initiated" -> "true")
+
+    val _ = (for {
       apiSuccessResponse <- btnService.submitBTN(btnPayload)
       updatedAnswers     <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
       _                  <- sessionRepository.set(updatedAnswers)
@@ -104,11 +121,12 @@ class CheckYourAnswersController @Inject() (
            )
 
       _ = logger.info(s"BTN Request Submission was successful. response.body= $apiSuccessResponse")
-
-    } yield Redirect(controllers.btn.routes.BTNConfirmationController.onPageLoad)).recoverWith { case e: Throwable =>
+    } yield ()).recoverWith { case e: Throwable =>
       logger.error(s"BTN Request Submission failed with error: ${e.getMessage}")
 
       for {
+        errorStatus <- Future.fromTry(request.userAnswers.set(BTNStatus, BTNStatus.error))
+        _           <- sessionRepository.set(errorStatus)
         _ <- auditService.auditBTN(
                pillarReference = request.subscriptionLocalData.plrReference,
                accountingPeriod = subAccountingPeriod.toString,
@@ -120,8 +138,10 @@ class CheckYourAnswersController @Inject() (
                  responseMessage = e.getMessage
                )
              )
-      } yield Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
+      } yield ()
     }
+
+    redirectResult
   }
 
   def cannotReturnKnockback: Action[AnyContent] = identify(implicit request => BadRequest(cannotReturnView()))

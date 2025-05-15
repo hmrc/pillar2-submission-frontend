@@ -1,0 +1,5 @@
+# BTN Waiting Room
+btn.waitingRoom.title = Processing your submission - Pillar 2 top-up tax - GOV.UK
+btn.waitingRoom.heading = Processing your submission
+btn.waitingRoom.loadingText = Please wait while your submission is being processed
+btn.waitingRoom.description = This may take up to 30 seconds. Please do not refresh the page or use the back button. 
