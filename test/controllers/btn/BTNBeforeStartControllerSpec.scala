@@ -53,8 +53,8 @@ class BTNBeforeStartControllerSpec extends SpecBase {
     )
     .build()
 
-  "BTNBeforeStartController" when {
-    "must redirect to unauthorised page when AgentAccessFilterAction returns a request block/redirect" in {
+  "BTNBeforeStartController" must {
+    "redirect to unauthorised page when AgentAccessFilterAction returns a request block/redirect" in {
       running(application) {
         when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
         when(mockAgentAccessFilterAction.filter[AnyContent](any()))
@@ -68,7 +68,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
       }
     }
 
-    "must allow access to start page when AgentAccessFilterAction check passes" which {
+    "allow access to start page when AgentAccessFilterAction check passes" which {
       "returns an OK with correct view for when subscription data and obligation data exists with a singular account period" in {
         running(application) {
           when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
@@ -95,7 +95,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
         }
       }
 
-      "returns an OK with correct view for when subscription data and obligation data exists with multiple account periods" in {
+      "return an OK with correct view for when subscription data and obligation data exists with multiple account periods" in {
         when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
         when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
         when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
