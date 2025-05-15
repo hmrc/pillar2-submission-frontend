@@ -18,8 +18,8 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.obligationsandsubmissions.ObligationStatus
 import models.obligationsandsubmissions.SubmissionType.BTN
+import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationStatus}
 import models.{MneOrDomestic, Mode}
 import pages.{BTNChooseAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.i18n.I18nSupport
@@ -56,7 +56,6 @@ class BTNAccountingPeriodController @Inject() (
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
       val pillar2Id                 = request.subscriptionLocalData.plrReference
       val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
-      val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
       val accountStatus             = request.subscriptionLocalData.accountStatus.forall(_.inactive)
 
       def accountingPeriods(startDate: LocalDate, endDate: LocalDate) = {
@@ -77,29 +76,37 @@ class BTNAccountingPeriodController @Inject() (
         )
       }
 
-      val accountingPeriodDates: (LocalDate, LocalDate) = request.userAnswers.get(BTNChooseAccountingPeriodPage) match {
-        case Some(details) => (details.startDate, details.endDate)
-        case None          => (request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now())
+      val accountingPeriod: Future[AccountingPeriodDetails] = request.userAnswers.get(BTNChooseAccountingPeriodPage) match {
+        case Some(details) =>
+          Future.successful(details)
+        case None =>
+          obligationsAndSubmissionsService
+            .handleData(pillar2Id, request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now())
+            .map(_.accountingPeriodDetails.filterNot(_.startDate.isAfter(LocalDate.now())).filterNot(_.dueDate.isBefore(LocalDate.now())))
+            .map {
+              case singleAccountingPeriod :: Nil =>
+                singleAccountingPeriod
+              case e =>
+                throw new RuntimeException(s"Expected one single accounting period but received: $e")
+            }
       }
 
-      obligationsAndSubmissionsService
-        .handleData(pillar2Id, accountingPeriodDates._1, accountingPeriodDates._2)
+      accountingPeriod
         .map {
-          case success
-              if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.exists(_.submissionType == BTN))) =>
+          case period if !accountStatus && period.obligations.exists(_.submissions.exists(_.submissionType == BTN)) =>
             Ok(btnAlreadyInPlaceView())
-          case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Fulfilled)) =>
+          case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Fulfilled) =>
             Ok(
               viewReturnSubmitted(
-                accountingPeriods(success.accountingPeriodDetails.head.startDate, success.accountingPeriodDetails.head.endDate),
+                accountingPeriods(period.startDate, period.endDate),
                 false,
-                success.accountingPeriodDetails.head
+                period
               )
             )
-          case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Open)) =>
+          case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Open) =>
             Ok(
               accountingPeriodView(
-                accountingPeriods(success.accountingPeriodDetails.head.startDate, success.accountingPeriodDetails.head.endDate),
+                accountingPeriods(period.startDate, period.endDate),
                 mode,
                 changeAccountingPeriodUrl,
                 request.isAgent,

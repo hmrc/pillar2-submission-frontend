@@ -76,7 +76,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
     )
 
   val zippedAccountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)] = obligationsAndSubmissionsSuccess.accountingPeriodDetails.zipWithIndex
-  val chosenAccountingPeriod: (AccountingPeriodDetails, Int) = zippedAccountingPeriodDetails.head
+  val chosenAccountingPeriod:        (AccountingPeriodDetails, Int)      = zippedAccountingPeriodDetails.head
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
     .overrides(
@@ -122,7 +122,13 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(chosenAccountingPeriod._2), mode, isAgent = false, organisationName, zippedAccountingPeriodDetails)(
+        contentAsString(result) mustEqual view(
+          form.fill(chosenAccountingPeriod._2),
+          mode,
+          isAgent = false,
+          organisationName,
+          zippedAccountingPeriodDetails
+        )(
           request,
           appConfig(application),
           messages(application)
@@ -193,17 +199,5 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
       }
     }
-
-//    "redirect to the next page when a valid index is submitted" in {
-//      when(mockObligationsService.handleData(any(), any(), any()))
-//        .thenReturn(Future.successful(serviceResponse))
-//      when(mockSessionRepo.set(any()))
-//        .thenReturn(Future.successful(true))
-//      val request = fakeRequest.withFormUrlEncodedBody("value" -> "0")
-//      val result  = controller(Some(emptyUserAnswers)).onSubmit(mode)(request)
-//      status(result) mustEqual SEE_OTHER
-//      redirectLocation(result).value mustEqual controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode).url
-//    }
-
   }
 }
