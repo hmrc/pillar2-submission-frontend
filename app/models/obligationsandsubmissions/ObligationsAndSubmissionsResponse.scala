@@ -50,8 +50,8 @@ case class AccountingPeriodDetails(
   underEnquiry: Boolean,
   obligations:  Seq[Obligation]
 ) {
-  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-  def formattedDates = s"${startDate.format(formatter)} to ${endDate.format(formatter)}"
+  val formatter:      DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  def formattedDates: String            = s"${startDate.format(formatter)} to ${endDate.format(formatter)}"
 }
 
 object AccountingPeriodDetails {

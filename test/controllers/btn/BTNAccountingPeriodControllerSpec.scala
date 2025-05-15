@@ -19,12 +19,12 @@ package controllers.btn
 import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.btn.routes._
-import models.{NormalMode, UserAnswers}
 import models.obligationsandsubmissions.ObligationStatus.{Fulfilled, Open}
 import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.SubmissionType.{BTN, UKTR_CREATE}
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, Submission}
+import models.obligationsandsubmissions._
 import models.subscription.{AccountStatus, AccountingPeriod, SubscriptionLocalData}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{BTNChooseAccountingPeriodPage, PlrReferencePage, SubAccountingPeriodPage}
