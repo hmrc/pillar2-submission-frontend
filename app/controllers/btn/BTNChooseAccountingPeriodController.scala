@@ -58,20 +58,17 @@ class BTNChooseAccountingPeriodController @Inject() (
           request.subscriptionLocalData.subAccountingPeriod.startDate,
           request.subscriptionLocalData.subAccountingPeriod.endDate
         )
-        .map {
-          case success =>
-            val form = formProvider()
-            val preparedForm = request.userAnswers
-              .get(BTNChooseAccountingPeriodPage)
-              .flatMap { chosenPeriod =>
-                success.accountingPeriodDetails.zipWithIndex.find(_._1 == chosenPeriod).map { case (_, index) =>
-                  form.fill(index)
-                }
+        .map { success =>
+          val form = formProvider()
+          val preparedForm = request.userAnswers
+            .get(BTNChooseAccountingPeriodPage)
+            .flatMap { chosenPeriod =>
+              success.accountingPeriodDetails.zipWithIndex.find(_._1 == chosenPeriod).map { case (_, index) =>
+                form.fill(index)
               }
-              .getOrElse(form)
-            Ok(view(preparedForm, mode, request.isAgent, request.organisationName, success.accountingPeriodDetails.zipWithIndex))
-          case _ =>
-            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
+            }
+            .getOrElse(form)
+          Ok(view(preparedForm, mode, request.isAgent, request.organisationName, success.accountingPeriodDetails.zipWithIndex))
         }
         .recover { case _ =>
           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
@@ -86,37 +83,34 @@ class BTNChooseAccountingPeriodController @Inject() (
           request.subscriptionLocalData.subAccountingPeriod.startDate,
           request.subscriptionLocalData.subAccountingPeriod.endDate
         )
-        .flatMap {
-          case success =>
-            val form = formProvider()
-            form
-              .bindFromRequest()
-              .fold(
-                formWithErrors =>
-                  Future.successful(
-                    BadRequest(
-                      view(
-                        formWithErrors,
-                        mode,
-                        request.isAgent,
-                        request.organisationName,
-                        success.accountingPeriodDetails.zipWithIndex
-                      )
+        .flatMap { success =>
+          val form = formProvider()
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors =>
+                Future.successful(
+                  BadRequest(
+                    view(
+                      formWithErrors,
+                      mode,
+                      request.isAgent,
+                      request.organisationName,
+                      success.accountingPeriodDetails.zipWithIndex
                     )
-                  ),
-                value =>
-                  success.accountingPeriodDetails.zipWithIndex.find { case (_, index) => index == value } match {
-                    case Some((chosenPeriod, _)) =>
-                      for {
-                        updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))
-                        _              <- sessionRepository.set(updatedAnswers)
-                      } yield Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
-                    case None =>
-                      Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-                  }
-              )
-          case _ =>
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None)))
+                  )
+                ),
+              value =>
+                success.accountingPeriodDetails.zipWithIndex.find { case (_, index) => index == value } match {
+                  case Some((chosenPeriod, _)) =>
+                    for {
+                      updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))
+                      _              <- sessionRepository.set(updatedAnswers)
+                    } yield Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
+                  case None =>
+                    Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+                }
+            )
         }
         .recover { case _ =>
           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
