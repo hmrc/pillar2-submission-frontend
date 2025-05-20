@@ -26,9 +26,13 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = messages("btn.waitingRoom.title"), showSignOut = false, showBackLink = false, timeout = false) {
-  <meta http-equiv="refresh" content="1" />
-  
+@layout(
+  pageTitle = messages("btn.waitingRoom.title"), 
+  headBlock = None,
+  showSignOut = false, 
+  showBackLink = false, 
+  timeout = false
+) {
   <div class="hods-loading-spinner">
     <div
             class="hods-loading-spinner__spinner"
@@ -38,6 +42,9 @@
     <div class="hods-loading-spinner__content">
       @heading("Submitting...", "govuk-heading-m")
       @heading("Don't leave this page.", "govuk-body-s", "h2")
+      <div class="govuk-body">
+        <p>You will be redirected automatically when the submission is complete.</p>
+      </div>
     </div>
   </div>
 }

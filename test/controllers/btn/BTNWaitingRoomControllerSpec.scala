@@ -55,7 +55,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
-      
+
           val timestamp = System.currentTimeMillis() - 5000
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
             .withSession(
@@ -76,7 +76,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
-      
+
           val timestamp = System.currentTimeMillis() - 1000
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
             .withSession(
