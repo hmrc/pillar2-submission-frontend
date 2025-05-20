@@ -69,14 +69,13 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "show waiting room when status is submitted but minimum wait time hasn't passed" in {
-        val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.submitted).get
+      "show waiting room when status is processing" in {
+        val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.processing).get
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
-
           val timestamp = System.currentTimeMillis() - 1000
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
             .withSession(
@@ -106,8 +105,8 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "show waiting room page when status is processing" in {
-        val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.processing).get
+      "show waiting room page when status is not submitted/error (including null)" in {
+        val userAnswers = emptyUserAnswers // No BTNStatus set
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
@@ -123,8 +122,15 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "redirect to check your answers when status is missing" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+      "set the Refresh header with the correct poll interval from configuration" in {
+        val userAnswers        = emptyUserAnswers.set(BTNStatus, BTNStatus.processing).get
+        val customPollInterval = 5
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(someSubscriptionLocalData),
+          additionalData = Map("btn.waitingRoom.pollIntervalSeconds" -> customPollInterval)
+        )
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -132,8 +138,8 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
           val result  = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad.url
+          status(result) mustEqual OK
+          header("Refresh", result) mustEqual Some(customPollInterval.toString)
         }
       }
     }

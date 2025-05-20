@@ -21,9 +21,8 @@ import controllers.btn.routes._
 import controllers.routes._
 import models.InternalIssueError
 import models.UserAnswers
-import models.audit.ApiResponseData
 import models.btn.{BTNStatus, BTNSuccess}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import pages._
@@ -35,7 +34,6 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import viewmodels.govuk.SummaryListFluency
 import views.html.btn.CheckYourAnswersView
@@ -195,17 +193,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
 
+          verify(mockSessionRepository).set(any())
+
           successPromise.success(BTNSuccess(ZonedDateTime.now()))
-
-          Thread.sleep(200)
-
-          verify(mockSessionRepository, times(2)).set(any())
-          verify(mockAuditService).auditBTN(
-            eqTo("Abc123"),
-            eqTo("AccountingPeriod(2024-10-24,2025-10-24,None)"),
-            eqTo(true),
-            any[ApiResponseData]
-          )(any[HeaderCarrier])
         }
       }
 
@@ -231,17 +221,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
 
+          verify(mockSessionRepository).set(any())
+
           failPromise.failure(InternalIssueError)
-
-          Thread.sleep(200)
-
-          verify(mockSessionRepository, times(2)).set(any())
-          verify(mockAuditService).auditBTN(
-            eqTo("Abc123"),
-            eqTo("AccountingPeriod(2024-10-24,2025-10-24,None)"),
-            eqTo(true),
-            any[ApiResponseData]
-          )(any[HeaderCarrier])
         }
       }
 

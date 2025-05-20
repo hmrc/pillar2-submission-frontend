@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// app/controllers/btn/BTNWaitingRoomController.scala
 package controllers.btn
 
 import config.FrontendAppConfig
@@ -22,19 +23,22 @@ import models.btn.BTNStatus
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BTNWaitingRoomView
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
+@Singleton
 class BTNWaitingRoomController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
   getData:                  SubscriptionDataRetrievalAction,
   requireData:              SubscriptionDataRequiredAction,
+  sessionRepository:        SessionRepository,
   view:                     BTNWaitingRoomView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -53,21 +57,16 @@ class BTNWaitingRoomController @Inject() (
         logger.info(s"BTNWaitingRoomController: Status is error, redirecting to problem page")
         Future.successful(Redirect(routes.BTNProblemWithServiceController.onPageLoad))
 
-      case Some(BTNStatus.processing) =>
+      case _ =>
         logger.info("BTNWaitingRoomController: Status is processing, showing waiting room with refresh header")
-
         Future.successful(
           Ok(view()).withHeaders(
-            "Refresh"       -> "3",
+            "Refresh"       -> s"${appConfig.btnWaitingRoomPollIntervalSeconds}",
             "Cache-Control" -> "no-store, no-cache, must-revalidate",
             "Pragma"        -> "no-cache",
             "Expires"       -> "0"
           )
         )
-
-      case _ =>
-        logger.warn("User navigated to waiting room without a valid BTN status")
-        Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad))
     }
   }
 }
