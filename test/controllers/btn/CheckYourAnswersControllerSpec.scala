@@ -140,7 +140,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
+          redirectLocation(result).value mustEqual "/report-pillar2-submission-top-up-taxes/below-threshold-notification/problem-with-service"
         }
       }
     }
