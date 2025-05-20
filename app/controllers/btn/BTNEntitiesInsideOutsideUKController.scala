@@ -75,6 +75,6 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
   def onPageLoadAmendGroupDetails(): Action[AnyContent] = (identify andThen getSubscriptionData) { implicit request =>
     request.maybeSubscriptionLocalData
       .map(subData => Ok(viewAmend(subData.subMneOrDomestic)))
-      .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      .getOrElse(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
   }
 }

@@ -72,7 +72,7 @@ class CheckYourAnswersController @Inject() (
             Ok(view(summaryList))
           } else {
             Redirect(IndexController.onPageLoad)
-          }).getOrElse(Redirect(JourneyRecoveryController.onPageLoad()))
+          }).getOrElse(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
       }
     }
 
