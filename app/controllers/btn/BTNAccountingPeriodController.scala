@@ -18,15 +18,17 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.filteredAccountingPeriodDetails
 import models.obligationsandsubmissions.SubmissionType.BTN
 import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationStatus}
 import models.{MneOrDomestic, Mode}
 import pages.{BTNChooseAccountingPeriodPage, SubMneOrDomesticPage}
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
@@ -52,37 +54,37 @@ class BTNAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
+  private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(implicit messages: Messages): SummaryList = {
+    val start = HtmlFormat.escape(dateHelper.formatDateGDS(startDate))
+    val end   = HtmlFormat.escape(dateHelper.formatDateGDS(endDate))
+
+    SummaryListViewModel(
+      rows = Seq(
+        SummaryListRowViewModel(
+          key = "btn.returnSubmitted.startAccountDate",
+          value = ValueViewModel(HtmlContent(start))
+        ),
+        SummaryListRowViewModel(
+          key = "btn.returnSubmitted.endAccountDate",
+          value = ValueViewModel(HtmlContent(end))
+        )
+      )
+    )
+  }
+
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
       val pillar2Id                 = request.subscriptionLocalData.plrReference
       val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
       val accountStatus             = request.subscriptionLocalData.accountStatus.forall(_.inactive)
 
-      def accountingPeriods(startDate: LocalDate, endDate: LocalDate) = {
-        val start = HtmlFormat.escape(dateHelper.formatDateGDS(startDate))
-        val end   = HtmlFormat.escape(dateHelper.formatDateGDS(endDate))
-
-        SummaryListViewModel(
-          rows = Seq(
-            SummaryListRowViewModel(
-              key = "btn.returnSubmitted.startAccountDate",
-              value = ValueViewModel(HtmlContent(start))
-            ),
-            SummaryListRowViewModel(
-              key = "btn.returnSubmitted.endAccountDate",
-              value = ValueViewModel(HtmlContent(end))
-            )
-          )
-        )
-      }
-
-      val accountingPeriod: Future[AccountingPeriodDetails] = request.userAnswers.get(BTNChooseAccountingPeriodPage) match {
+      val accountingPeriodDetails: Future[AccountingPeriodDetails] = request.userAnswers.get(BTNChooseAccountingPeriodPage) match {
         case Some(details) =>
           Future.successful(details)
         case None =>
           obligationsAndSubmissionsService
             .handleData(pillar2Id, request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now())
-            .map(_.accountingPeriodDetails.filterNot(_.startDate.isAfter(LocalDate.now())).filterNot(_.dueDate.isBefore(LocalDate.now())))
+            .map(x => filteredAccountingPeriodDetails(x.accountingPeriodDetails))
             .map {
               case singleAccountingPeriod :: Nil =>
                 singleAccountingPeriod
@@ -91,14 +93,14 @@ class BTNAccountingPeriodController @Inject() (
             }
       }
 
-      accountingPeriod
+      accountingPeriodDetails
         .map {
           case period if !accountStatus && period.obligations.exists(_.submissions.exists(_.submissionType == BTN)) =>
             Ok(btnAlreadyInPlaceView())
           case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Fulfilled) =>
             Ok(
               viewReturnSubmitted(
-                accountingPeriods(period.startDate, period.endDate),
+                getSummaryList(period.startDate, period.endDate),
                 false,
                 period
               )
@@ -106,7 +108,7 @@ class BTNAccountingPeriodController @Inject() (
           case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Open) =>
             Ok(
               accountingPeriodView(
-                accountingPeriods(period.startDate, period.endDate),
+                getSummaryList(period.startDate, period.endDate),
                 mode,
                 changeAccountingPeriodUrl,
                 request.isAgent,
