@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-// app/controllers/btn/BTNWaitingRoomController.scala
 package controllers.btn
 
 import config.FrontendAppConfig
@@ -33,17 +32,17 @@ import scala.concurrent.Future
 @Singleton
 class BTNWaitingRoomController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  identify:                 IdentifierAction,
-  getData:                  SubscriptionDataRetrievalAction,
-  requireData:              SubscriptionDataRequiredAction,
+  identifierAction:         IdentifierAction,
+  dataRetrievalAction:      SubscriptionDataRetrievalAction,
+  dataRequiredAction:       SubscriptionDataRequiredAction,
   sessionRepository:        SessionRepository,
-  view:                     BTNWaitingRoomView
+  btnWaitingRoomView:       BTNWaitingRoomView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identifierAction andThen dataRetrievalAction andThen dataRequiredAction).async { implicit request =>
     val status = request.userAnswers.get(BTNStatus)
 
     logger.info(s"BTNWaitingRoomController.onPageLoad: Current BTN status = $status")
@@ -60,7 +59,7 @@ class BTNWaitingRoomController @Inject() (
       case _ =>
         logger.info("BTNWaitingRoomController: Status is processing, showing waiting room with refresh header")
         Future.successful(
-          Ok(view()).withHeaders(
+          Ok(btnWaitingRoomView()).withHeaders(
             "Refresh"       -> s"${appConfig.btnWaitingRoomPollIntervalSeconds}",
             "Cache-Control" -> "no-store, no-cache, must-revalidate",
             "Pragma"        -> "no-cache",
