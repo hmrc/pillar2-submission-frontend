@@ -40,10 +40,10 @@
             role="status"
     ></div>
     <div class="hods-loading-spinner__content">
-      @heading("Submitting...", "govuk-heading-m")
-      @heading("Don't leave this page.", "govuk-body-s", "h2")
+      @heading(messages("btn.waitingRoom.submitting"), "govuk-heading-m")
+      @heading(messages("btn.waitingRoom.dontLeave"), "govuk-body-s", "h2")
       <div class="govuk-body">
-        <p>You will be redirected automatically when the submission is complete.</p>
+        <p>@messages("btn.waitingRoom.redirect")</p>
       </div>
     </div>
   </div>
