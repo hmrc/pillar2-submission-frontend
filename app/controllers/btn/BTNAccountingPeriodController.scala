@@ -77,7 +77,7 @@ class BTNAccountingPeriodController @Inject() (
         )
       }
 
-      val accountingPeriod: Future[AccountingPeriodDetails] = request.userAnswers.get(BTNChooseAccountingPeriodPage) match {
+      val accountingPeriodDetails: Future[AccountingPeriodDetails] = request.userAnswers.get(BTNChooseAccountingPeriodPage) match {
         case Some(details) =>
           Future.successful(details)
         case None =>
@@ -92,7 +92,7 @@ class BTNAccountingPeriodController @Inject() (
             }
       }
 
-      accountingPeriod
+      accountingPeriodDetails
         .map {
           case period if !accountStatus && period.obligations.exists(_.submissions.exists(_.submissionType == BTN)) =>
             Ok(btnAlreadyInPlaceView())
