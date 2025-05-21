@@ -26,9 +26,9 @@ import java.time.LocalDate
 
 class FilteredAccountingPeriodDetailsSpec extends AnyFreeSpec with Matchers {
 
-  private val now        = LocalDate.now
+  private val now                            = LocalDate.now
   private def minusYears(amountOfYears: Int) = LocalDate.now.minusYears(amountOfYears)
-  private def plusYears(amountOfYears: Int) = LocalDate.now.plusYears(amountOfYears)
+  private def plusYears(amountOfYears: Int)  = LocalDate.now.plusYears(amountOfYears)
 
   private val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, Seq.empty))
 
