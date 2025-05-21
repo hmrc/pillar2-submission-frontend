@@ -20,6 +20,7 @@ import cats.data.OptionT
 import cats.implicits.catsStdInstancesForFuture
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.filteredAccountingPeriodDetails
 import models.subscription.AccountingPeriod
 import models.{Mode, UserAnswers}
 import pages.PlrReferencePage
@@ -91,7 +92,7 @@ class BTNBeforeStartController @Inject() (
     obligationsAndSubmissionsService
       .handleData(pillar2Id, subAccountPeriod.startDate, now)
       .map { success =>
-        !accountStatus && success.accountingPeriodDetails.filterNot(_.startDate.isAfter(now)).filterNot(_.dueDate.isBefore(now)).size > 1
+        !accountStatus && filteredAccountingPeriodDetails(success.accountingPeriodDetails).size > 1
       }
   }
 }

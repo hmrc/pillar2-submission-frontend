@@ -18,6 +18,7 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.filteredAccountingPeriodDetails
 import models.obligationsandsubmissions.SubmissionType.BTN
 import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationStatus}
 import models.{MneOrDomestic, Mode}
@@ -82,7 +83,7 @@ class BTNAccountingPeriodController @Inject() (
         case None =>
           obligationsAndSubmissionsService
             .handleData(pillar2Id, request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now())
-            .map(_.accountingPeriodDetails.filterNot(_.startDate.isAfter(LocalDate.now())).filterNot(_.dueDate.isBefore(LocalDate.now())))
+            .map(x => filteredAccountingPeriodDetails(x.accountingPeriodDetails))
             .map {
               case singleAccountingPeriod :: Nil =>
                 singleAccountingPeriod

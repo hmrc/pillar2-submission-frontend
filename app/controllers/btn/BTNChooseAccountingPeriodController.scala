@@ -18,6 +18,7 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.filteredAccountingPeriodDetails
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.Mode
 import navigation.BTNNavigator
@@ -29,7 +30,6 @@ import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BTNChooseAccountingPeriodView
 
-import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,8 +58,7 @@ class BTNChooseAccountingPeriodController @Inject() (
           request.subscriptionLocalData.subAccountingPeriod.endDate
         )
         .map { success =>
-          val now               = LocalDate.now
-          val accountingPeriods = success.accountingPeriodDetails.filterNot(_.startDate.isAfter(now)).filterNot(_.dueDate.isBefore(now)).zipWithIndex
+          val accountingPeriods = filteredAccountingPeriodDetails(success.accountingPeriodDetails).zipWithIndex
           val form              = formProvider()
           val preparedForm = request.userAnswers
             .get(BTNChooseAccountingPeriodPage)
@@ -85,8 +84,7 @@ class BTNChooseAccountingPeriodController @Inject() (
           request.subscriptionLocalData.subAccountingPeriod.endDate
         )
         .flatMap { success =>
-          val now               = LocalDate.now
-          val accountingPeriods = success.accountingPeriodDetails.filterNot(_.startDate.isAfter(now)).filterNot(_.dueDate.isBefore(now)).zipWithIndex
+          val accountingPeriods = filteredAccountingPeriodDetails(success.accountingPeriodDetails).zipWithIndex
           val form              = formProvider()
           form
             .bindFromRequest()
