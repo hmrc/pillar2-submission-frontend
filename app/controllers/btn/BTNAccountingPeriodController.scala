@@ -101,7 +101,7 @@ class BTNAccountingPeriodController @Inject() (
             Ok(
               viewReturnSubmitted(
                 getSummaryList(period.startDate, period.endDate),
-                false,
+                request.isAgent,
                 period
               )
             )
