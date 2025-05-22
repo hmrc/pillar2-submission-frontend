@@ -70,4 +70,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
 
   val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
+
+  val btnWaitingRoomPollIntervalSeconds: Int = configuration.get[Int]("btn.waitingRoom.pollIntervalSeconds")
 }

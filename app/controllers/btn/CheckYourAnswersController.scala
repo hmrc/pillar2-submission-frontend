@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes._
 import models.audit.ApiResponseData
-import models.btn.BTNStatus.submitted
 import models.btn.{BTNRequest, BTNStatus}
 import models.subscription.AccountingPeriod
 import pages._
@@ -86,43 +85,63 @@ class CheckYourAnswersController @Inject() (
 
     implicit val pillar2Id: String = request.subscriptionLocalData.plrReference
 
-    (for {
-      apiSuccessResponse <- btnService.submitBTN(btnPayload)
-      updatedAnswers     <- Future.fromTry(request.userAnswers.set(BTNStatus, submitted))
-      _                  <- sessionRepository.set(updatedAnswers)
+    val setProcessingF: Future[Unit] = for {
+      updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNStatus, BTNStatus.processing))
+      _              <- sessionRepository.set(updatedAnswers)
+    } yield ()
 
-      _ <- auditService.auditBTN(
-             pillarReference = request.subscriptionLocalData.plrReference,
-             accountingPeriod = subAccountingPeriod.toString,
-             entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-             apiResponseData = ApiResponseData(
-               statusCode = CREATED,
-               processingDate = apiSuccessResponse.processingDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-               errorCode = None,
-               responseMessage = "Success"
-             )
-           )
-
-      _ = logger.info(s"BTN Request Submission was successful. response.body= $apiSuccessResponse")
-
-    } yield Redirect(controllers.btn.routes.BTNConfirmationController.onPageLoad)).recoverWith { case e: Throwable =>
-      logger.error(s"BTN Request Submission failed with error: ${e.getMessage}")
-
-      for {
-        _ <- auditService.auditBTN(
-               pillarReference = request.subscriptionLocalData.plrReference,
-               accountingPeriod = subAccountingPeriod.toString,
-               entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-               apiResponseData = ApiResponseData(
-                 statusCode = INTERNAL_SERVER_ERROR,
-                 processingDate = java.time.LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                 errorCode = Some("InternalIssueError"),
-                 responseMessage = e.getMessage
-               )
-             )
-      } yield Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
+    setProcessingF.foreach { _ =>
+      btnService
+        .submitBTN(btnPayload)
+        .flatMap { resp =>
+          sessionRepository.get(request.userId).flatMap {
+            case Some(latest) =>
+              for {
+                submittedAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.submitted))
+                _                <- sessionRepository.set(submittedAnswers)
+                _ <- auditService.auditBTN(
+                       pillarReference = pillar2Id,
+                       accountingPeriod = subAccountingPeriod.toString,
+                       entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
+                       apiResponseData = ApiResponseData(
+                         statusCode = CREATED,
+                         processingDate = resp.processingDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                         errorCode = None,
+                         responseMessage = "Success"
+                       )
+                     )
+              } yield ()
+            case None =>
+              Future.successful(())
+          }
+        }
+        .recover { case err =>
+          sessionRepository.get(request.userId).flatMap {
+            case Some(latest) =>
+              for {
+                errorAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.error))
+                _            <- sessionRepository.set(errorAnswers)
+                _ <- auditService.auditBTN(
+                       pillarReference = pillar2Id,
+                       accountingPeriod = subAccountingPeriod.toString,
+                       entitiesInsideAndOutsideUK = request.userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
+                       apiResponseData = ApiResponseData(
+                         statusCode = INTERNAL_SERVER_ERROR,
+                         processingDate = java.time.LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                         errorCode = Some("InternalIssueError"),
+                         responseMessage = err.getMessage
+                       )
+                     )
+              } yield ()
+            case None =>
+              Future.successful(())
+          }
+        }
     }
+
+    Future.successful(Redirect(routes.BTNWaitingRoomController.onPageLoad))
   }
 
-  def cannotReturnKnockback: Action[AnyContent] = identify(implicit request => BadRequest(cannotReturnView()))
+  def cannotReturnKnockback: Action[AnyContent] =
+    identify(implicit request => BadRequest(cannotReturnView()))
 }
