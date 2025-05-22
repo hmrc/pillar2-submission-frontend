@@ -18,6 +18,7 @@ package controllers.btn
 
 import base.SpecBase
 import connectors.SubscriptionConnector
+import controllers.filteredAccountingPeriodDetails
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.obligationsandsubmissions.ObligationStatus.Open
 import models.obligationsandsubmissions.ObligationType.UKTR
@@ -76,8 +77,10 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       )
     )
 
-  val zippedAccountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)] = obligationsAndSubmissionsSuccess.accountingPeriodDetails.zipWithIndex
-  val chosenAccountingPeriod:        (AccountingPeriodDetails, Int)      = zippedAccountingPeriodDetails.head
+  val zippedAccountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)] = filteredAccountingPeriodDetails(
+    obligationsAndSubmissionsSuccess.accountingPeriodDetails
+  ).zipWithIndex
+  val chosenAccountingPeriod: (AccountingPeriodDetails, Int) = zippedAccountingPeriodDetails.head
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
     .overrides(
