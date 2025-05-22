@@ -15,6 +15,9 @@
  *@
 
 @import config.FrontendAppConfig
+@import java.time.format.DateTimeFormatter
+@import java.time.LocalDate
+@import models.obligationsandsubmissions.AccountingPeriodDetails
 @import views.html.components.gds._
 @import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 
@@ -24,17 +27,47 @@
         p: ParagraphBody,
         heading: Heading,
         govukSummaryList: GovukSummaryList,
-        formHelper: FormWithCSRF,
+        govukInsetText: GovukInsetText,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        formHelper: FormWithCSRF
 )
 
-@(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-    @layout(pageTitle = titleNoForm(messages("btn.returnSubmitted.title"))) {
-        @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
+@(list: SummaryList, isAgent: Boolean, accountingPeriodDetails: AccountingPeriodDetails)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@formatDate = @{DateTimeFormatter.ofPattern("d MMMM yyyy")}
+
+@layout(
+    pageTitle = if(isAgent) {
+        titleNoForm(messages("btn.returnSubmitted.agent.title", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)))
+    } else {
+        titleNoForm(messages("btn.returnSubmitted.title"))
+    }
+) {
+    @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
+        @if(isAgent) {
+            @heading(messages("btn.returnSubmitted.agent.heading", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)), classes = "govuk-heading-l")
+        } else {
             @heading(messages("btn.returnSubmitted.heading"), classes = "govuk-heading-l")
+        }
+
+        @if(isAgent) {
+            @p(messages("btn.returnSubmitted.agent.p1"))
+        } else {
             @govukSummaryList(list)
+        }
+
+        @if(isAgent) {
+            @govukInsetText(InsetText(content = Text(messages("btn.returnSubmitted.agent.insetText"))))
+        } else {
             @p(messages("btn.returnSubmitted.p1"))
-            @govukButton(
-                ButtonViewModel(messages("site.continue"))
-            )
+        }
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+
+        @if(isAgent) {
+            @paragraphMessageWithLink(linkMessage = messages("btn.alreadyInPlace.link"), linkUrl = controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url)
         }
     }
+}

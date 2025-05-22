@@ -18,20 +18,24 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.obligationsandsubmissions.ObligationStatus
+import controllers.filteredAccountingPeriodDetails
+import models.obligationsandsubmissions.SubmissionType.BTN
+import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationStatus}
 import models.{MneOrDomestic, Mode}
-import pages.SubMneOrDomesticPage
-import play.api.i18n.I18nSupport
+import pages.{BTNChooseAccountingPeriodPage, SubMneOrDomesticPage}
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-import views.html.btn.{BTNAccountingPeriodView, BTNReturnSubmittedView}
+import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
 
+import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,45 +46,76 @@ class BTNAccountingPeriodController @Inject() (
   btnStatus:                              BTNStatusAction,
   obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
   dateHelper:                             ViewHelpers,
-  view:                                   BTNAccountingPeriodView,
+  accountingPeriodView:                   BTNAccountingPeriodView,
   viewReturnSubmitted:                    BTNReturnSubmittedView,
+  btnAlreadyInPlaceView:                  BTNAlreadyInPlaceView,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
+  private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(implicit messages: Messages): SummaryList = {
+    val start = HtmlFormat.escape(dateHelper.formatDateGDS(startDate))
+    val end   = HtmlFormat.escape(dateHelper.formatDateGDS(endDate))
+
+    SummaryListViewModel(
+      rows = Seq(
+        SummaryListRowViewModel(
+          key = "btn.returnSubmitted.startAccountDate",
+          value = ValueViewModel(HtmlContent(start))
+        ),
+        SummaryListRowViewModel(
+          key = "btn.returnSubmitted.endAccountDate",
+          value = ValueViewModel(HtmlContent(end))
+        )
+      )
+    )
+  }
+
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
       val pillar2Id                 = request.subscriptionLocalData.plrReference
       val changeAccountingPeriodUrl = appConfig.changeAccountingPeriodUrl
-      val subAccountingPeriod       = request.subscriptionLocalData.subAccountingPeriod
       val accountStatus             = request.subscriptionLocalData.accountStatus.forall(_.inactive)
 
-      val accountingPeriods = {
-        val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.startDate))
-        val endDate   = HtmlFormat.escape(dateHelper.formatDateGDS(subAccountingPeriod.endDate))
-
-        SummaryListViewModel(
-          rows = Seq(
-            SummaryListRowViewModel(
-              key = "btn.returnSubmitted.startAccountDate",
-              value = ValueViewModel(HtmlContent(startDate))
-            ),
-            SummaryListRowViewModel(
-              key = "btn.returnSubmitted.endAccountDate",
-              value = ValueViewModel(HtmlContent(endDate))
-            )
-          )
-        )
+      val accountingPeriodDetails: Future[AccountingPeriodDetails] = request.userAnswers.get(BTNChooseAccountingPeriodPage) match {
+        case Some(details) =>
+          Future.successful(details)
+        case None =>
+          obligationsAndSubmissionsService
+            .handleData(pillar2Id, request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now())
+            .map(x => filteredAccountingPeriodDetails(x.accountingPeriodDetails))
+            .map {
+              case singleAccountingPeriod :: Nil =>
+                singleAccountingPeriod
+              case e =>
+                throw new RuntimeException(s"Expected one single accounting period but received: $e")
+            }
       }
 
-      obligationsAndSubmissionsService
-        .handleData(pillar2Id, subAccountingPeriod.startDate, subAccountingPeriod.endDate)
+      accountingPeriodDetails
         .map {
-          case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Fulfilled)) =>
-            Ok(viewReturnSubmitted(accountingPeriods))
-          case success if !accountStatus && success.accountingPeriodDetails.exists(_.obligations.exists(_.status == ObligationStatus.Open)) =>
-            Ok(view(accountingPeriods, mode, changeAccountingPeriodUrl))
+          case period if !accountStatus && period.obligations.exists(_.submissions.exists(_.submissionType == BTN)) =>
+            Ok(btnAlreadyInPlaceView())
+          case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Fulfilled) =>
+            Ok(
+              viewReturnSubmitted(
+                getSummaryList(period.startDate, period.endDate),
+                request.isAgent,
+                period
+              )
+            )
+          case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Open) =>
+            Ok(
+              accountingPeriodView(
+                getSummaryList(period.startDate, period.endDate),
+                mode,
+                changeAccountingPeriodUrl,
+                request.isAgent,
+                request.organisationName,
+                request.userAnswers.get(BTNChooseAccountingPeriodPage).isDefined
+              )
+            )
           case _ =>
             Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
         }
