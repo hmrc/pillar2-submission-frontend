@@ -53,13 +53,6 @@ class BTNChooseAccountingPeriodController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData) {
       implicit request =>
-//      obligationsAndSubmissionsService
-//        .handleData(
-//          request.subscriptionLocalData.plrReference,
-//          request.subscriptionLocalData.subAccountingPeriod.startDate,
-//          request.subscriptionLocalData.subAccountingPeriod.endDate
-//        )
-//        .map { success =>
         val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
         val form              = formProvider()
         val preparedForm = request.userAnswers
@@ -71,22 +64,11 @@ class BTNChooseAccountingPeriodController @Inject() (
           }
           .getOrElse(form)
         Ok(view(preparedForm, mode, request.isAgent, request.organisationName, accountingPeriods))
-//        }
-//        .recover { case _ =>
-//          Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
-//        }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData).async {
       implicit request =>
-//      obligationsAndSubmissionsService
-//        .handleData(
-//          request.subscriptionLocalData.plrReference,
-//          request.subscriptionLocalData.subAccountingPeriod.startDate,
-//          request.subscriptionLocalData.subAccountingPeriod.endDate
-//        )
-//        .flatMap { success =>
         val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
         val form              = formProvider()
         form
@@ -115,9 +97,5 @@ class BTNChooseAccountingPeriodController @Inject() (
                   Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
               }
           )
-//        }
-//        .recover { case _ =>
-//          Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
-//        }
     }
 }
