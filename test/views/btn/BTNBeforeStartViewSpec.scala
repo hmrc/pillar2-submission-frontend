@@ -44,7 +44,7 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
 
     "have group specific content" in {
       view().getElementsByClass("govuk-body").text must include(
-        "The Below-Threshold Notification satisfies the group's obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold."
+        "The Below-Threshold Notification satisfies the group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold."
       )
 
       view().getElementsByClass("govuk-body").text must include(
