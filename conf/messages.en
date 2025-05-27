@@ -165,8 +165,8 @@ uktr.ukTaxReturnStart.inactive.p1 = Your account has a Below-Threshold Notificat
 
 btn.beforeStart.title = Below-Threshold Notification (BTN)
 btn.beforeStart.header = Below-Threshold Notification (BTN)
-btn.beforeStart.group.p1 = The Below-Threshold Notification satisfies the group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold.
-btn.beforeStart.agent.p1 = A Below-Threshold Notification (BTN) removes your client’s obligation to submit a UKTR for the current and future accounting periods. HMRC will not expect to receive an information return while your client is below-threshold.
+btn.beforeStart.group.p1 = The Below-Threshold Notification satisfies your group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while your group remains below-threshold.
+btn.beforeStart.agent.p1 = The Below-Threshold Notification satisfies the group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold.
 btn.beforeStart.header2 = Who can submit a Below-Threshold Notification
 btn.beforeStart.group.p2 = You can submit a Below-Threshold Notification if the group:
 btn.beforeStart.agent.p2 = The group can submit a Below-Threshold Notification if it:
