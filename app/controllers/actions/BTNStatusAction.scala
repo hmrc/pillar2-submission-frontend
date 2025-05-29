@@ -46,9 +46,13 @@ class BTNStatusAction @Inject() (val sessionRepository: SessionRepository)(impli
     }
 
   private def btnAlreadySubmitted[T](userId: String)(request: T) = sessionRepository.get(userId).map { maybeUserAnswers =>
-    if (maybeUserAnswers.flatMap(_.get(BTNStatus)).contains(BTNStatus.submitted))
-      Left(Redirect(CheckYourAnswersController.cannotReturnKnockback))
-    else
-      Right(request)
+    maybeUserAnswers.flatMap(_.get(BTNStatus)) match {
+      case Some(BTNStatus.submitted) =>
+        Left(Redirect(CheckYourAnswersController.cannotReturnKnockback))
+      case Some(BTNStatus.processing) =>
+        Left(Redirect(BTNWaitingRoomController.onPageLoad))
+      case _ =>
+        Right(request)
+    }
   }
 }
