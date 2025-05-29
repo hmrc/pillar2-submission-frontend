@@ -107,7 +107,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
 
       "have following contents" in {
         view(isAgent = true).getElementsByClass("govuk-body").text must include(
-          "The group will keep below-threshold status from this accounting period onwards, unless a UK tax return is filed."
+          "The group will keep below-threshold status from this accounting period onwards, unless a UK Tax Return is filed."
         )
         view(isAgent = true).getElementsByClass("govuk-summary-list__key").text must include(
           "Start date of accounting period"
