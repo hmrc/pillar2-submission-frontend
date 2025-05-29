@@ -24,8 +24,9 @@ import views.html.btn.BTNBeforeStartView
 
 class BTNBeforeStartViewSpec extends ViewSpecBase {
 
-  val page:                           BTNBeforeStartView = inject[BTNBeforeStartView]
-  def view(isAgent: Boolean = false): Document           = Jsoup.parse(page(isAgent, NormalMode)(request, appConfig, messages).toString())
+  val page: BTNBeforeStartView = inject[BTNBeforeStartView]
+  def view(isAgent: Boolean = false, hasMultipleAccountPeriods: Boolean = false): Document =
+    Jsoup.parse(page(isAgent, hasMultipleAccountPeriods, NormalMode)(request, appConfig, messages).toString())
 
   "BTNBeforeStartView" should {
 
@@ -57,15 +58,15 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have agent specific content" in {
-      view(true).getElementsByClass("govuk-body").text must include(
+      view(isAgent = true).getElementsByClass("govuk-body").text must include(
         "A Below-Threshold Notification (BTN) removes your client’s obligation to submit a UKTR for the current and future accounting periods. HMRC will not expect to receive an information return while your client is below-threshold."
       )
 
-      view(true).getElementsByClass("govuk-body").text must include(
+      view(isAgent = true).getElementsByClass("govuk-body").text must include(
         "The group can submit a Below-Threshold Notification if it:"
       )
 
-      view(true).getElementsByClass("govuk-inset-text").text must include(
+      view(isAgent = true).getElementsByClass("govuk-inset-text").text must include(
         "If your client needs to submit a UK tax return for this accounting period they do not qualify for a Below-Threshold Notification."
       )
     }
@@ -87,8 +88,20 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
       )
     }
 
-    "have a button" in {
-      view().getElementsByClass("govuk-button").text must include("Continue")
+    "have a button" that {
+      "links to the accounting period page when there is only one accounting period present" in {
+        view().getElementsByClass("govuk-button").text must include("Continue")
+        view()
+          .getElementsByClass("govuk-button")
+          .attr("href") mustBe controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url
+      }
+
+      "links to the choose accounting period page when there are multiple accounting periods present" in {
+        view(hasMultipleAccountPeriods = true).getElementsByClass("govuk-button").text must include("Continue")
+        view(hasMultipleAccountPeriods = true)
+          .getElementsByClass("govuk-button")
+          .attr("href") mustBe controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
+      }
     }
 
   }

@@ -17,27 +17,44 @@
 package controllers.btn
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import controllers.actions.AgentAccessFilterAction
 import models.NormalMode
+import models.obligationsandsubmissions.ObligationStatus
+import models.subscription.{AccountingPeriod, SubscriptionLocalData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.{PlrReferencePage, SubAccountingPeriodPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.obligationsandsubmissions.ObligationsAndSubmissionsService
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.btn.BTNBeforeStartView
 
-import scala.concurrent.Future
+import java.time.LocalDate
+import scala.concurrent.{ExecutionContext, Future}
 
 class BTNBeforeStartControllerSpec extends SpecBase {
 
-  def application: Application = applicationBuilder()
-    .overrides(bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction))
+  val plrReference = "testPlrRef"
+  val dates: AccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
+
+  val ua: SubscriptionLocalData =
+    emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
+
+  def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
+    .overrides(
+      bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction),
+      bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+      bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+    )
     .build()
 
-  "BTNBeforeStartController" when {
-    "must redirect to unauthorised page when AgentAccessFilterAction returns a request block/redirect" in {
+  "BTNBeforeStartController" must {
+    "redirect to unauthorised page when AgentAccessFilterAction returns a request block/redirect" in {
       running(application) {
         when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
         when(mockAgentAccessFilterAction.filter[AnyContent](any()))
@@ -51,19 +68,95 @@ class BTNBeforeStartControllerSpec extends SpecBase {
       }
     }
 
-    "must allow access to start page when AgentAccessFilterAction check passes" in {
-      running(application) {
+    "allow access to start page when AgentAccessFilterAction check passes" which {
+      "returns an OK with correct view for when subscription data and obligation data exists with a singular account period" in {
+        running(application) {
+          when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
+          when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
+          when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+          when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(Some(subscriptionData)))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+            .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
+
+          val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          val view = application.injector.instanceOf[BTNBeforeStartView]
+
+          status(result) mustEqual OK
+
+          contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = false, NormalMode)(
+            request,
+            appConfig(application),
+            messages(application)
+          ).toString
+        }
+      }
+
+      "return an OK with correct view for when subscription data and obligation data exists with multiple account periods" in {
         when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
         when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
+        when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+        when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(subscriptionData)))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[BTNBeforeStartView]
 
-        status(result) mustEqual OK
+        status(result) mustBe OK
 
-        contentAsString(result) mustEqual view(isAgent = false, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = true, NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+
+      "redirect to BTN error page when no subscription data is found" in {
+        def application: Application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction),
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
+
+        running(application) {
+          when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
+          when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+            .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
+
+          val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
+        }
+      }
+
+      "redirect to BTN error page when no obligation data is found" in {
+        running(application) {
+          when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
+          when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
+          when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(Some(subscriptionData)))
+          when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+            .thenReturn(Future.failed(new Exception("Service failed")))
+
+          val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
+        }
       }
     }
   }
