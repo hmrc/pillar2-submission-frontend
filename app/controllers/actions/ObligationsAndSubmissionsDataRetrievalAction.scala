@@ -16,12 +16,10 @@
 
 package controllers.actions
 
-import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import models.requests.{ObligationsAndSubmissionsSuccessDataRequest, SubscriptionDataRequest}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-import repositories.SessionRepository
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -32,8 +30,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationsAndSubmissionsDataRetrievalActionImpl @Inject() (
-  val obligationsAndSubmissionsService: ObligationsAndSubmissionsService,
-  sessionRepository:                    SessionRepository
+  val obligationsAndSubmissionsService: ObligationsAndSubmissionsService
 )(implicit val executionContext:        ExecutionContext)
     extends ObligationsAndSubmissionsDataRetrievalAction
     with Logging {
@@ -41,11 +38,9 @@ class ObligationsAndSubmissionsDataRetrievalActionImpl @Inject() (
   override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, ObligationsAndSubmissionsSuccessDataRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    for {
-      obligationsAndSubmissionsData <-
-        obligationsAndSubmissionsService.handleData(request.userId, request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now)
-    } yield obligationsAndSubmissionsData match {
-      case obligationData: ObligationsAndSubmissionsSuccess =>
+    obligationsAndSubmissionsService
+      .handleData(request.userId, request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now)
+      .map { obligationData =>
         Right(
           ObligationsAndSubmissionsSuccessDataRequest(
             request.request,
@@ -58,14 +53,15 @@ class ObligationsAndSubmissionsDataRetrievalActionImpl @Inject() (
             request.organisationName
           )
         )
-      case _ =>
+      }
+      .recover { case _: Exception =>
         logger.warn(s"obligations and submissions data not found")
         if (JourneyCheck.isBTNJourney(request.path)) {
           Left(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
         } else {
           Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
         }
-    }
+      }
   }
 }
 

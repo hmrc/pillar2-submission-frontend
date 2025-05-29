@@ -21,12 +21,10 @@ import controllers.actions._
 import controllers.filteredAccountingPeriodDetails
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.Mode
-import navigation.BTNNavigator
 import pages.BTNChooseAccountingPeriodPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BTNChooseAccountingPeriodView
 
@@ -36,14 +34,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class BTNChooseAccountingPeriodController @Inject() (
   override val messagesApi:               MessagesApi,
   sessionRepository:                      SessionRepository,
-  navigator:                              BTNNavigator,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction,
   btnStatus:                              BTNStatusAction,
   formProvider:                           BTNChooseAccountingPeriodFormProvider,
-  obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNChooseAccountingPeriodView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
