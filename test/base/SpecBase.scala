@@ -18,6 +18,7 @@ package base
 import config.FrontendAppConfig
 import controllers.actions._
 import helpers._
+import models.obligationsandsubmissions.ObligationStatus.Open
 import models.obligationsandsubmissions._
 import models.requests.{DataRequest, IdentifierRequest, OptionalDataRequest}
 import models.subscription.{AccountStatus, SubscriptionLocalData}
@@ -106,6 +107,40 @@ trait SpecBase
     )
   )
 
+  def obligationsAndSubmissionsSuccessResponseMultipleAccounts(): ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+    processingDate = ZonedDateTime.now(),
+    accountingPeriodDetails = Seq(
+      AccountingPeriodDetails(
+        startDate = LocalDate.now.minusYears(1),
+        endDate = LocalDate.now(),
+        dueDate = LocalDate.now().plusYears(1),
+        underEnquiry = false,
+        obligations = Seq(
+          Obligation(
+            obligationType = ObligationType.UKTR,
+            status = Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+      ),
+      AccountingPeriodDetails(
+        startDate = LocalDate.now.minusYears(2),
+        endDate = LocalDate.now.minusYears(1),
+        dueDate = LocalDate.now(),
+        underEnquiry = false,
+        obligations = Seq(
+          Obligation(
+            obligationType = ObligationType.UKTR,
+            status = Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+      )
+    )
+  )
+
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   def emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
@@ -171,7 +206,8 @@ trait SpecBase
     enrolments:            Set[Enrolment] = Set.empty,
     additionalData:        Map[String, Any] = Map.empty,
     subscriptionLocalData: Option[SubscriptionLocalData] = None,
-    isAgent:               Boolean = false
+    isAgent:               Boolean = false,
+    organisationName:      Option[String] = Some("OrgName")
   ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
@@ -190,7 +226,8 @@ trait SpecBase
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[IdentifierAction].qualifiedWith("EnrolmentIdentifier").to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, isAgent)),
-        bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData, userAnswers))
+        bind[SubscriptionDataRetrievalAction]
+          .toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData, userAnswers, organisationName))
       )
 
 }

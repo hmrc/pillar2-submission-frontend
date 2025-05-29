@@ -180,23 +180,43 @@ btn.beforeStart.li3 = the start and end date of the group’s accounting period
 btn.beforeStart.li4 = whether the group has entities located in the UK
 btn.beforeStart.p4 = If you submit a Below-Threshold Notification, this will replace any returns you’ve submitted for that period. It will also replace any returns you have already submitted for your most recent account periods.
 
+btn.chooseAccountingPeriod.title = Which accounting period would you like to register a Below-Threshold Notification for?
+btn.chooseAccountingPeriod.heading = Which accounting period would you like to register a Below-Threshold Notification for?
+btn.chooseAccountingPeriod.p1 = We only list the current and previous accounting periods.
+btn.chooseAccountingPeriod.error.required = Select the account period you’d like to register as below-threshold.
+
 btn.accountingPeriod.title = Submit a Below-Threshold Notification for your group’s current accounting period
+btn.accountingPeriod.agent.title = Confirm account period for Below-Threshold Notification
 btn.accountingPeriod.header = Submit a Below-Threshold Notification for your group’s current accounting period
+btn.accountingPeriod.agent.header = Confirm account period for Below-Threshold Notification
 btn.accountingPeriod.p1 = The Below-Threshold Notification you submit will remove your group’s obligation to submit a UKTR for this current accounting period and all future ones.
+btn.accountingPeriod.agent.p1 = The group will keep below-threshold status from this accounting period onwards, unless a UK Tax Return is filed.
 btn.accountingPeriod.startAccountDate = Start date of accounting period
 btn.accountingPeriod.endAccountDate = End date of accounting period
+btn.accountingPeriod.selectAccountingPeriodLink = Select different accounting period
 btn.accountingPeriod.p2.before = If the date shown is incorrect,
-btn.accountingPeriod.link = Update your group’s current accounting period
+btn.accountingPeriod.agent.p2.before = If the accounting period dates are wrong,
+btn.accountingPeriod.link = update your group’s current accounting period
+btn.accountingPeriod.agent.link = update the group’s accounting period dates
 btn.accountingPeriod.p2 =  before continuing.
 btn.accountingPeriod.checkYourAnswersLabel = Group’s accounting period
 btn.accountingPeriod.checkYourAnswersPrefix.startDate = Start date:
 btn.accountingPeriod.checkYourAnswersPrefix.endDate = End date:
 
 btn.returnSubmitted.title = Your group has already submitted a UK Tax Return for this accounting period
+btn.returnSubmitted.agent.title = The group has submitted a UK Tax Return for the accounting period {0} - {1}
 btn.returnSubmitted.heading = Your group has already submitted a UK Tax Return for this accounting period
+btn.returnSubmitted.agent.heading = The group has submitted a UK Tax Return for the accounting period {0} - {1}
 btn.returnSubmitted.startAccountDate = Start date of accounting period
 btn.returnSubmitted.endAccountDate = End date of accounting period
 btn.returnSubmitted.p1 = If you continue, the Below-Threshold Notification you submit will replace the UK Tax Return you previously submitted for this accounting period.
+btn.returnSubmitted.agent.p1 = By continuing, the group’s UK Tax Return will be replaced for this period.
+btn.returnSubmitted.agent.insetText = If the group needs to submit a UK Tax Return for this accounting period they do not qualify for a Below-Threshold Notification.
+
+btn.alreadyInPlace.title = The group has already submitted a Below-Threshold Notification for this accounting period
+btn.alreadyInPlace.heading = The group has already submitted a Below-Threshold Notification for this accounting period
+btn.alreadyInPlace.p1 = You cannot submit two notifications for the same period.
+btn.alreadyInPlace.link = Return to homepage
 
 btn.entitiesInsideOutsideUK.title.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
 btn.entitiesInsideOutsideUK.title.uk = Does the group still have entities located only in the UK?
@@ -237,6 +257,11 @@ btn.error.returnToHomePageText.link = Return to your account homepage to submit 
 btn.cannotReturn.heading = Submission successful
 btn.cannotReturn.p1 = You have submitted a Below-Threshold Notification
 btn.cannotReturn.link = Return to your group’s homepage
+btn.waitingRoom.submitting = Submitting your notification
+btn.waitingRoom.title = Submitting your Below-Threshold Notification
+btn.waitingRoom.dontLeave = Don’t leave this page
+btn.waitingRoom.redirect = You will be redirected automatically when the submission is complete.
+
 ###############################################
 
 ###############################################

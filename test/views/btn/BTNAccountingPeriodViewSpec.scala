@@ -39,33 +39,108 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
   )
 
   val page: BTNAccountingPeriodView = inject[BTNAccountingPeriodView]
-  val view: Document                = Jsoup.parse(page(list, NormalMode, "test-url")(request, appConfig, messages).toString())
+  def view(isAgent: Boolean = false, hasMultipleAccountingPeriods: Boolean = false): Document =
+    Jsoup.parse(
+      page(list, NormalMode, "test-url", isAgent, "orgName", hasMultipleAccountingPeriods)(request, appConfig, messages).toString()
+    )
 
-  "BTNAccountingPeriodView" should {
+  "BTNAccountingPeriodView" when {
+    "it's an organisation" should {
+      "have a title" in {
+        view().getElementsByTag("title").text must include("Submit a Below-Threshold Notification for your group’s current accounting period")
+      }
 
-    "have a title" in {
-      view.getElementsByTag("title").text must include("Submit a Below-Threshold Notification for your group’s current accounting period")
+      "have a h1 heading" in {
+        view().getElementsByTag("h1").text must include("Submit a Below-Threshold Notification for your group’s current accounting period")
+      }
+
+      "have following contents" in {
+        view().getElementsByClass("govuk-body").text must include(
+          "The Below-Threshold Notification you submit will remove your group’s obligation to submit a UKTR for this current accounting period and all future ones."
+        )
+        view().getElementsByClass("govuk-summary-list__key").text must include(
+          "Start date of accounting period"
+        )
+        view().getElementsByClass("govuk-summary-list__key").text must include(
+          "End date of accounting period"
+        )
+      }
+
+      "have a link for selecting a different accounting period when they have multiple accounting periods" in {
+        val link = view(hasMultipleAccountingPeriods = true).getElementsByClass("govuk-body").get(1).getElementsByTag("a")
+        link.text must include("Select different accounting period")
+        link.attr("href") must include(
+          controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
+        )
+      }
+
+      "have a paragraph with link" in {
+        val link = view().getElementsByClass("govuk-body").last().getElementsByTag("a")
+        view().getElementsByTag("p").text must include(
+          "If the date shown is incorrect,"
+        )
+        link.text         must include("update your group’s current accounting period")
+        link.attr("href") must include("test-url")
+        view().getElementsByTag("p").text must include(
+          "before continuing."
+        )
+      }
+
+      "have a button" in {
+        view().getElementsByClass("govuk-button").text must include("Continue")
+      }
+
     }
 
-    "have a h1 heading" in {
-      view.getElementsByTag("h1").text must include("Submit a Below-Threshold Notification for your group’s current accounting period")
-    }
+    "it's an agent" should {
+      "have a caption" in {
+        view(isAgent = true).getElementsByClass("govuk-caption-m").text must include("orgName")
+      }
 
-    "have following contents" in {
-      view.getElementsByClass("govuk-body").text must include(
-        "The Below-Threshold Notification you submit will remove your group’s obligation to submit a UKTR for this current accounting period and all future ones."
-      )
-      view.getElementsByClass("govuk-summary-list__key").text must include(
-        "Start date of accounting period"
-      )
-      view.getElementsByClass("govuk-summary-list__key").text must include(
-        "End date of accounting period"
-      )
-    }
+      "have a title" in {
+        view(isAgent = true).getElementsByTag("title").text must include("Confirm account period for Below-Threshold Notification")
+      }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
-    }
+      "have a h1 heading" in {
+        view(isAgent = true).getElementsByTag("h1").text must include("Confirm account period for Below-Threshold Notification")
+      }
 
+      "have following contents" in {
+        view(isAgent = true).getElementsByClass("govuk-body").text must include(
+          "The group will keep below-threshold status from this accounting period onwards, unless a UK Tax Return is filed."
+        )
+        view(isAgent = true).getElementsByClass("govuk-summary-list__key").text must include(
+          "Start date of accounting period"
+        )
+        view(isAgent = true).getElementsByClass("govuk-summary-list__key").text must include(
+          "End date of accounting period"
+        )
+      }
+
+      "have a link for selecting a different accounting period when they have multiple accounting periods" in {
+        val link = view(isAgent = true, hasMultipleAccountingPeriods = true).getElementsByClass("govuk-body").get(1).getElementsByTag("a")
+        link.text must include("Select different accounting period")
+        link.attr("href") must include(
+          controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
+        )
+      }
+
+      "have a paragraph with link" in {
+        val link = view(isAgent = true).getElementsByClass("govuk-body").last().getElementsByTag("a")
+        view(isAgent = true).getElementsByTag("p").text must include(
+          "If the accounting period dates are wrong,"
+        )
+        link.text         must include("update the group’s accounting period dates")
+        link.attr("href") must include("test-url")
+        view(isAgent = true).getElementsByTag("p").text must include(
+          "before continuing."
+        )
+      }
+
+      "have a button" in {
+        view(isAgent = true).getElementsByClass("govuk-button").text must include("Continue")
+      }
+
+    }
   }
 }

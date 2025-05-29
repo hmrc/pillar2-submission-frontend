@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package models.btn
+package forms
 
-import play.api.libs.json.JsPath
-import queries.{Gettable, Settable}
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object BTNStatus extends Gettable[String] with Settable[String] {
-  val submitted  = "submitted"
-  val processing = "processing"
-  val error      = "error"
+import javax.inject.Inject
 
-  override def path:     JsPath = JsPath \ toString
-  override def toString: String = "status"
+class BTNChooseAccountingPeriodFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Int] =
+    Form(
+      "value" -> int("btn.chooseAccountingPeriod.error.required")
+    )
 }

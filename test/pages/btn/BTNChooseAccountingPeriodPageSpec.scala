@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package models.btn
+package pages.btn
 
-import play.api.libs.json.JsPath
-import queries.{Gettable, Settable}
+import models.obligationsandsubmissions.AccountingPeriodDetails
+import pages.{BTNChooseAccountingPeriodPage, PageBehaviours}
 
-case object BTNStatus extends Gettable[String] with Settable[String] {
-  val submitted  = "submitted"
-  val processing = "processing"
-  val error      = "error"
+class BTNChooseAccountingPeriodPageSpec extends PageBehaviours {
 
-  override def path:     JsPath = JsPath \ toString
-  override def toString: String = "status"
+  "BTNChooseAccountingPeriodPage" - {
+
+    beRetrievable[AccountingPeriodDetails](BTNChooseAccountingPeriodPage)
+
+    beSettable[AccountingPeriodDetails](BTNChooseAccountingPeriodPage)
+
+    beRemovable[AccountingPeriodDetails](BTNChooseAccountingPeriodPage)
+  }
 }
