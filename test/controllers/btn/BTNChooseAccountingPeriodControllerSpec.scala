@@ -80,7 +80,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
   val zippedAccountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)] = filteredAccountingPeriodDetails(
     obligationsAndSubmissionsSuccess.accountingPeriodDetails
   ).zipWithIndex
-  val chosenAccountingPeriod: (AccountingPeriodDetails, Int) = zippedAccountingPeriodDetails.head
+  val chosenAccountingPeriod: (AccountingPeriodDetails, Int) = zippedAccountingPeriodDetails.headOption.value
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
     .overrides(
