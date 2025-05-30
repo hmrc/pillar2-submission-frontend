@@ -31,7 +31,7 @@
 )
 
 
-@(submissionDate: String, accountingPeriodStartDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(companyName: String, submissionDate: String, accountingPeriodStartDate: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false) {
 
@@ -41,7 +41,11 @@
         attributes = Map("id" -> "plr2-banner")
     ))
 
-    @p(messages("btn.confirmation.group.p1", submissionDate))
+    @if(isAgent) {
+        @p(messages("btn.confirmation.agent.p1", companyName, submissionDate))
+    } else {
+        @p(messages("btn.confirmation.group.p1", submissionDate))
+    }
     @p(messages("btn.confirmation.p2", accountingPeriodStartDate))
 
     @printLink(messages("site.print"))
