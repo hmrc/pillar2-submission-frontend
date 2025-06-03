@@ -45,7 +45,7 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
 
     "have group specific content" in {
       view().getElementsByClass("govuk-body").text must include(
-        "A Below-Threshold Notification (BTN) removes your group’s obligation to submit a UKTR for the current and future accounting periods. HMRC will not expect to receive an information return while your group is below-threshold."
+        "The Below-Threshold Notification satisfies your group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while your group remains below-threshold."
       )
 
       view().getElementsByClass("govuk-body").text must include(
@@ -58,8 +58,9 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have agent specific content" in {
+
       view(isAgent = true).getElementsByClass("govuk-body").text must include(
-        "A Below-Threshold Notification (BTN) removes your client’s obligation to submit a UKTR for the current and future accounting periods. HMRC will not expect to receive an information return while your client is below-threshold."
+        "The Below-Threshold Notification satisfies the group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold."
       )
 
       view(isAgent = true).getElementsByClass("govuk-body").text must include(
