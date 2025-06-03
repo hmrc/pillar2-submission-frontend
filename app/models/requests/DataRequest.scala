@@ -17,6 +17,7 @@
 package models.requests
 
 import models.UserAnswers
+import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import models.subscription.SubscriptionLocalData
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.Enrolment
@@ -55,6 +56,17 @@ final case class SubscriptionDataRequest[A](
   enrolments:            Set[Enrolment],
   isAgent:               Boolean = false,
   organisationName:      String
+) extends WrappedRequest[A](request)
+
+final case class ObligationsAndSubmissionsSuccessDataRequest[A](
+  request:                              Request[A],
+  userId:                               String,
+  subscriptionLocalData:                SubscriptionLocalData,
+  obligationsAndSubmissionsSuccessData: ObligationsAndSubmissionsSuccess,
+  userAnswers:                          UserAnswers,
+  enrolments:                           Set[Enrolment],
+  isAgent:                              Boolean = false,
+  organisationName:                     String
 ) extends WrappedRequest[A](request)
 
 final case class SessionDataRequest[A](

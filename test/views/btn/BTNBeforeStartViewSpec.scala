@@ -59,7 +59,7 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
 
     "have agent specific content" in {
 
-      view(true).getElementsByClass("govuk-body").text must include(
+      view(isAgent = true).getElementsByClass("govuk-body").text must include(
         "The Below-Threshold Notification satisfies the group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold."
       )
 
