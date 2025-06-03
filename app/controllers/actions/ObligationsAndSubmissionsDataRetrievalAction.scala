@@ -39,7 +39,7 @@ class ObligationsAndSubmissionsDataRetrievalActionImpl @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     obligationsAndSubmissionsService
-      .handleData(request.userId, request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now)
+      .handleData(request.subscriptionLocalData.plrReference, request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now)
       .map { obligationData =>
         Right(
           ObligationsAndSubmissionsSuccessDataRequest(
