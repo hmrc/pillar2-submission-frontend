@@ -60,7 +60,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       )
 
       groupView.text() must include(
-        "The Below-Threshold Notification satisfies the groups obligation"
+        "The Below-Threshold Notification satisfies the group’s obligation"
       )
 
       groupView.text() must include(

@@ -246,7 +246,7 @@ btn.confirmation.group.p1 = You have submitted a Below-Threshold Notification on
 btn.confirmation.agent.p1 = You have submitted a Below-Threshold Notification for {0} on {1}.
 btn.confirmation.p2 = This is effective from the start of the accounting period you selected, {0}.
 btn.confirmation.subheading = What happens next
-btn.confirmation.group.p3 = The Below-Threshold Notification satisfies the group's obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold.
+btn.confirmation.group.p3 = The Below-Threshold Notification satisfies the group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold.
 btn.confirmation.group.p4 = You must submit a UK Tax Return if your group meets the threshold conditions in the future.
 btn.confirmation.p5.group.link = Back to group’s homepage
 
