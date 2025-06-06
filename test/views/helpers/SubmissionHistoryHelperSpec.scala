@@ -65,6 +65,43 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
       tables.last.rows.flatten should have length 2
     }
 
+    "generate a table for GIR obligation fulfilled by BTN (no submissions)" in {
+      val startDate = LocalDate.of(2024, 1, 1)
+      val endDate   = LocalDate.of(2024, 12, 31)
+
+      val girObligationFulfilledByBTN = Obligation(ObligationType.GIR, Fulfilled, canAmend = true, Seq.empty)
+
+      val accountingPeriods = Seq(
+        AccountingPeriodDetails(startDate, endDate, LocalDate.now, underEnquiry = false, Seq(girObligationFulfilledByBTN))
+      )
+
+      when(messages("submissionHistory.typeOfReturn")).thenReturn("Type of return")
+      when(messages("submissionHistory.submissionDate")).thenReturn("Submission Date")
+      when(messages("submissionHistory.girFulfilledByBTN.returnType")).thenReturn("Information return (GIR)")
+      when(messages("submissionHistory.girFulfilledByBTN.status")).thenReturn("Fulfilled by Below-Threshold Notification")
+
+      val tables = SubmissionHistoryHelper.generateSubmissionHistoryTable(accountingPeriods)
+
+      tables                   should have length 1
+      tables.head.caption    shouldBe Some("1 January 2024 to 31 December 2024")
+      tables.head.rows.flatten should have length 2 // Two cells: return type and status
+    }
+
+    "not generate a table for non-GIR obligations with empty submissions" in {
+      val startDate = LocalDate.of(2024, 1, 1)
+      val endDate   = LocalDate.of(2024, 12, 31)
+
+      val uktrObligationWithoutSubmissions = Obligation(ObligationType.UKTR, Open, canAmend = true, Seq.empty)
+
+      val accountingPeriods = Seq(
+        AccountingPeriodDetails(startDate, endDate, LocalDate.now, underEnquiry = false, Seq(uktrObligationWithoutSubmissions))
+      )
+
+      val tables = SubmissionHistoryHelper.generateSubmissionHistoryTable(accountingPeriods)
+
+      tables should have length 0
+    }
+
     "format table caption correctly" in {
       val startDate = LocalDate.of(2024, 1, 1)
       val endDate   = LocalDate.of(2024, 12, 31)

@@ -18,6 +18,10 @@ package controllers.submissionhistory
 
 import base.SpecBase
 import controllers.helpers.SubmissionHistoryDataFixture
+import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, ObligationType}
+import models.obligationsandsubmissions.ObligationStatus.Fulfilled
+import models.obligationsandsubmissions.ObligationType.GIR
+import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -58,6 +62,55 @@ class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with Sc
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual view(submissionHistoryResponse.accountingPeriodDetails, isAgent = false)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "return OK and render the SubmissionHistoryView when GIR obligation is fulfilled by BTN (no submissions)" in {
+      val girObligationFulfilledByBTNResponse = obligationsAndSubmissionsSuccessResponse(
+        obligationType = ObligationType.GIR,
+        status = Fulfilled,
+        submissionType = UKTR_CREATE
+      ).success.copy(
+        accountingPeriodDetails = Seq(
+          AccountingPeriodDetails(
+            startDate = LocalDate.now,
+            endDate = LocalDate.now.plusYears(1),
+            dueDate = LocalDate.now.plusYears(1),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.GIR,
+                status = Fulfilled,
+                canAmend = true,
+                submissions = Seq.empty // Empty submissions - fulfilled by BTN
+              )
+            )
+          )
+        )
+      )
+
+      when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(girObligationFulfilledByBTNResponse))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+        .overrides(
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SubmissionHistoryView]
+
+        status(result) mustEqual OK
+
+        contentAsString(result) mustEqual view(girObligationFulfilledByBTNResponse.accountingPeriodDetails, isAgent = false)(
           request,
           appConfig(application),
           messages(application)
