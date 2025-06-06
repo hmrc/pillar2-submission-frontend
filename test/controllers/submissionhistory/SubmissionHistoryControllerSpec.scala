@@ -18,10 +18,9 @@ package controllers.submissionhistory
 
 import base.SpecBase
 import controllers.helpers.SubmissionHistoryDataFixture
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, ObligationType}
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
-import models.obligationsandsubmissions.ObligationType.GIR
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
+import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures

@@ -63,7 +63,6 @@ class SubmissionHistoryController @Inject() (
 
   private def hasSubmissionsOrFulfilledGIR(accountingPeriodDetails: Seq[AccountingPeriodDetails]): Boolean =
     accountingPeriodDetails.exists(_.obligations.exists { obligation =>
-      // Show if has submissions OR if it's a fulfilled GIR obligation (indicating BTN submission)
       obligation.submissions.nonEmpty ||
       (obligation.obligationType == ObligationType.GIR &&
         obligation.status == ObligationStatus.Fulfilled)

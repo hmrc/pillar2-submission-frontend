@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationStatus, ObligationType, Submission}
+import models.obligationsandsubmissions._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
@@ -38,7 +38,6 @@ object SubmissionHistoryHelper {
 
   private def hasDisplayableObligations(accountPeriod: AccountingPeriodDetails): Boolean =
     accountPeriod.obligations.exists { obligation =>
-      // Show if has submissions OR if it's a fulfilled GIR obligation (indicating BTN submission)
       obligation.submissions.nonEmpty ||
       (obligation.obligationType == ObligationType.GIR && obligation.status == ObligationStatus.Fulfilled)
     }
@@ -46,13 +45,10 @@ object SubmissionHistoryHelper {
   private def createRowsForAccountingPeriod(accountingPeriod: AccountingPeriodDetails)(implicit messages: Messages): Seq[Seq[TableRow]] =
     accountingPeriod.obligations.flatMap { obligation =>
       if (obligation.submissions.nonEmpty) {
-        // Standard case: show all submissions
         obligation.submissions.map(createTableRows)
       } else if (obligation.obligationType == ObligationType.GIR && obligation.status == ObligationStatus.Fulfilled) {
-        // Special case: GIR obligation fulfilled by BTN (no submissions)
         Seq(createGIRFulfilledByBTNRows())
       } else {
-        // No rows for other obligations without submissions
         Seq.empty
       }
     }
