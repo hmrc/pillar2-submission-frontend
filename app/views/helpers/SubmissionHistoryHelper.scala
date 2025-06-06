@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Submission}
+import models.obligationsandsubmissions._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
@@ -30,11 +30,28 @@ object SubmissionHistoryHelper {
     messages:                                           Messages
   ): Seq[Table] =
     accountingPeriods
-      .filter(accountPeriod => accountPeriod.obligations.flatMap(_.submissions).nonEmpty)
+      .filter(accountPeriod => hasDisplayableObligations(accountPeriod))
       .map { periodsWithSubmissions =>
-        val rows = periodsWithSubmissions.obligations.flatMap(_.submissions).map(createTableRows)
+        val rows = createRowsForAccountingPeriod(periodsWithSubmissions)
         createTable(periodsWithSubmissions.startDate, periodsWithSubmissions.endDate, rows)
       }
+
+  private def hasDisplayableObligations(accountPeriod: AccountingPeriodDetails): Boolean =
+    accountPeriod.obligations.exists { obligation =>
+      obligation.submissions.nonEmpty ||
+      (obligation.obligationType == ObligationType.GIR && obligation.status == ObligationStatus.Fulfilled)
+    }
+
+  private def createRowsForAccountingPeriod(accountingPeriod: AccountingPeriodDetails)(implicit messages: Messages): Seq[Seq[TableRow]] =
+    accountingPeriod.obligations.flatMap { obligation =>
+      if (obligation.submissions.nonEmpty) {
+        obligation.submissions.map(createTableRows)
+      } else if (obligation.obligationType == ObligationType.GIR && obligation.status == ObligationStatus.Fulfilled) {
+        Seq(createGIRFulfilledByBTNRows())
+      } else {
+        Seq.empty
+      }
+    }
 
   def createTable(startDate: LocalDate, endDate: LocalDate, rows: Seq[Seq[TableRow]])(implicit messages: Messages): Table = {
     val formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
@@ -67,6 +84,16 @@ object SubmissionHistoryHelper {
       ),
       TableRow(
         content = Text(submission.receivedDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))
+      )
+    )
+
+  private def createGIRFulfilledByBTNRows()(implicit messages: Messages): Seq[TableRow] =
+    Seq(
+      TableRow(
+        content = Text(messages("submissionHistory.girFulfilledByBTN.returnType"))
+      ),
+      TableRow(
+        content = Text(messages("submissionHistory.girFulfilledByBTN.status"))
       )
     )
 

@@ -18,6 +18,7 @@ package controllers.submissionhistory
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationStatus, ObligationType}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
@@ -51,7 +52,7 @@ class SubmissionHistoryController @Inject() (
         LocalDate.now
       )
       .map {
-        case success if success.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty)) =>
+        case success if hasSubmissionsOrFulfilledGIR(success.accountingPeriodDetails) =>
           Ok(view(success.accountingPeriodDetails, request.isAgent))
         case _ => Ok(viewNoSubmissions(request.isAgent))
       }
@@ -59,4 +60,11 @@ class SubmissionHistoryController @Inject() (
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
       }
   }
+
+  private def hasSubmissionsOrFulfilledGIR(accountingPeriodDetails: Seq[AccountingPeriodDetails]): Boolean =
+    accountingPeriodDetails.exists(_.obligations.exists { obligation =>
+      obligation.submissions.nonEmpty ||
+      (obligation.obligationType == ObligationType.GIR &&
+        obligation.status == ObligationStatus.Fulfilled)
+    })
 }

@@ -83,6 +83,29 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
         )
       )
     )
+
+  def girObligationFulfilledByBTNResponse(): ObligationsAndSubmissionsSuccessResponse =
+    ObligationsAndSubmissionsSuccessResponse(
+      ObligationsAndSubmissionsSuccess(
+        processingDate = testZonedDateTime,
+        accountingPeriodDetails = Seq(
+          AccountingPeriodDetails(
+            startDate = localDateFrom,
+            endDate = localDateTo,
+            dueDate = localDateTo.plusMonths(10),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.GIR,
+                status = Fulfilled,
+                canAmend = true,
+                submissions = Seq.empty // Empty submissions - fulfilled by BTN
+              )
+            )
+          )
+        )
+      )
+    )
 }
 
 trait SubscriptionLocalDataFixture {
