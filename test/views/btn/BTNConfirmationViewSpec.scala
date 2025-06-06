@@ -64,7 +64,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       )
 
       groupView.text() must include(
-        "You must submit a UK Tax Return if your group meets the threshold"
+        "The group must submit a UK Tax Return if your group meets the threshold"
       )
     }
 
