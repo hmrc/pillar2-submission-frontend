@@ -84,7 +84,7 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
 
       tables                   should have length 1
       tables.head.caption    shouldBe Some("1 January 2024 to 31 December 2024")
-      tables.head.rows.flatten should have length 2 // Two cells: return type and status
+      tables.head.rows.flatten should have length 2
     }
 
     "not generate a table for non-GIR obligations with empty submissions" in {
