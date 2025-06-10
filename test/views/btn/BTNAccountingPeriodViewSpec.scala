@@ -47,16 +47,16 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
   "BTNAccountingPeriodView" when {
     "it's an organisation" should {
       "have a title" in {
-        view().getElementsByTag("title").text must include("Submit a Below-Threshold Notification for your group’s current accounting period")
+        view().getElementsByTag("title").text must include("Confirm account period for Below-Threshold Notification")
       }
 
       "have a h1 heading" in {
-        view().getElementsByTag("h1").text must include("Submit a Below-Threshold Notification for your group’s current accounting period")
+        view().getElementsByTag("h1").text must include("Confirm account period for Below-Threshold Notification")
       }
 
       "have following contents" in {
         view().getElementsByClass("govuk-body").text must include(
-          "The Below-Threshold Notification you submit will remove your group’s obligation to submit a UKTR for this current accounting period and all future ones."
+          "Your group will keep below-threshold status from this accounting period onwards, unless you file a UK tax return."
         )
         view().getElementsByClass("govuk-summary-list__key").text must include(
           "Start date of accounting period"
