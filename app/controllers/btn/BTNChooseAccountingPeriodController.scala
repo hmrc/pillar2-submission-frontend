@@ -21,12 +21,10 @@ import controllers.actions._
 import controllers.filteredAccountingPeriodDetails
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.Mode
-import navigation.BTNNavigator
 import pages.BTNChooseAccountingPeriodPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BTNChooseAccountingPeriodView
 
@@ -36,13 +34,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class BTNChooseAccountingPeriodController @Inject() (
   override val messagesApi:               MessagesApi,
   sessionRepository:                      SessionRepository,
-  navigator:                              BTNNavigator,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
+  requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction,
   btnStatus:                              BTNStatusAction,
   formProvider:                           BTNChooseAccountingPeriodFormProvider,
-  obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNChooseAccountingPeriodView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
@@ -50,71 +47,51 @@ class BTNChooseAccountingPeriodController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
-      obligationsAndSubmissionsService
-        .handleData(
-          request.subscriptionLocalData.plrReference,
-          request.subscriptionLocalData.subAccountingPeriod.startDate,
-          request.subscriptionLocalData.subAccountingPeriod.endDate
-        )
-        .map { success =>
-          val accountingPeriods = filteredAccountingPeriodDetails(success.accountingPeriodDetails).zipWithIndex
-          val form              = formProvider()
-          val preparedForm = request.userAnswers
-            .get(BTNChooseAccountingPeriodPage)
-            .flatMap { chosenPeriod =>
-              accountingPeriods.find(_._1 == chosenPeriod).map { case (_, index) =>
-                form.fill(index)
-              }
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData) {
+      implicit request =>
+        val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
+        val form              = formProvider()
+        val preparedForm = request.userAnswers
+          .get(BTNChooseAccountingPeriodPage)
+          .flatMap { chosenPeriod =>
+            accountingPeriods.find(_._1 == chosenPeriod).map { case (_, index) =>
+              form.fill(index)
             }
-            .getOrElse(form)
-          Ok(view(preparedForm, mode, request.isAgent, request.organisationName, accountingPeriods))
-        }
-        .recover { case _ =>
-          Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
-        }
+          }
+          .getOrElse(form)
+        Ok(view(preparedForm, mode, request.isAgent, request.organisationName, accountingPeriods))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
-      obligationsAndSubmissionsService
-        .handleData(
-          request.subscriptionLocalData.plrReference,
-          request.subscriptionLocalData.subAccountingPeriod.startDate,
-          request.subscriptionLocalData.subAccountingPeriod.endDate
-        )
-        .flatMap { success =>
-          val accountingPeriods = filteredAccountingPeriodDetails(success.accountingPeriodDetails).zipWithIndex
-          val form              = formProvider()
-          form
-            .bindFromRequest()
-            .fold(
-              formWithErrors =>
-                Future.successful(
-                  BadRequest(
-                    view(
-                      formWithErrors,
-                      mode,
-                      request.isAgent,
-                      request.organisationName,
-                      accountingPeriods
-                    )
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData).async {
+      implicit request =>
+        val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
+        val form              = formProvider()
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              Future.successful(
+                BadRequest(
+                  view(
+                    formWithErrors,
+                    mode,
+                    request.isAgent,
+                    request.organisationName,
+                    accountingPeriods
                   )
-                ),
-              value =>
-                accountingPeriods.find { case (_, index) => index == value } match {
-                  case Some((chosenPeriod, _)) =>
-                    for {
-                      updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))
-                      _              <- sessionRepository.set(updatedAnswers)
-                    } yield Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
-                  case None =>
-                    Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
-                }
-            )
-        }
-        .recover { case _ =>
-          Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
-        }
+                )
+              ),
+            value =>
+              accountingPeriods.find { case (_, index) => index == value } match {
+                case Some((chosenPeriod, _)) =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
+                case None =>
+                  Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
+              }
+          )
     }
 }
