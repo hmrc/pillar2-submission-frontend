@@ -55,7 +55,7 @@
         }
 
         @if(isAgent) {
-          @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.agent.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.agent.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
+          @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.agent.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
         } else {
           @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
         }

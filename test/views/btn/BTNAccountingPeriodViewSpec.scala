@@ -77,9 +77,9 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
       "have a paragraph with link" in {
         val link = view().getElementsByClass("govuk-body").last().getElementsByTag("a")
         view().getElementsByTag("p").text must include(
-          "If the date shown is incorrect,"
+          "If the accounting period dates are wrong,"
         )
-        link.text         must include("update your group’s current accounting period")
+        link.text         must include("update your group’s accounting period dates")
         link.attr("href") must include("test-url")
         view().getElementsByTag("p").text must include(
           "before continuing."
