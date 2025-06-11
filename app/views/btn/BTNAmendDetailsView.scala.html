@@ -22,7 +22,7 @@
 @this(
         layout: templates.Layout,
         heading: Heading,
-        p: ParagraphWithBold,
+        p: ParagraphBody,
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
@@ -32,12 +32,13 @@
     @heading(messages("btn.entitiesInsideOutsideUK.amend.heading"), classes = "govuk-heading-l")
     @{
         if(mneOrDomestic == UkAndOther) {
-            p(message1 = Some(messages("btn.entitiesInsideOutsideUK.amend.p1.ukAndOther")), message2 = Some(messages("btn.entitiesInsideOutsideUK.amend.p1.ukAndOther.bold")), message2IsBold = true)
+            p(messages("btn.entitiesInsideOutsideUK.amend.p1.ukAndOther"))
         } else {
-            p(message1 = Some(messages("btn.entitiesInsideOutsideUK.amend.p1.ukOnly")), message2 = Some(messages("btn.entitiesInsideOutsideUK.amend.p1.ukOnly.bold")), message2IsBold = true)
+            p(messages("btn.entitiesInsideOutsideUK.amend.p1.ukOnly"))
         }
     }
-    @paragraphMessageWithLink(message1 = Some(messages("btn.entitiesInsideOutsideUK.amend.p2")),
-        linkMessage = messages("btn.entitiesInsideOutsideUK.amend.p2.link"), message2 = Some(messages("btn.entitiesInsideOutsideUK.amend.p2.end")), linkUrl = s"${appConfig.pillar2FrontendUrl}/manage-account/account-details/summary")
 
+    @p(messages("btn.entitiesInsideOutsideUK.amend.p2"))
+
+    @paragraphMessageWithLink(linkMessage = messages("btn.entitiesInsideOutsideUK.amend.link"), linkUrl = s"${appConfig.pillar2FrontendUrl}/manage-account/account-details/summary")
 }

@@ -225,13 +225,10 @@ btn.entitiesInsideOutsideUK.error.required.uk = Select yes if the group still ha
 btn.entitiesInsideOutsideUK.change.hidden = Are your entities still located in both the UK and outside the UK?
 btn.entitiesInsideOutsideUK.amend.title = Based on your answer, you need to amend your details
 btn.entitiesInsideOutsideUK.amend.heading = Based on your answer, you need to amend your details
-btn.entitiesInsideOutsideUK.amend.p1.ukAndOther = You previously reported that the group had entities located in both the
-btn.entitiesInsideOutsideUK.amend.p1.ukAndOther.bold = UK and other outside the UK.
-btn.entitiesInsideOutsideUK.amend.p1.ukOnly = You previously reported that the group had entities located
-btn.entitiesInsideOutsideUK.amend.p1.ukOnly.bold = only in the UK.
-btn.entitiesInsideOutsideUK.amend.p2 = If this has changed, you must
-btn.entitiesInsideOutsideUK.amend.p2.link = amend your group’s details
-btn.entitiesInsideOutsideUK.amend.p2.end = to update the location of your entities before submitting a BTN.
+btn.entitiesInsideOutsideUK.amend.p1.ukAndOther = You reported that your group has entities both in and outside of the UK.
+btn.entitiesInsideOutsideUK.amend.p1.ukOnly = You reported that your group only has entities in the UK.
+btn.entitiesInsideOutsideUK.amend.p2 = If this has changed, you must amend your group details to update the location of your entities before submitting a BTN.
+btn.entitiesInsideOutsideUK.amend.link = Amend group details
 
 btn.cya.heading = Check your answers to submit your Below-Threshold Notification
 btn.cya.p1 = If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed.

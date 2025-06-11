@@ -47,26 +47,31 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
 
     "have paragraph content" in {
       viewUkOnly.getElementsByClass("govuk-body").first().text() must include(
-        "You previously reported that the group had entities located only in the UK"
+        "You reported that your group only has entities in the UK."
       )
       viewUkAndOther.getElementsByClass("govuk-body").first().text must include(
-        "You previously reported that the group had entities located in both the UK and other outside the UK."
+        "You reported that your group has entities both in and outside of the UK."
       )
 
-      val paragraphViewUkOnly     = viewUkOnly.getElementsByClass("govuk-body").get(1)
-      val paragraphViewUkAndOther = viewUkAndOther.getElementsByClass("govuk-body").get(1)
-
-      paragraphViewUkOnly.text() must include(
-        "If this has changed, you must amend your group’s details to update the location of your entities before submitting a BTN."
+      viewUkOnly.text() must include(
+        "If this has changed, you must amend your group details to update the location of your entities before submitting a BTN."
       )
-      paragraphViewUkOnly.getElementsByTag("a").text         must include("amend your group’s details")
-      paragraphViewUkOnly.getElementsByTag("a").attr("href") must include("/report-pillar2-top-up-taxes/manage-account/account-details/summary")
 
-      paragraphViewUkAndOther.text() must include(
-        "If this has changed, you must amend your group’s details to update the location of your entities before submitting a BTN."
+      val linkUkOnly = viewUkOnly.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      linkUkOnly.text must include("Amend group details")
+      linkUkOnly.attr("href") must include(
+        "/report-pillar2-top-up-taxes/manage-account/account-details/summary"
       )
-      paragraphViewUkAndOther.getElementsByTag("a").text         must include("amend your group’s details")
-      paragraphViewUkAndOther.getElementsByTag("a").attr("href") must include("/report-pillar2-top-up-taxes/manage-account/account-details/summary")
+
+      viewUkAndOther.text() must include(
+        "If this has changed, you must amend your group details to update the location of your entities before submitting a BTN."
+      )
+
+      val linkUkAndOther = viewUkAndOther.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      linkUkAndOther.text must include("Amend group details")
+      linkUkAndOther.attr("href") must include(
+        "/report-pillar2-top-up-taxes/manage-account/account-details/summary"
+      )
     }
 
   }
