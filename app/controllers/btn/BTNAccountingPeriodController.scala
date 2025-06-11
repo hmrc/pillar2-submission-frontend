@@ -109,7 +109,8 @@ class BTNAccountingPeriodController @Inject() (
                   changeAccountingPeriodUrl,
                   request.isAgent,
                   request.organisationName,
-                  request.userAnswers.get(BTNChooseAccountingPeriodPage).isDefined
+                  request.userAnswers.get(BTNChooseAccountingPeriodPage).isDefined,
+                  filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).head == period
                 )
               )
             case _ =>
