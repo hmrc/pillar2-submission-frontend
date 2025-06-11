@@ -34,11 +34,12 @@
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
  @formHelper(action = controllers.btn.routes.CheckYourAnswersController.onSubmit) {
  @heading(messages("btn.cya.heading"), classes = "govuk-heading-l")
+ @paragraph(messages("btn.cya.p1"))
 
  @govukSummaryList(list)
 
- @heading(messages("btn.cya.p1"), classes = "govuk-heading-s", tier = "h3")
- @paragraph(messages("btn.cya.p2"))
+ @heading(messages("btn.cya.p2"), classes = "govuk-heading-s", tier = "h3")
+ @paragraph(messages("btn.cya.p3"))
 
  @govukButton(Button(
   element = Some("button"),

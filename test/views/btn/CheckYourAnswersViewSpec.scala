@@ -36,9 +36,14 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       view.getElementsByTag("h1").text mustEqual "Check your answers to submit your Below-Threshold Notification"
     }
 
-    "have a paragraph with a H2 heading" in {
-      view.getElementsByTag("h3").get(0).text mustEqual "Now submit your Below-Threshold Notification"
+    "have a paragraph" in {
       view.getElementsByClass("govuk-body").get(0).text mustEqual
+        "If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed."
+    }
+
+    "have a paragraph with a H3 heading" in {
+      view.getElementsByTag("h3").get(0).text mustEqual "Submit your Below-Threshold Notification"
+      view.getElementsByClass("govuk-body").get(1).text mustEqual
         "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
     }
 
