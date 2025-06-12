@@ -19,49 +19,67 @@ package views.btn
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
+import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 import views.html.btn.CheckYourAnswersView
 
 class CheckYourAnswersViewSpec extends ViewSpecBase {
 
   val page: CheckYourAnswersView = inject[CheckYourAnswersView]
-  val view: Document             = Jsoup.parse(page(btnCyaSummaryList)(request, appConfig, realMessagesApi.preferred(request)).toString())
+  def view(summaryList: SummaryList = btnCyaSummaryList): Document =
+    Jsoup.parse(page(summaryList)(request, appConfig, realMessagesApi.preferred(request)).toString())
 
   "CheckYourAnswersView" must {
 
     "have a title" in {
-      view.getElementsByTag("title").get(0).text mustEqual "Check Your Answers - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view().getElementsByTag("title").get(0).text mustEqual "Check Your Answers - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a H1 heading" in {
-      view.getElementsByTag("h1").text mustEqual "Check your answers to submit your Below-Threshold Notification"
+      view().getElementsByTag("h1").text mustEqual "Check your answers to submit your Below-Threshold Notification"
     }
 
     "have a paragraph" in {
-      view.getElementsByClass("govuk-body").get(0).text mustEqual
+      view().getElementsByClass("govuk-body").get(0).text mustEqual
         "If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed."
     }
 
     "have a paragraph with a H3 heading" in {
-      view.getElementsByTag("h3").get(0).text mustEqual "Submit your Below-Threshold Notification"
-      view.getElementsByClass("govuk-body").get(1).text mustEqual
+      view().getElementsByTag("h3").get(0).text mustEqual "Submit your Below-Threshold Notification"
+      view().getElementsByClass("govuk-body").get(1).text mustEqual
         "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
     }
 
     "have the correct summary list" should {
       "have a summary list keys" in {
-        view.getElementsByClass("govuk-summary-list__key").get(0).text mustEqual "Group’s accounting period"
-        view.getElementsByClass("govuk-summary-list__key").get(1).text mustEqual
+        view().getElementsByClass("govuk-summary-list__key").get(0).text mustEqual "Group’s accounting period"
+        view().getElementsByClass("govuk-summary-list__key").get(1).text mustEqual
           "Are the entities still located in both the UK and outside the UK?"
       }
 
       "have a summary list items" in {
-        view.getElementsByClass("govuk-summary-list__value").get(0).text mustEqual "Start date: 24 October 2024 End date: 24 October 2025"
-        view.getElementsByClass("govuk-summary-list__value").get(1).text mustEqual "Yes"
+        view().getElementsByClass("govuk-summary-list__value").get(0).text mustEqual "Start date: 24 October 2024 End date: 24 October 2025"
+        view().getElementsByClass("govuk-summary-list__value").get(1).text mustEqual "Yes"
+      }
+
+      "have a summary list actions when applicable" in {
+        val summaryListWithMultipleAccountingPeriods = SummaryListViewModel(
+          rows = Seq(
+            SubAccountingPeriodSummary.row(accountingPeriod, multipleAccountingPeriods = true),
+            BTNEntitiesInsideOutsideUKSummary.row(validBTNCyaUa)
+          ).flatten
+        ).withCssClass("govuk-!-margin-bottom-9")
+
+        view().getElementsByClass("govuk-summary-list__actions").text must not include "Change group’s accounting period"
+        view(summaryList = summaryListWithMultipleAccountingPeriods).getElementsByClass("govuk-summary-list__actions").text must include(
+          "Change group’s accounting period"
+        )
       }
     }
 
     "have a 'Confirm and submit' button" in {
-      view.getElementsByClass("govuk-button").text mustEqual "Confirm and submit"
+      view().getElementsByClass("govuk-button").text mustEqual "Confirm and submit"
     }
 
   }

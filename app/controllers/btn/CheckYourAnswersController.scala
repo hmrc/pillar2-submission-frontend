@@ -62,9 +62,10 @@ class CheckYourAnswersController @Inject() (
           entitiesInOut <- userAnswers.get(EntitiesInsideOutsideUKPage)
         } yield
           if (entitiesInOut) {
+            val multipleAccountingPeriods = request.userAnswers.get(BTNChooseAccountingPeriodPage).isDefined
             val summaryList = SummaryListViewModel(
               rows = Seq(
-                SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod),
+                SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod, multipleAccountingPeriods),
                 BTNEntitiesInsideOutsideUKSummary.row(userAnswers)
               ).flatten
             ).withCssClass("govuk-!-margin-bottom-9")
@@ -77,7 +78,8 @@ class CheckYourAnswersController @Inject() (
     }
 
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val subAccountingPeriod: AccountingPeriod = request.subscriptionLocalData.subAccountingPeriod
+    val subAccountingPeriod: AccountingPeriod =
+      request.subscriptionLocalData.subAccountingPeriod //TODO: New logic needed for accounting period details
     val btnPayload = BTNRequest(
       accountingPeriodFrom = subAccountingPeriod.startDate,
       accountingPeriodTo = subAccountingPeriod.endDate

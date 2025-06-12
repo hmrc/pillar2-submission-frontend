@@ -197,6 +197,7 @@ btn.accountingPeriod.link = update your group’s accounting period dates
 btn.accountingPeriod.agent.link = update the group’s accounting period dates
 btn.accountingPeriod.p2 =  before continuing.
 btn.accountingPeriod.checkYourAnswersLabel = Group’s accounting period
+btn.accountingPeriod.change.hidden = group’s accounting period
 btn.accountingPeriod.checkYourAnswersPrefix.startDate = Start date:
 btn.accountingPeriod.checkYourAnswersPrefix.endDate = End date:
 
