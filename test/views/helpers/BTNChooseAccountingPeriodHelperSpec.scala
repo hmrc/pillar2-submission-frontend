@@ -46,7 +46,7 @@ class BTNChooseAccountingPeriodHelperSpec extends AnyFreeSpec with Matchers {
     }
 
     "must select the correct item as checked when form is bound" in {
-      val boundForm = form.bind(Map("chooseAccountingPeriod" -> "1"))
+      val boundForm = form.bind(Map("value" -> "1"))
       val result    = BTNChooseAccountingPeriodHelper.radioButtons(boundForm, data)
 
       result.find(_.value.contains("0")).get.checked shouldBe false

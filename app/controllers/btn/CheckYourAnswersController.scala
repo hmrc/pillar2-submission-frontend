@@ -80,7 +80,7 @@ class CheckYourAnswersController @Inject() (
 
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val subAccountingPeriod: AccountingPeriod =
-      request.subscriptionLocalData.subAccountingPeriod //TODO: New logic needed for accounting period details
+      request.subscriptionLocalData.subAccountingPeriod
     val btnPayload = BTNRequest(
       accountingPeriodFrom = subAccountingPeriod.startDate,
       accountingPeriodTo = subAccountingPeriod.endDate
