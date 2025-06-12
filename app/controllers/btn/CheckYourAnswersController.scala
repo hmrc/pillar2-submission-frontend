@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes._
+import models.MneOrDomestic.Uk
 import models.audit.ApiResponseData
 import models.btn.{BTNRequest, BTNStatus}
 import models.subscription.AccountingPeriod
@@ -66,7 +67,7 @@ class CheckYourAnswersController @Inject() (
             val summaryList = SummaryListViewModel(
               rows = Seq(
                 SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod, multipleAccountingPeriods),
-                BTNEntitiesInsideOutsideUKSummary.row(userAnswers)
+                BTNEntitiesInsideOutsideUKSummary.row(userAnswers, request.subscriptionLocalData.subMneOrDomestic == Uk)
               ).flatten
             ).withCssClass("govuk-!-margin-bottom-9")
 

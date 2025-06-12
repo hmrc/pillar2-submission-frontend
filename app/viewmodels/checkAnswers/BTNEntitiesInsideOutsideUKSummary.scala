@@ -24,17 +24,32 @@ import viewmodels.implicits._
 
 object BTNEntitiesInsideOutsideUKSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(EntitiesInsideOutsideUKPage).map { answer =>
-      val value = if (answer) "site.yes" else "site.no"
+  def row(answers: UserAnswers, ukOnly: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+    if (ukOnly) {
+      answers.get(EntitiesInsideOutsideUKPage).map { answer =>
+        val value = if (answer) "site.yes" else "site.no"
 
-      SummaryListRowViewModel(
-        key = "btn.entitiesInsideOutsideUK.checkYourAnswersLabel",
-        value = ValueViewModel(value),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("btn.entitiesInsideOutsideUK.change.hidden"))
+        SummaryListRowViewModel(
+          key = "btn.entitiesInsideOutsideUK.checkYourAnswersLabel.uk",
+          value = ValueViewModel(value),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.btn.routes.BTNEntitiesInUKOnlyController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("btn.entitiesInsideOutsideUK.change.hidden.uk"))
+          )
         )
-      )
+      }
+    } else {
+      answers.get(EntitiesInsideOutsideUKPage).map { answer =>
+        val value = if (answer) "site.yes" else "site.no"
+
+        SummaryListRowViewModel(
+          key = "btn.entitiesInsideOutsideUK.checkYourAnswersLabel",
+          value = ValueViewModel(value),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("btn.entitiesInsideOutsideUK.change.hidden"))
+          )
+        )
+      }
     }
 }

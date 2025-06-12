@@ -47,7 +47,7 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
   def btnCyaSummaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(
     rows = Seq(
       SubAccountingPeriodSummary.row(accountingPeriod, multipleAccountingPeriods = false),
-      BTNEntitiesInsideOutsideUKSummary.row(validBTNCyaUa)
+      BTNEntitiesInsideOutsideUKSummary.row(validBTNCyaUa, ukOnly = true)
     ).flatten
   ).withCssClass("govuk-!-margin-bottom-9")
 
