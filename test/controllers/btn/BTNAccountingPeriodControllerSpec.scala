@@ -106,7 +106,8 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
             appConfig.changeAccountingPeriodUrl,
             isAgent = false,
             "orgName",
-            hasMultipleAccountingPeriods = false
+            hasMultipleAccountingPeriods = false,
+            currentAP = true
           )(
             request,
             appConfig(application),
@@ -140,7 +141,8 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
             appConfig.changeAccountingPeriodUrl,
             isAgent = false,
             "orgName",
-            hasMultipleAccountingPeriods = true
+            hasMultipleAccountingPeriods = true,
+            currentAP = false
           )(
             request,
             appConfig(application),

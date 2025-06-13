@@ -39,9 +39,9 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
   )
 
   val page: BTNAccountingPeriodView = inject[BTNAccountingPeriodView]
-  def view(isAgent: Boolean = false, hasMultipleAccountingPeriods: Boolean = false): Document =
+  def view(isAgent: Boolean = false, hasMultipleAccountingPeriods: Boolean = false, currentAP: Boolean = true): Document =
     Jsoup.parse(
-      page(list, NormalMode, "test-url", isAgent, "orgName", hasMultipleAccountingPeriods)(request, appConfig, messages).toString()
+      page(list, NormalMode, "test-url", isAgent, "orgName", hasMultipleAccountingPeriods, currentAP)(request, appConfig, messages).toString()
     )
 
   "BTNAccountingPeriodView" when {
@@ -74,7 +74,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         )
       }
 
-      "have a paragraph with link" in {
+      "have a paragraph with link if it's the current accounting period" in {
         val link = view().getElementsByClass("govuk-body").last().getElementsByTag("a")
         view().getElementsByTag("p").text must include(
           "If the accounting period dates are wrong,"
@@ -82,6 +82,18 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         link.text         must include("update your group’s accounting period dates")
         link.attr("href") must include("test-url")
         view().getElementsByTag("p").text must include(
+          "before continuing."
+        )
+      }
+
+      "not have a paragraph with link if it's a previous accounting period" in {
+        val link = view(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByClass("govuk-body").last().getElementsByTag("a")
+        view(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByTag("p").text mustNot include(
+          "If the accounting period dates are wrong,"
+        )
+        link.text mustNot include("update your group’s accounting period dates")
+        link.attr("href") mustNot include("test-url")
+        view(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByTag("p").text mustNot include(
           "before continuing."
         )
       }
@@ -125,7 +137,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         )
       }
 
-      "have a paragraph with link" in {
+      "have a paragraph with link if it's the current accounting period" in {
         val link = view(isAgent = true).getElementsByClass("govuk-body").last().getElementsByTag("a")
         view(isAgent = true).getElementsByTag("p").text must include(
           "If the accounting period dates are wrong,"
@@ -133,6 +145,19 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         link.text         must include("update the group’s accounting period dates")
         link.attr("href") must include("test-url")
         view(isAgent = true).getElementsByTag("p").text must include(
+          "before continuing."
+        )
+      }
+
+      "not have a paragraph with link if it's a previous accounting period" in {
+        val link =
+          view(isAgent = true, hasMultipleAccountingPeriods = true, currentAP = false).getElementsByClass("govuk-body").last().getElementsByTag("a")
+        view(isAgent = true, hasMultipleAccountingPeriods = true, currentAP = false).getElementsByTag("p").text mustNot include(
+          "If the accounting period dates are wrong,"
+        )
+        link.text mustNot include("update the group’s accounting period dates")
+        link.attr("href") mustNot include("test-url")
+        view(isAgent = true, hasMultipleAccountingPeriods = true, currentAP = false).getElementsByTag("p").text mustNot include(
           "before continuing."
         )
       }

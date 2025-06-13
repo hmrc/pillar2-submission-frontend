@@ -31,6 +31,6 @@ object BTNChooseAccountingPeriodHelper {
       id = Some(s"radio_${indexedAccountingPeriod._2}"),
       value = Some(indexedAccountingPeriod._2.toString),
       content = Text(indexedAccountingPeriod._1.formattedDates),
-      checked = form("chooseAccountingPeriod").value.contains(indexedAccountingPeriod._2.toString)
+      checked = form("value").value.contains(indexedAccountingPeriod._2.toString)
     )
 }

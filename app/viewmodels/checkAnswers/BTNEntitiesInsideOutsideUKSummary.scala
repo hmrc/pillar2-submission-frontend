@@ -19,22 +19,38 @@ import models.{CheckMode, UserAnswers}
 import pages.EntitiesInsideOutsideUKPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import utils.Constants.{SITE_CHANGE, SITE_NO, SITE_YES}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object BTNEntitiesInsideOutsideUKSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(EntitiesInsideOutsideUKPage).map { answer =>
-      val value = if (answer) "site.yes" else "site.no"
+  def row(answers: UserAnswers, ukOnly: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+    if (ukOnly) {
+      answers.get(EntitiesInsideOutsideUKPage).map { answer =>
+        val value = if (answer) SITE_YES else SITE_NO
 
-      SummaryListRowViewModel(
-        key = "btn.entitiesInsideOutsideUK.checkYourAnswersLabel",
-        value = ValueViewModel(value),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("btn.entitiesInsideOutsideUK.change.hidden"))
+        SummaryListRowViewModel(
+          key = "btn.entitiesInsideOutsideUK.checkYourAnswersLabel.uk",
+          value = ValueViewModel(value),
+          actions = Seq(
+            ActionItemViewModel(SITE_CHANGE, controllers.btn.routes.BTNEntitiesInUKOnlyController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("btn.entitiesInsideOutsideUK.change.hidden.uk"))
+          )
         )
-      )
+      }
+    } else {
+      answers.get(EntitiesInsideOutsideUKPage).map { answer =>
+        val value = if (answer) SITE_YES else SITE_NO
+
+        SummaryListRowViewModel(
+          key = "btn.entitiesInsideOutsideUK.checkYourAnswersLabel",
+          value = ValueViewModel(value),
+          actions = Seq(
+            ActionItemViewModel(SITE_CHANGE, controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("btn.entitiesInsideOutsideUK.change.hidden"))
+          )
+        )
+      }
     }
 }

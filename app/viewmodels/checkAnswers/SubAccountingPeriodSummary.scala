@@ -16,10 +16,12 @@
 
 package viewmodels.checkAnswers
 
+import models.CheckMode
 import models.subscription.AccountingPeriod
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import utils.Constants.SITE_CHANGE
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -28,21 +30,40 @@ object SubAccountingPeriodSummary {
 
   private val viewHelpers = new ViewHelpers()
 
-  def row(accountingPeriod: AccountingPeriod)(implicit messages: Messages): Option[SummaryListRow] = {
+  def row(accountingPeriod: AccountingPeriod, multipleAccountingPeriods: Boolean)(implicit messages: Messages): Option[SummaryListRow] = {
     val startDate = viewHelpers.formatDateGDS(accountingPeriod.startDate)
     val endDate   = viewHelpers.formatDateGDS(accountingPeriod.endDate)
 
-    Some(
-      SummaryListRowViewModel(
-        key = "btn.accountingPeriod.checkYourAnswersLabel",
-        value = ValueViewModel(
-          content = HtmlContent(
-            s"""${messages("btn.accountingPeriod.checkYourAnswersPrefix.startDate")} $startDate<br>
+    if (multipleAccountingPeriods) {
+      Some(
+        SummaryListRowViewModel(
+          key = "btn.accountingPeriod.checkYourAnswersLabel",
+          value = ValueViewModel(
+            content = HtmlContent(
+              s"""${messages("btn.accountingPeriod.checkYourAnswersPrefix.startDate")} $startDate<br>
                  |${messages("btn.accountingPeriod.checkYourAnswersPrefix.endDate")} $endDate
                  |""".stripMargin
+            )
+          ),
+          actions = Seq(
+            ActionItemViewModel(SITE_CHANGE, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("btn.accountingPeriod.change.hidden"))
           )
         )
       )
-    )
+    } else {
+      Some(
+        SummaryListRowViewModel(
+          key = "btn.accountingPeriod.checkYourAnswersLabel",
+          value = ValueViewModel(
+            content = HtmlContent(
+              s"""${messages("btn.accountingPeriod.checkYourAnswersPrefix.startDate")} $startDate<br>
+                 |${messages("btn.accountingPeriod.checkYourAnswersPrefix.endDate")} $endDate
+                 |""".stripMargin
+            )
+          )
+        )
+      )
+    }
   }
 }

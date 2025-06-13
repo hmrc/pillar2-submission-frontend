@@ -102,6 +102,11 @@ class BTNAccountingPeriodController @Inject() (
                 )
               )
             case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Open) =>
+              val currentYear = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails) match {
+                case head :: _ if head == period => true
+                case _                           => false
+              }
+
               Ok(
                 accountingPeriodView(
                   getSummaryList(period.startDate, period.endDate),
@@ -109,7 +114,8 @@ class BTNAccountingPeriodController @Inject() (
                   changeAccountingPeriodUrl,
                   request.isAgent,
                   request.organisationName,
-                  request.userAnswers.get(BTNChooseAccountingPeriodPage).isDefined
+                  request.userAnswers.get(BTNChooseAccountingPeriodPage).isDefined,
+                  currentYear
                 )
               )
             case _ =>
