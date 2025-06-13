@@ -21,6 +21,7 @@ import models.subscription.AccountingPeriod
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import utils.Constants.SITE_CHANGE
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -45,7 +46,7 @@ object SubAccountingPeriodSummary {
             )
           ),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(CheckMode).url)
+            ActionItemViewModel(SITE_CHANGE, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("btn.accountingPeriod.change.hidden"))
           )
         )
