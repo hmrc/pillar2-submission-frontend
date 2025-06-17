@@ -17,6 +17,7 @@
 package controllers.btn
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import controllers.btn.routes._
 import forms.BTNEntitiesInsideOutsideUKFormProvider
 import models.{MneOrDomestic, NormalMode, UserAnswers}
@@ -24,6 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.EntitiesInsideOutsideUKPage
+import play.api.Application
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -43,11 +45,15 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
 
   lazy val entitiesInsideOutsideUKRoute: String = BTNEntitiesInsideOutsideUKController.onPageLoad(NormalMode).url
 
+  def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
+    .overrides(
+      bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+    )
+    .build()
+
   "EntitiesBothInUKAndOutsideController" when {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, entitiesInsideOutsideUKRoute)
@@ -57,7 +63,11 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val view = application.injector.instanceOf[BTNEntitiesInsideOutsideUKView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(form, isAgent = false, "orgName", NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -65,7 +75,11 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
 
       val userAnswers = UserAnswers(userAnswersId).set(EntitiesInsideOutsideUKPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, entitiesInsideOutsideUKRoute)
@@ -75,23 +89,15 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), isAgent = false, "orgName", NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
     "must redirect to the CheckYourAnswers page when answer is Yes and valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
       running(application) {
         val request =
           FakeRequest(POST, entitiesInsideOutsideUKRoute)
@@ -105,12 +111,15 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must redirect to a knockback page when a BTN is submitted" in {
-      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(submittedBTNRecord))
 
-      val application =
-        applicationBuilder()
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
+      val application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(submittedBTNRecord))
 
       running(application) {
         val request = FakeRequest(GET, entitiesInsideOutsideUKRoute)
@@ -122,9 +131,6 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
       running(application) {
         val request =
           FakeRequest(POST, entitiesInsideOutsideUKRoute)
@@ -137,7 +143,27 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, isAgent = false, "orgName", NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must redirect to BTN specific error page when subscription data is not returned" in {
+      val application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, entitiesInsideOutsideUKRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
       }
     }
 

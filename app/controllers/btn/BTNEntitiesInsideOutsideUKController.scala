@@ -36,9 +36,8 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
   sessionRepository:                      SessionRepository,
   navigator:                              BTNNavigator,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  getData:                                DataRetrievalAction,
-  requireData:                            DataRequiredAction,
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
+  requireSubscriptionData:                SubscriptionDataRequiredAction,
   btnStatus:                              BTNStatusAction,
   formProvider:                           BTNEntitiesInsideOutsideUKFormProvider,
   val controllerComponents:               MessagesControllerComponents,
@@ -48,22 +47,23 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen btnStatus.dataRequest) { implicit request =>
-    val form = formProvider()
-    val preparedForm = request.userAnswers.get(EntitiesInsideOutsideUKPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest) { implicit request =>
+      val form = formProvider()
+      val preparedForm = request.userAnswers.get(EntitiesInsideOutsideUKPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+
+      Ok(view(preparedForm, request.isAgent, request.organisationName, mode))
     }
 
-    Ok(view(preparedForm, mode))
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
     val form = formProvider()
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, request.isAgent, request.organisationName, mode))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EntitiesInsideOutsideUKPage, value))
