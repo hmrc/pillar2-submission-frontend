@@ -91,7 +91,7 @@ class BTNAccountingPeriodController @Inject() (
 
         accountingPeriodDetails
           .map {
-            case period if !accountStatus && period.obligations.exists(_.submissions.exists(_.submissionType == BTN)) =>
+            case period if !accountStatus && period.obligations.exists(_.submissions.exists(_.exists(_.submissionType == BTN))) =>
               Ok(btnAlreadyInPlaceView())
             case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Fulfilled) =>
               Ok(

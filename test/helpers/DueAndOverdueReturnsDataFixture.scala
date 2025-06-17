@@ -41,7 +41,7 @@ trait DueAndOverdueReturnsDataFixture {
       obligationType = obligationType,
       status = status,
       canAmend = canAmend,
-      submissions = Seq.empty
+      submissions = None
     )
 
   def createAccountingPeriod(

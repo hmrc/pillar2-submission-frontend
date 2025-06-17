@@ -100,7 +100,7 @@ trait SpecBase
             obligationType = ObligationType.UKTR,
             status = status,
             canAmend = false,
-            submissions = Seq.empty
+            submissions = None
           )
         )
       )
@@ -120,7 +120,7 @@ trait SpecBase
             obligationType = ObligationType.UKTR,
             status = Open,
             canAmend = false,
-            submissions = Seq.empty
+            submissions = None
           )
         )
       ),
@@ -134,7 +134,7 @@ trait SpecBase
             obligationType = ObligationType.UKTR,
             status = Open,
             canAmend = false,
-            submissions = Seq.empty
+            submissions = None
           )
         )
       )

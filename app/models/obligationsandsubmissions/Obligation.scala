@@ -19,7 +19,7 @@ package models.obligationsandsubmissions
 import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 import play.api.libs.json._
 
-case class Obligation(obligationType: ObligationType, status: ObligationStatus, canAmend: Boolean, submissions: Seq[Submission])
+case class Obligation(obligationType: ObligationType, status: ObligationStatus, canAmend: Boolean, submissions: Option[Seq[Submission]])
 
 object Obligation {
   implicit val format: OFormat[Obligation] = Json.format[Obligation]

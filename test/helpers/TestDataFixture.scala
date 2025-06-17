@@ -74,8 +74,10 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
                 obligationType = obligationType,
                 status = status,
                 canAmend = canAmend,
-                submissions = Seq(
-                  Submission(submissionType = submissionType, receivedDate = receivedDate, country = country)
+                submissions = Some(
+                  Seq(
+                    Submission(submissionType = submissionType, receivedDate = receivedDate, country = country)
+                  )
                 )
               )
             )

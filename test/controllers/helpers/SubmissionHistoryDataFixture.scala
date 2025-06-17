@@ -38,16 +38,18 @@ trait SubmissionHistoryDataFixture {
             UKTR,
             Fulfilled,
             canAmend = true,
-            Seq(
-              Submission(
-                UKTR_CREATE,
-                ZonedDateTime.now,
-                None
-              ),
-              Submission(
-                UKTR_CREATE,
-                ZonedDateTime.now,
-                None
+            Some(
+              Seq(
+                Submission(
+                  UKTR_CREATE,
+                  ZonedDateTime.now,
+                  None
+                ),
+                Submission(
+                  UKTR_CREATE,
+                  ZonedDateTime.now,
+                  None
+                )
               )
             )
           )
@@ -63,11 +65,13 @@ trait SubmissionHistoryDataFixture {
             UKTR,
             Fulfilled,
             canAmend = true,
-            Seq(
-              Submission(
-                UKTR_CREATE,
-                ZonedDateTime.now,
-                None
+            Some(
+              Seq(
+                Submission(
+                  UKTR_CREATE,
+                  ZonedDateTime.now,
+                  None
+                )
               )
             )
           )

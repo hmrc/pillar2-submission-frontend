@@ -32,7 +32,10 @@ object SubmissionHistoryHelper {
     accountingPeriods
       .filter(accountPeriod => accountPeriod.obligations.flatMap(_.submissions).nonEmpty)
       .map { periodsWithSubmissions =>
-        val rows = periodsWithSubmissions.obligations.flatMap(_.submissions).map(createTableRows)
+        val rows = periodsWithSubmissions.obligations
+          .flatMap(_.submissions.getOrElse(Seq.empty))
+          .map(createTableRows)
+
         createTable(periodsWithSubmissions.startDate, periodsWithSubmissions.endDate, rows)
       }
 

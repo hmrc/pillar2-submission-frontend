@@ -54,7 +54,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
   val dates: AccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
   val dateHelper = new ViewHelpers()
 
-  val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, Seq.empty))
+  val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, None))
   val chosenAccountPeriod: AccountingPeriodDetails = AccountingPeriodDetails(
     LocalDate.now.minusYears(2),
     LocalDate.now.minusYears(1),
@@ -253,7 +253,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         LocalDate.now(),
         LocalDate.now().plusYears(1),
         underEnquiry = false,
-        Seq(Obligation(UKTR, Fulfilled, canAmend = true, Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None))))
+        Seq(Obligation(UKTR, Fulfilled, canAmend = true, Some(Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None)))))
       )
 
       when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))

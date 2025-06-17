@@ -47,7 +47,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
   val plrReference     = "testPlrRef"
   val organisationName = "orgName"
-  val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, Seq.empty))
+  val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, None))
 
   val obligationsAndSubmissionsSuccess: ObligationsAndSubmissionsSuccess =
     ObligationsAndSubmissionsSuccess(

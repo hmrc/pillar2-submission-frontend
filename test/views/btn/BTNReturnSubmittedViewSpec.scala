@@ -53,7 +53,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
     accountingPeriodEndDate,
     LocalDate.now().plusYears(1),
     underEnquiry = false,
-    Seq(Obligation(UKTR, Fulfilled, canAmend = true, Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None))))
+    Seq(Obligation(UKTR, Fulfilled, canAmend = true, Some(Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None)))))
   )
 
   val formattedStartDate: String = accountingPeriodStartDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))

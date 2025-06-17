@@ -43,9 +43,9 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
       val submission1 = Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now, None)
       val submission2 = Submission(SubmissionType.GIR, ZonedDateTime.now, None)
 
-      val obligation1 = Obligation(ObligationType.UKTR, Open, canAmend = true, Seq(submission1, submission2))
-      val obligation2 = Obligation(ObligationType.GIR, Fulfilled, canAmend = false, Seq(submission1))
-      val obligation3 = Obligation(ObligationType.UKTR, Open, canAmend = true, Seq.empty)
+      val obligation1 = Obligation(ObligationType.UKTR, Open, canAmend = true, Some(Seq(submission1, submission2)))
+      val obligation2 = Obligation(ObligationType.GIR, Fulfilled, canAmend = false, Some(Seq(submission1)))
+      val obligation3 = Obligation(ObligationType.UKTR, Open, canAmend = true, None)
 
       val accountingPeriods = Seq(
         AccountingPeriodDetails(startDate1, endDate1, LocalDate.now, underEnquiry = false, Seq(obligation1)),

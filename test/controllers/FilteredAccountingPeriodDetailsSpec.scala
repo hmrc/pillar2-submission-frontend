@@ -30,7 +30,7 @@ class FilteredAccountingPeriodDetailsSpec extends AnyFreeSpec with Matchers {
   private def minusYears(amountOfYears: Int) = LocalDate.now.minusYears(amountOfYears)
   private def plusYears(amountOfYears: Int)  = LocalDate.now.plusYears(amountOfYears)
 
-  private val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, Seq.empty))
+  private val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, None))
 
   private val unfilteredList: Seq[AccountingPeriodDetails] = Seq(
     AccountingPeriodDetails(minusYears(1), now, plusYears(1), underEnquiry = false, obligationData),
