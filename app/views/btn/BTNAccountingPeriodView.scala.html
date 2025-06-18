@@ -30,7 +30,7 @@
         formHelper: FormWithCSRF,
 )
 
-@(list: SummaryList, mode: Mode, changeAccountingPeriodUrl: String, isAgent: Boolean, organisationName: String, hasMultipleAccountingPeriods: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList, mode: Mode, changeAccountingPeriodUrl: String, isAgent: Boolean, organisationName: String, hasMultipleAccountingPeriods: Boolean, currentAP: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle = titleNoForm(messages("btn.accountingPeriod.title"))
 ) {
@@ -54,10 +54,12 @@
           @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.selectAccountingPeriodLink"), linkUrl = controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url)
         }
 
-        @if(isAgent) {
-          @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.agent.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
-        } else {
-          @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
+        @if(currentAP) {
+            @if(isAgent) {
+                @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.agent.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
+            } else {
+                @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
+            }
         }
 
         @govukButton(

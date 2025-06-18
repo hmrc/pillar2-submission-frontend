@@ -17,51 +17,191 @@
 package views.btn
 
 import base.ViewSpecBase
+import models.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
+import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 import views.html.btn.CheckYourAnswersView
 
 class CheckYourAnswersViewSpec extends ViewSpecBase {
 
+  def summaryListCYA(multipleAccountingPeriods: Boolean = false, ukOnlyEntities: Boolean = false): SummaryList = SummaryListViewModel(
+    rows = Seq(
+      SubAccountingPeriodSummary.row(accountingPeriod, multipleAccountingPeriods = multipleAccountingPeriods),
+      BTNEntitiesInsideOutsideUKSummary.row(validBTNCyaUa, ukOnly = ukOnlyEntities)
+    ).flatten
+  ).withCssClass("govuk-!-margin-bottom-9")
+
   val page: CheckYourAnswersView = inject[CheckYourAnswersView]
-  val view: Document             = Jsoup.parse(page(btnCyaSummaryList)(request, appConfig, realMessagesApi.preferred(request)).toString())
+  def view(summaryList: SummaryList = summaryListCYA()): Document =
+    Jsoup.parse(page(summaryList)(request, appConfig, realMessagesApi.preferred(request)).toString())
 
   "CheckYourAnswersView" must {
 
     "have a title" in {
-      view.getElementsByTag("title").get(0).text mustEqual "Check Your Answers - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view().getElementsByTag("title").get(0).text mustEqual "Check Your Answers - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a H1 heading" in {
-      view.getElementsByTag("h1").text mustEqual "Check your answers to submit your Below-Threshold Notification"
+      view().getElementsByTag("h1").text mustEqual "Check your answers to submit your Below-Threshold Notification"
     }
 
     "have a paragraph" in {
-      view.getElementsByClass("govuk-body").get(0).text mustEqual
+      view().getElementsByClass("govuk-body").get(0).text mustEqual
         "If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed."
     }
 
     "have a paragraph with a H3 heading" in {
-      view.getElementsByTag("h3").get(0).text mustEqual "Submit your Below-Threshold Notification"
-      view.getElementsByClass("govuk-body").get(1).text mustEqual
+      view().getElementsByTag("h3").get(0).text mustEqual "Submit your Below-Threshold Notification"
+      view().getElementsByClass("govuk-body").get(1).text mustEqual
         "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
     }
 
-    "have the correct summary list" should {
-      "have a summary list keys" in {
-        view.getElementsByClass("govuk-summary-list__key").get(0).text mustEqual "Group’s accounting period"
-        view.getElementsByClass("govuk-summary-list__key").get(1).text mustEqual
-          "Are the entities still located in both the UK and outside the UK?"
+    "have the correct summary list" when {
+      "UK only entities" should {
+
+        "have a summary list keys" in {
+          view(summaryList = summaryListCYA(ukOnlyEntities = true))
+            .getElementsByClass("govuk-summary-list__key")
+            .get(0)
+            .text mustEqual "Group’s accounting period"
+          view(summaryList = summaryListCYA(ukOnlyEntities = true)).getElementsByClass("govuk-summary-list__key").get(1).text mustEqual
+            "Are the entities still located only in the UK?"
+        }
+
+        "have a summary list items" in {
+          view(summaryList = summaryListCYA(ukOnlyEntities = true))
+            .getElementsByClass("govuk-summary-list__value")
+            .get(0)
+            .text mustEqual "Start date: 24 October 2024 End date: 24 October 2025"
+          view(summaryList = summaryListCYA(ukOnlyEntities = true)).getElementsByClass("govuk-summary-list__value").get(1).text mustEqual "Yes"
+        }
+
+        "have a summary list actions" when {
+          "single accounting period" in {
+            view(summaryList = summaryListCYA(ukOnlyEntities = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .text must not include "Change group’s accounting period"
+
+            view(summaryList = summaryListCYA(ukOnlyEntities = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(0)
+              .text mustBe "Change are the entities still located only in the UK?"
+
+            view(summaryList = summaryListCYA(ukOnlyEntities = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(0)
+              .getElementsByTag("a")
+              .attr("href") must include(
+              controllers.btn.routes.BTNEntitiesInUKOnlyController.onPageLoad(CheckMode).url
+            )
+          }
+
+          "multiple accounting periods" in {
+            view(summaryList = summaryListCYA(ukOnlyEntities = true, multipleAccountingPeriods = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(0)
+              .text must include(
+              "Change group’s accounting period"
+            )
+
+            view(summaryList = summaryListCYA(ukOnlyEntities = true, multipleAccountingPeriods = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(0)
+              .getElementsByTag("a")
+              .attr("href") must include(
+              controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(CheckMode).url
+            )
+
+            view(summaryList = summaryListCYA(ukOnlyEntities = true, multipleAccountingPeriods = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(1)
+              .text must include(
+              "Change are the entities still located only in the UK?"
+            )
+
+            view(summaryList = summaryListCYA(ukOnlyEntities = true, multipleAccountingPeriods = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(1)
+              .getElementsByTag("a")
+              .attr("href") must include(
+              controllers.btn.routes.BTNEntitiesInUKOnlyController.onPageLoad(CheckMode).url
+            )
+          }
+        }
       }
 
-      "have a summary list items" in {
-        view.getElementsByClass("govuk-summary-list__value").get(0).text mustEqual "Start date: 24 October 2024 End date: 24 October 2025"
-        view.getElementsByClass("govuk-summary-list__value").get(1).text mustEqual "Yes"
+      "when inside and outside UK entities" should {
+        "have a summary list keys" in {
+          view().getElementsByClass("govuk-summary-list__key").get(0).text mustEqual "Group’s accounting period"
+          view().getElementsByClass("govuk-summary-list__key").get(1).text mustEqual
+            "Are the entities still located in both the UK and outside the UK?"
+        }
+
+        "have a summary list items" in {
+          view().getElementsByClass("govuk-summary-list__value").get(0).text mustEqual "Start date: 24 October 2024 End date: 24 October 2025"
+          view().getElementsByClass("govuk-summary-list__value").get(1).text mustEqual "Yes"
+        }
+
+        "have a summary list actions" when {
+          "single accounting period" in {
+            view()
+              .getElementsByClass("govuk-summary-list__actions")
+              .text must not include "Change group’s accounting period"
+
+            view()
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(0)
+              .text mustBe "Change are the entities still located in both the UK and outside the UK?"
+
+            view()
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(0)
+              .getElementsByTag("a")
+              .attr("href") must include(
+              controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(CheckMode).url
+            )
+          }
+
+          "multiple accounting periods" in {
+            view(summaryList = summaryListCYA(multipleAccountingPeriods = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(0)
+              .text must include(
+              "Change group’s accounting period"
+            )
+
+            view(summaryList = summaryListCYA(multipleAccountingPeriods = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(0)
+              .getElementsByTag("a")
+              .attr("href") must include(
+              controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(CheckMode).url
+            )
+
+            view(summaryList = summaryListCYA(multipleAccountingPeriods = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(1)
+              .text must include(
+              "Change are the entities still located in both the UK and outside the UK?"
+            )
+
+            view(summaryList = summaryListCYA(multipleAccountingPeriods = true))
+              .getElementsByClass("govuk-summary-list__actions")
+              .get(1)
+              .getElementsByTag("a")
+              .attr("href") must include(
+              controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(CheckMode).url
+            )
+          }
+        }
       }
     }
 
     "have a 'Confirm and submit' button" in {
-      view.getElementsByClass("govuk-button").text mustEqual "Confirm and submit"
+      view().getElementsByClass("govuk-button").text mustEqual "Confirm and submit"
     }
 
   }
