@@ -179,7 +179,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val view = application.injector.instanceOf[BTNAmendDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(MneOrDomestic.Uk)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(MneOrDomestic.Uk, isAgent = false)(request, appConfig(application), messages(application)).toString
       }
     }
 
