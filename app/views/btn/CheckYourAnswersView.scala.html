@@ -29,10 +29,15 @@
     heading: Heading,
     paragraph: ParagraphBody,
 )
-@(list: SummaryList)(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList, isAgent: Boolean, organisationName: String)(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
  @formHelper(action = controllers.btn.routes.CheckYourAnswersController.onSubmit) {
+
+ @if(isAgent) {
+  <span class="govuk-caption-m">@organisationName</span>
+ }
+
  @heading(messages("btn.cya.heading"), classes = "govuk-heading-l")
  @paragraph(messages("btn.cya.p1"))
 
