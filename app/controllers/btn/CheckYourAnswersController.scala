@@ -71,7 +71,7 @@ class CheckYourAnswersController @Inject() (
               ).flatten
             ).withCssClass("govuk-!-margin-bottom-9")
 
-            Ok(view(summaryList))
+            Ok(view(summaryList, request.isAgent, request.organisationName))
           } else {
             Redirect(IndexController.onPageLoad)
           }).getOrElse(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
