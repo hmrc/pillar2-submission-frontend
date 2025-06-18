@@ -18,7 +18,7 @@ package helpers
 
 import play.api.i18n.DefaultLangs
 import uk.gov.hmrc.govukfrontend.views.html.components._
-import uk.gov.hmrc.govukfrontend.views.html.helpers.{GovukFormGroup, GovukHintAndErrorMessage}
+import uk.gov.hmrc.govukfrontend.views.html.helpers.{GovukFormGroup, GovukHintAndErrorMessage, GovukLogo}
 import uk.gov.hmrc.hmrcfrontend.config._
 import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardBetaBanner}
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
@@ -35,20 +35,32 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   lazy val tudorCrownConfig: TudorCrownConfig = TudorCrownConfig(configuration)
 
-  val govukHeader = new GovukHeader(tudorCrownConfig)
+  lazy val rebrandConfig: RebrandConfig = RebrandConfig(configuration)
 
-  val govukTemplate = new GovukTemplate(govukHeader, new GovukFooter, new GovukSkipLink, new FixedWidthPageLayout)
+  lazy val gokukLogo = new GovukLogo()
+
+  val govukHeader = new GovukHeader(tudorCrownConfig, rebrandConfig, gokukLogo)
+
+  val govukTemplate = new GovukTemplate(
+    govukHeader,
+    new GovukFooter(rebrandConfig = rebrandConfig, govukLogo = gokukLogo),
+    new GovukSkipLink,
+    new FixedWidthPageLayout,
+    rebrandConfig
+  )
 
   val hmrcStandardHeader = new HmrcStandardHeader(
     hmrcHeader = new HmrcHeader(
       hmrcBanner = new HmrcBanner(tudorCrownConfig),
       hmrcUserResearchBanner = new HmrcUserResearchBanner(),
       govukPhaseBanner = new GovukPhaseBanner(govukTag = new GovukTag()),
-      tudorCrownConfig = tudorCrownConfig
+      tudorCrownConfig = tudorCrownConfig,
+      rebrandConfig = rebrandConfig,
+      govukLogo = gokukLogo
     )
   )
   val hmrcStandardFooter = new HmrcStandardFooter(
-    new HmrcFooter(govukFooter = new GovukFooter),
+    new HmrcFooter(govukFooter = new GovukFooter(rebrandConfig = rebrandConfig, govukLogo = gokukLogo)),
     new HmrcFooterItems(new AccessibilityStatementConfig(configuration))
   )
 
@@ -98,7 +110,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val govukLayout = new GovukLayout(
     govukTemplate = govukTemplate,
     govukHeader = govukHeader,
-    govukFooter = new GovukFooter,
+    govukFooter = new GovukFooter(rebrandConfig = rebrandConfig, govukLogo = gokukLogo),
     govukBackLink = govukBackLink,
     defaultMainContentLayout = new TwoThirdsMainContent,
     fixedWidthPageLayout = new FixedWidthPageLayout
