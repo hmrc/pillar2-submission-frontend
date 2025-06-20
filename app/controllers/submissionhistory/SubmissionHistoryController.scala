@@ -16,46 +16,60 @@
 
 package controllers.submissionhistory
 
+import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions._
+import models.UserAnswers
+import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
+import play.api.i18n.Lang.logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.SubscriptionService
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
 import java.time.LocalDate
-import javax.inject.{Inject, Named}
-import scala.concurrent.ExecutionContext
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class SubmissionHistoryController @Inject() (
-  val controllerComponents:               MessagesControllerComponents,
-  obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
-  getSubscriptionData:                    SubscriptionDataRetrievalAction,
-  requireSubscriptionData:                SubscriptionDataRequiredAction,
-  view:                                   SubmissionHistoryView,
-  viewNoSubmissions:                      SubmissionHistoryNoSubmissionsView,
-  @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit ec:                            ExecutionContext, config: FrontendAppConfig)
+  val controllerComponents:         MessagesControllerComponents,
+  obligationsAndSubmissionsService: ObligationsAndSubmissionsService,
+  getData:                          DataRetrievalAction,
+  requireData:                      DataRequiredAction,
+  view:                             SubmissionHistoryView,
+  viewNoSubmissions:                SubmissionHistoryNoSubmissionsView,
+  subscriptionService:              SubscriptionService,
+  sessionRepository:                SessionRepository,
+  identify:                         IdentifierAction
+)(implicit ec:                      ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
-    val pillar2Id: String = request.subscriptionLocalData.plrReference
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    (for {
+      maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
+      userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))
+      maybeSubscriptionData <- OptionT.liftF(subscriptionService.getSubscriptionCache(request.userId))
+      updatedAnswers        <- OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, maybeSubscriptionData.plrReference)))
+      _                     <- OptionT.liftF(sessionRepository.set(updatedAnswers))
 
-    obligationsAndSubmissionsService
-      .handleData(
-        pillar2Id,
-        LocalDate.now.minusYears(SUBMISSION_ACCOUNTING_PERIODS),
-        LocalDate.now
-      )
-      .map {
-        case success if success.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty)) =>
-          Ok(view(success.accountingPeriodDetails, request.isAgent))
-        case _ => Ok(viewNoSubmissions(request.isAgent))
-      }
-      .recover { case _: Exception =>
+      fromDate  = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
+      toDate    = LocalDate.now()
+      pillar2Id = updatedAnswers.get(PlrReferencePage)
+      data <- OptionT.liftF(obligationsAndSubmissionsService.handleData(pillar2Id.get, fromDate, toDate))
+    } yield
+      if (data.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty))) {
+        Ok(view(data.accountingPeriodDetails, request.isAgent))
+      } else {
+        Ok(viewNoSubmissions(request.isAgent))
+      }).value
+      .map(_.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
+      .recover { case e =>
+        logger.error(s"Error calling obligationsAndSubmissionsService.handleData: ${e.getMessage}", e)
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
       }
   }
