@@ -66,8 +66,6 @@
             ButtonViewModel(messages("site.continue"))
         )
 
-        @if(isAgent) {
-            @paragraphMessageWithLink(linkMessage = messages("btn.alreadyInPlace.link"), linkUrl = controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url)
-        }
+        @paragraphMessageWithLink(linkMessage = messages("btn.returnSubmitted.link"), linkUrl = s"${appConfig.pillar2FrontendUrlHomepage}")
     }
 }

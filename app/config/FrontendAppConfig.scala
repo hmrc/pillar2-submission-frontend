@@ -46,6 +46,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val startPagePillar2SubmissionUrl: String = configuration.get[String]("urls.startPagePillar2Submission")
   val changeAccountingPeriodUrl:     String = configuration.get[String]("urls.changeAccountingPeriod")
   val pillar2FrontendUrl:            String = configuration.get[String]("urls.pillar2FrontendUrl")
+  val pillar2FrontendUrlHomepage:    String = configuration.get[String]("urls.pillar2FrontendUrlHomepage")
   lazy val enrolmentStoreProxyUrl: String =
     s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration
       .get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
