@@ -91,7 +91,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
         val link = view().getElementsByClass("govuk-body").last().getElementsByTag("a")
         link.text must include("Return to homepage")
         link.attr("href") must include(
-          "http://localhost:10050/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"
+          appConfig.pillar2FrontendUrlHomepage
         )
       }
 
@@ -130,7 +130,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
         val link = view(true).getElementsByClass("govuk-body").last().getElementsByTag("a")
         link.text must include("Return to homepage")
         link.attr("href") must include(
-          "http://localhost:10050/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"
+          appConfig.pillar2FrontendUrlHomepage
         )
       }
     }
