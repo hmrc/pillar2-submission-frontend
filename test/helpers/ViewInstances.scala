@@ -37,13 +37,13 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   lazy val rebrandConfig: RebrandConfig = RebrandConfig(configuration)
 
-  lazy val gokukLogo = new GovukLogo()
+  lazy val govukLogo = new GovukLogo()
 
-  val govukHeader = new GovukHeader(tudorCrownConfig, rebrandConfig, gokukLogo)
+  val govukHeader = new GovukHeader(tudorCrownConfig, rebrandConfig, govukLogo)
 
   val govukTemplate = new GovukTemplate(
     govukHeader,
-    new GovukFooter(rebrandConfig = rebrandConfig, govukLogo = gokukLogo),
+    new GovukFooter(rebrandConfig = rebrandConfig, govukLogo = govukLogo),
     new GovukSkipLink,
     new FixedWidthPageLayout,
     rebrandConfig
@@ -56,11 +56,11 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
       govukPhaseBanner = new GovukPhaseBanner(govukTag = new GovukTag()),
       tudorCrownConfig = tudorCrownConfig,
       rebrandConfig = rebrandConfig,
-      govukLogo = gokukLogo
+      govukLogo = govukLogo
     )
   )
   val hmrcStandardFooter = new HmrcStandardFooter(
-    new HmrcFooter(govukFooter = new GovukFooter(rebrandConfig = rebrandConfig, govukLogo = gokukLogo)),
+    new HmrcFooter(govukFooter = new GovukFooter(rebrandConfig = rebrandConfig, govukLogo = govukLogo)),
     new HmrcFooterItems(new AccessibilityStatementConfig(configuration))
   )
 
@@ -68,8 +68,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
 
   val assetsConfig = new AssetsConfig()
 
-  val hmrcScripts        = new HmrcScripts(assetsConfig)
-  val hmrcTimeoutDilogue = new HmrcTimeoutDialog
+  val hmrcScripts         = new HmrcScripts(assetsConfig)
+  val hmrcTimeoutDialogue = new HmrcTimeoutDialog
 
   val languageUtils = new LanguageUtils(new DefaultLangs(), configuration)
 
@@ -110,7 +110,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val govukLayout = new GovukLayout(
     govukTemplate = govukTemplate,
     govukHeader = govukHeader,
-    govukFooter = new GovukFooter(rebrandConfig = rebrandConfig, govukLogo = gokukLogo),
+    govukFooter = new GovukFooter(rebrandConfig = rebrandConfig, govukLogo = govukLogo),
     govukBackLink = govukBackLink,
     defaultMainContentLayout = new TwoThirdsMainContent,
     fixedWidthPageLayout = new FixedWidthPageLayout
@@ -123,7 +123,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     hmrcStandardHeader,
     hmrcStandardFooter,
     hmrcTrackingConsent,
-    hmrcTimeoutDilogue,
+    hmrcTimeoutDialogue,
     new HmrcReportTechnicalIssueHelper(new HmrcReportTechnicalIssue(), new ContactFrontendConfig(configuration)),
     hmrcScripts,
     new StandardBetaBanner,
