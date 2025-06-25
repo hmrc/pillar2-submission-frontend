@@ -227,10 +227,15 @@ btn.entitiesInsideOutsideUK.error.required.uk = Select yes if the group still ha
 btn.entitiesInsideOutsideUK.change.hidden = are the entities still located in both the UK and outside the UK?
 btn.entitiesInsideOutsideUK.change.hidden.uk = are the entities still located only in the UK?
 btn.entitiesInsideOutsideUK.amend.title = Based on your answer, you need to amend your details
+btn.entitiesInsideOutsideUK.amend.agent.title = Group details amend needed
 btn.entitiesInsideOutsideUK.amend.heading = Based on your answer, you need to amend your details
+btn.entitiesInsideOutsideUK.amend.agent.heading = Group details amend needed
 btn.entitiesInsideOutsideUK.amend.p1.ukAndOther = You reported that your group has entities both in and outside of the UK.
+btn.entitiesInsideOutsideUK.amend.agent.p1.ukAndOther = You reported that the group has entities both in and outside of the UK.
 btn.entitiesInsideOutsideUK.amend.p1.ukOnly = You reported that your group only has entities in the UK.
+btn.entitiesInsideOutsideUK.amend.agent.p1.ukOnly = You reported that the group only has entities in the UK.
 btn.entitiesInsideOutsideUK.amend.p2 = If this has changed, you must amend your group details to update the location of your entities before submitting a BTN.
+btn.entitiesInsideOutsideUK.amend.agent.p2 = If this has changed, you must amend the group details to update the location of the entities before submitting a BTN.
 btn.entitiesInsideOutsideUK.amend.link = Amend group details
 
 btn.cya.heading = Check your answers to submit your Below-Threshold Notification
