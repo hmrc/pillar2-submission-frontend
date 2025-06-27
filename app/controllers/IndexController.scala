@@ -17,41 +17,31 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.IndexView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject() (
   val controllerComponents:   MessagesControllerComponents,
-  override val authConnector: AuthConnector,
-  identify:                   IdentifierAction,
-  view:                       IndexView
+  override val authConnector: AuthConnector
 )(implicit appConfig:         FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with AuthorisedFunctions
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    Ok(view())
-  }
-
-  def onPageLoadBanner: Action[AnyContent] = Action.async { implicit request =>
+  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
     authorised(AuthProviders(GovernmentGateway))
       .retrieve(Retrievals.affinityGroup and Retrievals.allEnrolments) {
-        case Some(Organisation) ~ _ =>
-          Future successful Redirect(routes.IndexController.onPageLoad)
-        case Some(Agent) ~ _      => Future successful Redirect(appConfig.asaHomePageUrl)
         case Some(Individual) ~ _ => Future successful Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)
+        case Some(_) ~ _          => Future successful Redirect(appConfig.pillar2FrontendUrlHomepage)
       }
       .recover {
         case _: NoActiveSession =>
