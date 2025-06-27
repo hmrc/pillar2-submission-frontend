@@ -22,10 +22,11 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.Application
 import play.api.inject.bind
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.SubscriptionService
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
@@ -35,75 +36,63 @@ import scala.concurrent.Future
 
 class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with ScalaFutures with SubmissionHistoryDataFixture {
 
-  val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
+  lazy val application: Application =
+    applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+      .overrides(
+        bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+        bind[SubscriptionService].toInstance(mockSubscriptionService)
+      )
+      .build()
+
+  lazy val view:              SubmissionHistoryView              = application.injector.instanceOf[SubmissionHistoryView]
+  lazy val noSubmissionsView: SubmissionHistoryNoSubmissionsView = application.injector.instanceOf[SubmissionHistoryNoSubmissionsView]
 
   "SubmissionHistoryController" must {
 
     "return OK and render the SubmissionHistoryView when submissions are present" in {
       when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
         .thenReturn(Future.successful(submissionHistoryResponse))
+      when(mockSubscriptionService.getSubscriptionCache(any())(any[HeaderCarrier]))
+        .thenReturn(Future.successful(someSubscriptionLocalData))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-        .overrides(
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
+      val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
 
-      running(application) {
+      val result = route(application, request).value
 
-        val result = route(application, request).value
+      status(result) mustEqual OK
 
-        val view = application.injector.instanceOf[SubmissionHistoryView]
-
-        status(result) mustEqual OK
-
-        contentAsString(result) mustEqual view(submissionHistoryResponse.accountingPeriodDetails, isAgent = false)(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
-      }
+      contentAsString(result) mustEqual view(submissionHistoryResponse.accountingPeriodDetails, isAgent = false)(
+        request,
+        appConfig(application),
+        messages(application)
+      ).toString
     }
 
     "return OK and render the submissionHistoryNoSubmissionsView when no submissions are present" in {
       when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
         .thenReturn(Future.successful(submissionHistoryResponse.copy(accountingPeriodDetails = Seq.empty)))
+      when(mockSubscriptionService.getSubscriptionCache(any())(any[HeaderCarrier]))
+        .thenReturn(Future.successful(someSubscriptionLocalData))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-        .overrides(
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
+      val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
 
-      running(application) {
+      val result = route(application, request).value
 
-        val result = route(application, request).value
+      status(result) mustEqual OK
 
-        val view = application.injector.instanceOf[SubmissionHistoryNoSubmissionsView]
-
-        status(result) mustEqual OK
-
-        contentAsString(result) mustEqual view(isAgent = false)(request, appConfig(application), messages(application)).toString
-      }
+      contentAsString(result) mustEqual noSubmissionsView(isAgent = false)(request, appConfig(application), messages(application)).toString
     }
 
     "redirect to JourneyRecoveryController on exception" in {
       when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
         .thenReturn(Future.failed(new Exception("something went wrong")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-        .overrides(
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
+      val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
 
-      running(application) {
+      val result = route(application, request).value
 
-        val result = route(application, request).value
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad(None).url)
-      }
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad(None).url)
     }
   }
 }
