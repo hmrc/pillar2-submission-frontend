@@ -32,6 +32,6 @@
 
             @p(messages("btn.alreadyInPlace.p1"))
 
-            @paragraphMessageWithLink(linkMessage = messages("btn.alreadyInPlace.link"), linkUrl = controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url)
+            @paragraphMessageWithLink(linkMessage = messages("btn.alreadyInPlace.link"), linkUrl = s"${appConfig.pillar2FrontendUrlHomepage}")
   }
 }

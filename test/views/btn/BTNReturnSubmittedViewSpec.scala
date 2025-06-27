@@ -17,7 +17,6 @@
 package views.btn
 
 import base.ViewSpecBase
-import models.NormalMode
 import models.obligationsandsubmissions.ObligationStatus.Fulfilled
 import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
@@ -85,7 +84,15 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
       }
 
       "have a button" in {
-        view(isAgent = true).getElementsByClass("govuk-button").text must include("Continue")
+        view().getElementsByClass("govuk-button").text must include("Continue")
+      }
+
+      "have a link" in {
+        val link = view().getElementsByClass("govuk-body").last().getElementsByTag("a")
+        link.text must include("Return to homepage")
+        link.attr("href") must include(
+          appConfig.pillar2FrontendUrlHomepage
+        )
       }
 
     }
@@ -123,8 +130,8 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
         val link = view(true).getElementsByClass("govuk-body").last().getElementsByTag("a")
         link.text must include("Return to homepage")
         link.attr("href") must include(
-          controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url
-        ) //TODO: Change link when homepage built
+          appConfig.pillar2FrontendUrlHomepage
+        )
       }
     }
   }

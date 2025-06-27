@@ -210,6 +210,7 @@ btn.returnSubmitted.endAccountDate = End date of accounting period
 btn.returnSubmitted.p1 = If you continue, the Below-Threshold Notification you submit will replace the UK Tax Return you previously submitted for this accounting period.
 btn.returnSubmitted.agent.p1 = By continuing, the group’s UK Tax Return will be replaced for this period.
 btn.returnSubmitted.agent.insetText = If the group needs to submit a UK Tax Return for this accounting period they do not qualify for a Below-Threshold Notification.
+btn.returnSubmitted.link = Return to homepage
 
 btn.alreadyInPlace.title = The group has already submitted a Below-Threshold Notification for this accounting period
 btn.alreadyInPlace.heading = The group has already submitted a Below-Threshold Notification for this accounting period

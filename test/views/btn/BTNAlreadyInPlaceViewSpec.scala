@@ -17,7 +17,6 @@
 package views.btn
 
 import base.ViewSpecBase
-import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.btn.BTNAlreadyInPlaceView
@@ -47,8 +46,8 @@ class BTNAlreadyInPlaceViewSpec extends ViewSpecBase {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
       link.text must include("Return to homepage")
       link.attr("href") must include(
-        controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url
-      ) //TODO: Change link when homepage built
+        appConfig.pillar2FrontendUrlHomepage
+      )
     }
 
   }
