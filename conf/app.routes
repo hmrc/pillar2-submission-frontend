@@ -3,7 +3,6 @@
 ->          /hmrc-frontend                                                        hmrcfrontend.Routes
 
 GET         /                                                                     controllers.IndexController.onPageLoad
-GET         /banner                                                               controllers.IndexController.onPageLoadBanner
 
 GET         /assets/*file                                                         controllers.Assets.versioned(path="/public", file: Asset)
 
@@ -30,7 +29,6 @@ GET         /asa/error/system                                                   
 GET         /asa/error/not-authorised                                             controllers.AgentController.onPageLoadUnauthorised
 GET         /asa/error/individual                                                 controllers.AgentController.onPageLoadIndividualError
 GET         /asa/error/organisation                                               controllers.AgentController.onPageLoadOrganisationError
-GET         /asa/home                                                             controllers.ASAStubController.onPageLoad
 
 GET         /uk-tax-return                                                        controllers.uktr.UKTaxReturnStartController.onPageLoad
 GET         /below-threshold-notification/start                                   controllers.btn.BTNBeforeStartController.onPageLoad(mode: Mode = NormalMode)

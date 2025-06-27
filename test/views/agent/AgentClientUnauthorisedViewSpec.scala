@@ -46,7 +46,7 @@ class AgentClientUnauthorisedViewSpec extends ViewSpecBase {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
       link.text         must include("request authorisation to report and manage this client’s Pillar 2 Top-up Taxes")
-      link.attr("href") must include("/report-pillar2-submission-top-up-taxes/asa/home")
+      link.attr("href") must include("/report-pillar2-top-up-taxes/pillar2-top-up-tax-home")
     }
 
   }
