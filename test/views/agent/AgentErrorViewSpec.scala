@@ -46,7 +46,7 @@ class AgentErrorViewSpec extends ViewSpecBase {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
       link.text         must include("Return to your Agent Services Account")
-      link.attr("href") must include("/report-pillar2-submission-top-up-taxes/asa/home")
+      link.attr("href") must include("/report-pillar2-top-up-taxes/pillar2-top-up-tax-home")
     }
 
   }
