@@ -28,6 +28,7 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.SubscriptionService
 import services.obligationsandsubmissions.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
@@ -40,7 +41,8 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
     subscriptionLocalData = Some(someSubscriptionLocalData),
     userAnswers = Some(emptyUserAnswers)
   ).overrides(
-    bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+    bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+    bind[SubscriptionService].toInstance(mockSubscriptionService)
   ).build()
 
   lazy val view: DueAndOverdueReturnsView = application.injector.instanceOf[DueAndOverdueReturnsView]
@@ -50,6 +52,8 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
       "return OK and display the correct view for a GET with no returns" in {
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
           .thenReturn(Future.successful(emptyResponse))
+        when(mockSubscriptionService.getSubscriptionCache(any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(someSubscriptionLocalData))
 
         val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
         val result  = route(application, request).value
@@ -66,6 +70,8 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
       "return OK and display the correct view for a GET with due returns" in {
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
           .thenReturn(Future.successful(dueReturnsResponse))
+        when(mockSubscriptionService.getSubscriptionCache(any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(someSubscriptionLocalData))
 
         val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
         val result  = route(application, request).value
@@ -82,6 +88,8 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with MockitoSugar with
       "return OK and display the correct view for a GET with overdue returns" in {
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
           .thenReturn(Future.successful(overdueReturnsResponse))
+        when(mockSubscriptionService.getSubscriptionCache(any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(someSubscriptionLocalData))
 
         val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
         val result  = route(application, request).value

@@ -35,8 +35,8 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
   ).withCssClass("govuk-!-margin-bottom-9")
 
   val page: CheckYourAnswersView = inject[CheckYourAnswersView]
-  def view(summaryList: SummaryList = summaryListCYA()): Document =
-    Jsoup.parse(page(summaryList)(request, appConfig, realMessagesApi.preferred(request)).toString())
+  def view(summaryList: SummaryList = summaryListCYA(), isAgent: Boolean = false): Document =
+    Jsoup.parse(page(summaryList, isAgent, "orgName")(request, appConfig, realMessagesApi.preferred(request)).toString())
 
   "CheckYourAnswersView" must {
 
@@ -204,5 +204,8 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       view().getElementsByClass("govuk-button").text mustEqual "Confirm and submit"
     }
 
+    "have a caption displaying the organisation name for an agent view" in {
+      view(isAgent = true).getElementsByClass("govuk-caption-m").text must include("orgName")
+    }
   }
 }
