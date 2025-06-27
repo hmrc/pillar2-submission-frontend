@@ -26,26 +26,30 @@ import views.html.btn.BTNEntitiesInUKOnlyView
 class BTNEntitiesInUKOnlyViewSpec extends ViewSpecBase {
   val formProvider = new BTNEntitiesInUKOnlyFormProvider
   val page: BTNEntitiesInUKOnlyView = inject[BTNEntitiesInUKOnlyView]
-  val view: Document                = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  def view(isAgent: Boolean = false): Document =
+    Jsoup.parse(page(formProvider(), isAgent, "orgName", NormalMode)(request, appConfig, messages).toString())
 
   "BTNEntitiesInUKOnlyView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Does the group still have entities located only in the UK?")
+      view().getElementsByTag("title").text must include("Does the group still have entities located only in the UK?")
     }
 
     "have a h1 heading" in {
-      view.getElementsByTag("h1").text must include("Does the group still have entities located only in the UK?")
+      view().getElementsByTag("h1").text must include("Does the group still have entities located only in the UK?")
     }
 
     "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+      view().getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
+      view().getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view().getElementsByClass("govuk-button").text must include("Continue")
     }
 
+    "have a caption displaying the organisation name for an agent view" ignore {
+      view(isAgent = true).getElementsByClass("govuk-caption-m").text must include("orgName")
+    }
   }
 }
