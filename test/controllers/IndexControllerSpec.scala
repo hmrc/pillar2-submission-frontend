@@ -26,7 +26,6 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
-import views.html.IndexView
 
 import scala.concurrent.Future
 
@@ -34,23 +33,6 @@ class IndexControllerSpec extends SpecBase {
   type RetrievalsType = Option[AffinityGroup] ~ Enrolments
 
   "Index Controller" when {
-
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[IndexView]
-
-        status(result) mustEqual OK
-
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
-      }
-    }
 
     "redirect Organisation to index controller" in {
       val enrolments: Set[Enrolment] = Set(
@@ -69,12 +51,12 @@ class IndexControllerSpec extends SpecBase {
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
           .thenReturn(Future.successful(Some(Organisation) ~ Enrolments(enrolments)))
 
-        val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.IndexController.onPageLoad.url
+        redirectLocation(result).value mustBe appConfig.pillar2FrontendUrlHomepage
       }
     }
 
@@ -87,7 +69,7 @@ class IndexControllerSpec extends SpecBase {
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
           .thenReturn(Future.successful(Some(Agent) ~ pillar2AgentEnrolment))
 
-        val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
 
         val result = route(application, request).value
 
@@ -105,7 +87,7 @@ class IndexControllerSpec extends SpecBase {
         when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
           .thenReturn(Future.successful(Some(Individual) ~ Enrolments(Set.empty)))
 
-        val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
 
         val result = route(application, request).value
 
