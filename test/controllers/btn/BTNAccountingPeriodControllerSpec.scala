@@ -241,11 +241,11 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         rows = Seq(
           SummaryListRowViewModel(
             "btn.returnSubmitted.startAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(LocalDate.now))))
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(localDateFrom))))
           ),
           SummaryListRowViewModel(
             "btn.returnSubmitted.endAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(LocalDate.now.plusYears(1)))))
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(localDateTo))))
           )
         )
       )
@@ -262,7 +262,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
       when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-        .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
+        .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse().success))
 
       running(application) {
         val request = FakeRequest(GET, btnAccountingPeriodRoute)

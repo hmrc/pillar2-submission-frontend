@@ -69,8 +69,7 @@ class BTNBeforeStartController @Inject() (
           case Some(subscriptionData) =>
             multipleAccountingPeriods(
               subscriptionData.subAccountingPeriod,
-              subscriptionData.plrReference,
-              subscriptionData.accountStatus.forall(_.inactive)
+              subscriptionData.plrReference
             ).map { hasMultipleAccountingPeriods =>
               Ok(view(request.isAgent, hasMultipleAccountingPeriods, mode))
             }
@@ -84,15 +83,12 @@ class BTNBeforeStartController @Inject() (
 
   private def multipleAccountingPeriods(
     subAccountPeriod: AccountingPeriod,
-    pillar2Id:        String,
-    accountStatus:    Boolean
+    pillar2Id:        String
   )(implicit hc:      HeaderCarrier): Future[Boolean] = {
     val now: LocalDate = LocalDate.now()
 
     obligationsAndSubmissionsService
       .handleData(pillar2Id, subAccountPeriod.startDate, now)
-      .map { success =>
-        !accountStatus && filteredAccountingPeriodDetails(success.accountingPeriodDetails).size > 1
-      }
+      .map(success => filteredAccountingPeriodDetails(success.accountingPeriodDetails).size > 1)
   }
 }
