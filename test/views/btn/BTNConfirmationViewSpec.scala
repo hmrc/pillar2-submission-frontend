@@ -50,7 +50,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       groupView.getElementsByTag("h2").text() must include("What happens next")
     }
 
-    "in a group flow have paragraph content" in {
+    "in a group flow have paragraph content and a link" in {
       groupView.text() must include(
         s"You have submitted a Below-Threshold Notification on $currentDate."
       )
@@ -66,9 +66,12 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       groupView.text() must include(
         "The group must submit a UK Tax Return if your group meets the threshold"
       )
+
+      groupView.text()   must include("Back to group’s homepage")
+      groupView.toString must include(appConfig.pillar2FrontendUrlHomepage)
     }
 
-    "in an agent flow have paragraph content with company name" in {
+    "in an agent flow have paragraph content (containing company name) and a link" in {
       agentView.text() must include(
         s"You have submitted a Below-Threshold Notification for $companyName on $currentDate."
       )
@@ -76,11 +79,9 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       agentView.text() must include(
         s"This is effective from the start of the accounting period you selected, $startDate."
       )
-    }
 
-    "have links" in {
-      groupView.text()   must include("Back to group")
-      groupView.toString must include("/report-pillar2-top-up-taxes")
+      agentView.text()   must include("Back to group’s homepage")
+      agentView.toString must include(appConfig.pillar2FrontendUrlHomepage)
     }
   }
 }
