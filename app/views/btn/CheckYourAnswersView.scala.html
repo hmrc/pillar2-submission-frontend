@@ -31,7 +31,7 @@
 )
 @(list: SummaryList, isAgent: Boolean, organisationName: String)(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title")), serviceBannerClickable = false) {
+@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title")), serviceBannerClickable = true) {
  @formHelper(action = controllers.btn.routes.CheckYourAnswersController.onSubmit) {
 
  @if(isAgent) {
