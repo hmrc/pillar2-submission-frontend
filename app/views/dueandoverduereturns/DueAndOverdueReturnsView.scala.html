@@ -92,7 +92,13 @@
                                 TableRow(content = Text(messages(s"dueAndOverdueReturns.obligationType.${obligation.obligationType}"))),
                                 TableRow(content = Text(period.dueDate.format(dateFormatter))),
                                 TableRow(content = 
-                                    if(period.dueDate.isBefore(LocalDate.now())) {
+                                    if(obligation.submissions.nonEmpty) {
+                                        HtmlContent(
+                                            s"""<p class="govuk-tag govuk-tag--yellow">
+                                                ${messages("dueAndOverdueReturns.status.incomplete")}
+                                            </p>"""
+                                        )
+                                    } else if(period.dueDate.isBefore(LocalDate.now())) {
                                         HtmlContent(
                                             s"""<p class="govuk-tag govuk-tag--red">
                                                 ${messages("dueAndOverdueReturns.status.overdue")}
