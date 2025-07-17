@@ -94,19 +94,19 @@
                                 TableRow(content = 
                                     if(obligation.submissions.nonEmpty) {
                                         HtmlContent(
-                                            s"""<p class="govuk-tag" style="background-color: #e9d5ff; color: #7c3aed;">
+                                            s"""<p class="govuk-tag govuk-tag--purple">
                                                 ${messages("dueAndOverdueReturns.status.incomplete")}
                                             </p>"""
                                         )
                                     } else if(period.dueDate.isBefore(LocalDate.now())) {
                                         HtmlContent(
-                                            s"""<p class="govuk-tag" style="background-color: #fecaca; color: #dc2626;">
+                                            s"""<p class="govuk-tag govuk-tag--red">
                                                 ${messages("dueAndOverdueReturns.status.overdue")}
                                             </p>"""
                                         )
                                     } else {
                                         HtmlContent(
-                                            s"""<p class="govuk-tag" style="background-color: #bfdbfe; color: #1e40af;">
+                                            s"""<p class="govuk-tag govuk-tag--blue">
                                                 ${messages("dueAndOverdueReturns.status.due")}
                                             </p>"""
                                         )
