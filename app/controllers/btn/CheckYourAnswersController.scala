@@ -66,7 +66,6 @@ class CheckYourAnswersController @Inject() (
         } yield
           if (entitiesInOut) {
             val maybeAccountingPeriodDetails: Option[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage)
-            request.userAnswers.get(BTNChooseAccountingPeriodPage).isDefined
 
             val accountingPeriod: AccountingPeriod =
               maybeAccountingPeriodDetails
@@ -75,7 +74,7 @@ class CheckYourAnswersController @Inject() (
                   AccountingPeriod(
                     startDate = accountingPeriodDetails.startDate,
                     endDate = accountingPeriodDetails.endDate,
-                    duetDate = Some(accountingPeriodDetails.dueDate)
+                    dueDate = Some(accountingPeriodDetails.dueDate)
                   )
                 }
                 .getOrElse {

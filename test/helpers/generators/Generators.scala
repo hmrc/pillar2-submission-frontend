@@ -126,8 +126,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       for {
         startDate <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         endDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-        duetDate  <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-      } yield AccountingPeriod(startDate, endDate, Some(duetDate))
+        dueDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+      } yield AccountingPeriod(startDate, endDate, Some(dueDate))
     }
 
   implicit lazy val accountingPeriodDetailsArbitrary: Arbitrary[AccountingPeriodDetails] =
