@@ -23,6 +23,7 @@ import controllers.routes._
 import models.MneOrDomestic.Uk
 import models.audit.ApiResponseData
 import models.btn.{BTNRequest, BTNStatus}
+import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.subscription.AccountingPeriod
 import pages._
 import play.api.Logging
@@ -31,6 +32,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -63,10 +65,27 @@ class CheckYourAnswersController @Inject() (
           entitiesInOut <- userAnswers.get(EntitiesInsideOutsideUKPage)
         } yield
           if (entitiesInOut) {
-            val multipleAccountingPeriods = request.userAnswers.get(BTNChooseAccountingPeriodPage).isDefined
-            val summaryList = SummaryListViewModel(
+            val maybeAccountingPeriodDetails: Option[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage)
+            request.userAnswers.get(BTNChooseAccountingPeriodPage).isDefined
+
+            val accountingPeriod: AccountingPeriod =
+              maybeAccountingPeriodDetails
+                .map { accountingPeriodDetails =>
+                  logger.info("Using AccountingPeriod from User Answers.")
+                  AccountingPeriod(
+                    startDate = accountingPeriodDetails.startDate,
+                    endDate = accountingPeriodDetails.endDate,
+                    duetDate = Some(accountingPeriodDetails.dueDate)
+                  )
+                }
+                .getOrElse {
+                  logger.info("No AccountingPeriod in User Answers. Using SubscriptionLocalData.")
+                  request.subscriptionLocalData.subAccountingPeriod
+                }
+
+            val summaryList: SummaryList = SummaryListViewModel(
               rows = Seq(
-                SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod, multipleAccountingPeriods),
+                SubAccountingPeriodSummary.row(accountingPeriod, maybeAccountingPeriodDetails.isDefined),
                 BTNEntitiesInsideOutsideUKSummary.row(userAnswers, request.subscriptionLocalData.subMneOrDomestic == Uk)
               ).flatten
             ).withCssClass("govuk-!-margin-bottom-9")

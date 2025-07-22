@@ -51,6 +51,28 @@ trait TestDataFixture extends SubscriptionLocalDataFixture {
     ).flatten
   ).withCssClass("govuk-!-margin-bottom-9")
 
+  def buildAccountingPeriodDetails(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate): AccountingPeriodDetails =
+    AccountingPeriodDetails(
+      startDate = startDate,
+      endDate = endDate,
+      dueDate = dueDate,
+      underEnquiry = false,
+      obligations = Nil
+    )
+
+  def buildBtnUserAnswers(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate): UserAnswers =
+    UserAnswers("id")
+      .setOrException(BTNChooseAccountingPeriodPage, buildAccountingPeriodDetails(startDate, endDate, dueDate))
+      .setOrException(SubAccountingPeriodPage, AccountingPeriod(startDate, endDate))
+      .setOrException(EntitiesInsideOutsideUKPage, true)
+
+  def buildSummaryList(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate)(implicit messages: Messages): SummaryList = SummaryListViewModel(
+    rows = Seq(
+      SubAccountingPeriodSummary.row(AccountingPeriod(startDate, endDate), multipleAccountingPeriods = true),
+      BTNEntitiesInsideOutsideUKSummary.row(buildBtnUserAnswers(startDate, endDate, dueDate), ukOnly = true)
+    ).flatten
+  ).withCssClass("govuk-!-margin-bottom-9")
+
   def obligationsAndSubmissionsSuccessResponse(
     underEnquiry:   Boolean = false,
     obligationType: ObligationType = ObligationType.UKTR,
