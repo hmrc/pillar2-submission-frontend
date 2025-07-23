@@ -96,7 +96,6 @@ class BTNAccountingPeriodController @Inject() (
             case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Fulfilled) =>
               Ok(
                 viewReturnSubmitted(
-                  getSummaryList(period.startDate, period.endDate),
                   request.isAgent,
                   period
                 )
