@@ -237,23 +237,11 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for return submitted page" in {
-      val list = SummaryListViewModel(
-        rows = Seq(
-          SummaryListRowViewModel(
-            "btn.returnSubmitted.startAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(LocalDate.now))))
-          ),
-          SummaryListRowViewModel(
-            "btn.returnSubmitted.endAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(LocalDate.now.plusYears(1)))))
-          )
-        )
-      )
 
       val accountingPeriodDetails = AccountingPeriodDetails(
-        LocalDate.now().minusYears(1),
         LocalDate.now(),
         LocalDate.now().plusYears(1),
+        LocalDate.now().plusYears(2),
         underEnquiry = false,
         Seq(Obligation(UKTR, Fulfilled, canAmend = true, Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None))))
       )
@@ -269,7 +257,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[BTNReturnSubmittedView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list, isAgent = false, accountingPeriodDetails)(
+        contentAsString(result) mustEqual view(isAgent = false, accountingPeriodDetails)(
           request,
           appConfig(application),
           messages(application)
