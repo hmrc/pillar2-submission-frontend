@@ -64,7 +64,4 @@ GET         /below-threshold-notification/confirmation                          
 GET         /below-threshold-notification/problem-with-service                    controllers.btn.BTNProblemWithServiceController.onPageLoad
 GET         /below-threshold-notification/confirmation/download-pdf               controllers.btn.BTNConfirmationController.onDownloadConfirmation
 
-GET         /submission-history                                                   controllers.submissionhistory.SubmissionHistoryController.onPageLoad
-GET         /due-and-overdue-returns                                              controllers.dueandoverduereturns.DueAndOverdueReturnsController.onPageLoad
-
 GET         /below-threshold-notification/processing-submission                   controllers.btn.BTNWaitingRoomController.onPageLoad
