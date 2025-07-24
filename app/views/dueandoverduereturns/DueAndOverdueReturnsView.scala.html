@@ -43,6 +43,42 @@
   )
 }
 
+@hasIncompleteReturns(period: AccountingPeriodDetails) = @{
+  if (period.dueDate.isBefore(LocalDate.now())) {
+    val uktrObligation = period.obligations.find(_.obligationType == ObligationType.UKTR)
+    val girObligation = period.obligations.find(_.obligationType == ObligationType.GIR)
+
+    (uktrObligation, girObligation) match {
+      case (Some(uktr), Some(gir)) =>
+        val uktrFulfilled = uktr.status == ObligationStatus.Fulfilled || uktr.submissions.nonEmpty
+        val girFulfilled = gir.status == ObligationStatus.Fulfilled || gir.submissions.nonEmpty
+        uktrFulfilled != girFulfilled
+
+      case (Some(uktr), None) =>
+        uktr.submissions.nonEmpty
+
+      case _ =>
+        false
+    }
+  } else {
+    false
+  }
+}
+
+@getObligationStatus(period: AccountingPeriodDetails, obligation: Obligation) = @{
+  if (hasIncompleteReturns(period)) {
+    if (obligation.submissions.nonEmpty) {
+      "incomplete"
+    } else {
+      "overdue"
+    }
+  } else if (period.dueDate.isBefore(LocalDate.now())) {
+    "overdue"
+  } else {
+    "due"
+  }
+}
+
 @layout(pageTitle = titleNoForm(messages("dueAndOverdueReturns.title"))) {
     @tableScrollStyles()
     
@@ -91,26 +127,19 @@
                             Seq(
                                 TableRow(content = Text(messages(s"dueAndOverdueReturns.obligationType.${obligation.obligationType}"))),
                                 TableRow(content = Text(period.dueDate.format(dateFormatter))),
-                                TableRow(content = 
-                                    if(obligation.submissions.nonEmpty) {
-                                        HtmlContent(
-                                            s"""<p class="govuk-tag govuk-tag--purple">
-                                                ${messages("dueAndOverdueReturns.status.incomplete")}
-                                            </p>"""
-                                        )
-                                    } else if(period.dueDate.isBefore(LocalDate.now())) {
-                                        HtmlContent(
-                                            s"""<p class="govuk-tag govuk-tag--red">
-                                                ${messages("dueAndOverdueReturns.status.overdue")}
-                                            </p>"""
-                                        )
-                                    } else {
-                                        HtmlContent(
-                                            s"""<p class="govuk-tag govuk-tag--blue">
-                                                ${messages("dueAndOverdueReturns.status.due")}
-                                            </p>"""
-                                        )
+                                TableRow(content = {
+                                    val status = getObligationStatus(period, obligation)
+                                    val (tagClass, statusMessage) = status match {
+                                        case "incomplete" => ("govuk-tag--purple", messages("dueAndOverdueReturns.status.incomplete"))
+                                        case "overdue" => ("govuk-tag--red", messages("dueAndOverdueReturns.status.overdue"))
+                                        case _ => ("govuk-tag--blue", messages("dueAndOverdueReturns.status.due"))
                                     }
+                                    HtmlContent(
+                                        s"""<p class="govuk-tag $tagClass">
+                                            $statusMessage
+                                        </p>"""
+                                    )
+                                }
                                 )
                             )
                             },

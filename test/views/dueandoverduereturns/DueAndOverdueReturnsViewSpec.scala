@@ -288,6 +288,169 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
       }
     }
 
+    "validate James's incomplete logic requirements" when {
+
+      "both UKTR and GIR are submitted (past due) - should show OVERDUE, not incomplete" must {
+        val bothSubmittedResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(
+            createAccountingPeriod(
+              dueDate = pastDueDate,
+              obligations = Seq(
+                Obligation(
+                  obligationType = ObligationType.UKTR,
+                  status = ObligationStatus.Open,
+                  canAmend = true,
+                  submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
+                ),
+                Obligation(
+                  obligationType = ObligationType.GIR,
+                  status = ObligationStatus.Open,
+                  canAmend = true,
+                  submissions = Seq(Submission(SubmissionType.GIR, ZonedDateTime.now(), None))
+                )
+              )
+            )
+          )
+        )
+
+        lazy val view: Document = Jsoup.parse(page(bothSubmittedResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+        "show both obligations as OVERDUE (not incomplete)" in {
+          val tables = view.select("table.govuk-table")
+          tables.size mustEqual 1
+          val rows = tables.select("tbody tr")
+          rows.size mustEqual 2
+
+          val uktrStatusTag = rows.get(0).select("td p.govuk-tag")
+          uktrStatusTag.text mustEqual "Overdue"
+          uktrStatusTag.attr("class") must include("govuk-tag--red")
+
+          val girStatusTag = rows.get(1).select("td p.govuk-tag")
+          girStatusTag.text mustEqual "Overdue"
+          girStatusTag.attr("class") must include("govuk-tag--red")
+        }
+      }
+
+      "neither UKTR nor GIR are submitted (past due) - should show OVERDUE, not incomplete" must {
+        val neitherSubmittedResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(
+            createAccountingPeriod(
+              dueDate = pastDueDate,
+              obligations = Seq(
+                createObligation(
+                  obligationType = ObligationType.UKTR,
+                  status = ObligationStatus.Open
+                ),
+                createObligation(
+                  obligationType = ObligationType.GIR,
+                  status = ObligationStatus.Open
+                )
+              )
+            )
+          )
+        )
+
+        lazy val view: Document = Jsoup.parse(page(neitherSubmittedResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+        "show both obligations as OVERDUE (not incomplete)" in {
+          val tables = view.select("table.govuk-table")
+          tables.size mustEqual 1
+          val rows = tables.select("tbody tr")
+          rows.size mustEqual 2
+
+          val uktrStatusTag = rows.get(0).select("td p.govuk-tag")
+          uktrStatusTag.text mustEqual "Overdue"
+          uktrStatusTag.attr("class") must include("govuk-tag--red")
+
+          val girStatusTag = rows.get(1).select("td p.govuk-tag")
+          girStatusTag.text mustEqual "Overdue"
+          girStatusTag.attr("class") must include("govuk-tag--red")
+        }
+      }
+
+      "GIR submitted but UKTR not submitted (past due) - should show INCOMPLETE" must {
+        val girSubmittedResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(
+            createAccountingPeriod(
+              dueDate = pastDueDate,
+              obligations = Seq(
+                createObligation(
+                  obligationType = ObligationType.UKTR,
+                  status = ObligationStatus.Open
+                ),
+                Obligation(
+                  obligationType = ObligationType.GIR,
+                  status = ObligationStatus.Open,
+                  canAmend = true,
+                  submissions = Seq(Submission(SubmissionType.GIR, ZonedDateTime.now(), None))
+                )
+              )
+            )
+          )
+        )
+
+        lazy val view: Document = Jsoup.parse(page(girSubmittedResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+        "show GIR as INCOMPLETE and UKTR as OVERDUE" in {
+          val tables = view.select("table.govuk-table")
+          tables.size mustEqual 1
+          val rows = tables.select("tbody tr")
+          rows.size mustEqual 2
+
+          val uktrStatusTag = rows.get(0).select("td p.govuk-tag")
+          uktrStatusTag.text mustEqual "Overdue"
+          uktrStatusTag.attr("class") must include("govuk-tag--red")
+
+          val girStatusTag = rows.get(1).select("td p.govuk-tag")
+          girStatusTag.text mustEqual "Incomplete"
+          girStatusTag.attr("class") must include("govuk-tag--purple")
+        }
+      }
+
+      "obligations with future due date - should show DUE regardless of submissions" must {
+        val futureDueResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(
+            createAccountingPeriod(
+              dueDate = futureDueDate,
+              obligations = Seq(
+                Obligation(
+                  obligationType = ObligationType.UKTR,
+                  status = ObligationStatus.Open,
+                  canAmend = true,
+                  submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
+                ),
+                createObligation(
+                  obligationType = ObligationType.GIR,
+                  status = ObligationStatus.Open
+                )
+              )
+            )
+          )
+        )
+
+        lazy val view: Document = Jsoup.parse(page(futureDueResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+        "show both obligations as DUE (blue)" in {
+          val tables = view.select("table.govuk-table")
+          tables.size mustEqual 1
+          val rows = tables.select("tbody tr")
+          rows.size mustEqual 2
+
+          val uktrStatusTag = rows.get(0).select("td p.govuk-tag")
+          uktrStatusTag.text mustEqual "Due"
+          uktrStatusTag.attr("class") must include("govuk-tag--blue")
+
+          val girStatusTag = rows.get(1).select("td p.govuk-tag")
+          girStatusTag.text mustEqual "Due"
+          girStatusTag.attr("class") must include("govuk-tag--blue")
+        }
+      }
+    }
+
     "displaying agent-specific content" when {
       "there are no returns" must {
         lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, true)(request, appConfig, messages).toString())
