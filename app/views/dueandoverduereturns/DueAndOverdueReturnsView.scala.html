@@ -160,7 +160,7 @@
             } else {
                 @messages("dueAndOverdueReturns.submissionHistory.description1")
             }
-            <a href="@controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad" class="govuk-link">@messages("dueAndOverdueReturns.submissionHistory.link")</a>
+            <a href="@{appConfig.pillar2FrontendUrl}/submission-history" class="govuk-link">@messages("dueAndOverdueReturns.submissionHistory.link")</a>
             @messages("dueAndOverdueReturns.submissionHistory.description2")
         </p>
     }
