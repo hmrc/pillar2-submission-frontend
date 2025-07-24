@@ -66,14 +66,16 @@
 }
 
 @getObligationStatus(period: AccountingPeriodDetails, obligation: Obligation) = @{
-  if (hasIncompleteReturns(period)) {
-    if (obligation.submissions.nonEmpty) {
-      "incomplete"
+  if (period.dueDate.isBefore(LocalDate.now())) {
+    if (hasIncompleteReturns(period)) {
+      if (obligation.submissions.nonEmpty) {
+        "incomplete"
+      } else {
+        "overdue"
+      }
     } else {
       "overdue"
     }
-  } else if (period.dueDate.isBefore(LocalDate.now())) {
-    "overdue"
   } else {
     "due"
   }

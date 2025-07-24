@@ -434,7 +434,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
 
         lazy val view: Document = Jsoup.parse(page(futureDueResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
 
-        "show both obligations as DUE (blue)" in {
+        "show both obligations as DUE (blue) even with submissions present" in {
           val tables = view.select("table.govuk-table")
           tables.size mustEqual 1
           val rows = tables.select("tbody tr")
