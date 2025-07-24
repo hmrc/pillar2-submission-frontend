@@ -19,20 +19,18 @@
 @import java.time.LocalDate
 @import models.obligationsandsubmissions.AccountingPeriodDetails
 @import views.html.components.gds._
-@import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
         p: ParagraphBody,
         heading: Heading,
-        govukSummaryList: GovukSummaryList,
         govukInsetText: GovukInsetText,
         paragraphMessageWithLink: ParagraphMessageWithLink,
         formHelper: FormWithCSRF
 )
 
-@(list: SummaryList, isAgent: Boolean, accountingPeriodDetails: AccountingPeriodDetails)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(isAgent: Boolean, accountingPeriodDetails: AccountingPeriodDetails)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @formatDate = @{DateTimeFormatter.ofPattern("d MMMM yyyy")}
 
@@ -40,26 +38,26 @@
     pageTitle = if(isAgent) {
         titleNoForm(messages("btn.returnSubmitted.agent.title", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)))
     } else {
-        titleNoForm(messages("btn.returnSubmitted.title"))
+        titleNoForm(messages("btn.returnSubmitted.title", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)))
     }
 ) {
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
         @if(isAgent) {
             @heading(messages("btn.returnSubmitted.agent.heading", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)), classes = "govuk-heading-l")
         } else {
-            @heading(messages("btn.returnSubmitted.heading"), classes = "govuk-heading-l")
+            @heading(messages("btn.returnSubmitted.heading", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)), classes = "govuk-heading-l")
         }
 
         @if(isAgent) {
             @p(messages("btn.returnSubmitted.agent.p1"))
         } else {
-            @govukSummaryList(list)
+            @p(messages("btn.returnSubmitted.p1"))
         }
 
         @if(isAgent) {
             @govukInsetText(InsetText(content = Text(messages("btn.returnSubmitted.agent.insetText"))))
         } else {
-            @p(messages("btn.returnSubmitted.p1"))
+            @govukInsetText(InsetText(content = Text(messages("btn.returnSubmitted.insetText"))))
         }
 
         @govukButton(

@@ -23,26 +23,12 @@ import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, Submission}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
 import views.html.btn.BTNReturnSubmittedView
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 
 class BTNReturnSubmittedViewSpec extends ViewSpecBase {
-  val list: SummaryList = SummaryListViewModel(
-    rows = Seq(
-      SummaryListRowViewModel("btn.returnSubmitted.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2024")))),
-      SummaryListRowViewModel(
-        "btn.returnSubmitted.endAccountDate",
-        value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2025").toString))
-      )
-    )
-  )
 
   val accountingPeriodStartDate: LocalDate = LocalDate.now().minusYears(1)
   val accountingPeriodEndDate:   LocalDate = LocalDate.now()
@@ -59,27 +45,31 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
   val formattedEndDate:   String = accountingPeriodEndDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
 
   val page: BTNReturnSubmittedView = inject[BTNReturnSubmittedView]
-  def view(isAgent: Boolean = false): Document = Jsoup.parse(page(list, isAgent, accountingPeriodDetails)(request, appConfig, messages).toString())
+  def view(isAgent: Boolean = false): Document = Jsoup.parse(page(isAgent, accountingPeriodDetails)(request, appConfig, messages).toString())
 
   "BTNAccountingPeriodView" when {
     "it's an organisation" should {
       "have a title" in {
-        view().getElementsByTag("title").text must include("Your group has already submitted a UK Tax Return for this accounting period")
+        view().getElementsByTag("title").text must include(
+          s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
+        )
       }
 
       "have a h1 heading" in {
-        view().getElementsByTag("h1").text must include("Your group has already submitted a UK Tax Return for this accounting period")
+        view().getElementsByTag("h1").text must include(
+          s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
+        )
       }
 
-      "have following content" in {
-        view().getElementsByClass("govuk-summary-list__key").text must include(
-          "Start date of accounting period"
-        )
-        view().getElementsByClass("govuk-summary-list__key").text must include(
-          "End date of accounting period"
-        )
+      "have a paragraph" in {
         view().getElementsByClass("govuk-body").text must include(
-          "If you continue, the Below-Threshold Notification you submit will replace the UK Tax Return you previously submitted for this accounting period."
+          "By continuing, your UK Tax Return will be replaced for this period."
+        )
+      }
+
+      "have an inset text" in {
+        view().getElementsByClass("govuk-inset-text").text must include(
+          "If you need to submit a UK Tax Return for this accounting period you do not qualify for a Below-Threshold Notification."
         )
       }
 
