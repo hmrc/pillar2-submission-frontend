@@ -21,8 +21,10 @@ import helpers.DueAndOverdueReturnsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
+import models.obligationsandsubmissions._
 
 import java.time.format.DateTimeFormatter
+import java.time.ZonedDateTime
 
 class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturnsDataFixture {
 
@@ -227,6 +229,62 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturn
         secondTableStatusTags.get(0).attr("class") must include("govuk-tag--blue")
         secondTableStatusTags.get(1).text mustEqual "Due"
         secondTableStatusTags.get(1).attr("class") must include("govuk-tag--blue")
+      }
+    }
+
+    "there are incomplete returns (with submissions)" must {
+
+      val incompleteReturnsResponse: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+        processingDate = ZonedDateTime.now(),
+        accountingPeriodDetails = Seq(
+          createAccountingPeriod(
+            dueDate = pastDueDate,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.UKTR,
+                status = ObligationStatus.Open,
+                canAmend = true,
+                submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
+              ),
+              createObligation(
+                obligationType = ObligationType.GIR,
+                status = ObligationStatus.Open
+              )
+            )
+          )
+        )
+      )
+
+      lazy val view: Document = Jsoup.parse(page(incompleteReturnsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+
+      "display the common page elements" in {
+        verifyCommonPageElements(view)
+      }
+
+      "show a table with properly formatted incomplete and overdue returns" in {
+        val tables = view.select("table.govuk-table")
+        tables.size mustEqual 1
+
+        verifyTableHeaders(tables)
+
+        val rows = tables.select("tbody tr")
+        rows.size mustEqual 2
+
+        val uktrCells = rows.get(0).select("td")
+        uktrCells.get(0).text mustEqual "UK Tax Return"
+        uktrCells.get(1).text mustEqual pastDueDate.format(dateFormatter)
+
+        val uktrStatusTag = rows.get(0).select("td p.govuk-tag")
+        uktrStatusTag.text mustEqual "Incomplete"
+        uktrStatusTag.attr("class") must include("govuk-tag--purple")
+
+        val girCells = rows.get(1).select("td")
+        girCells.get(0).text mustEqual "Information return"
+        girCells.get(1).text mustEqual pastDueDate.format(dateFormatter)
+
+        val girStatusTag = rows.get(1).select("td p.govuk-tag")
+        girStatusTag.text mustEqual "Overdue"
+        girStatusTag.attr("class") must include("govuk-tag--red")
       }
     }
 
