@@ -38,7 +38,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import viewmodels.govuk.SummaryListFluency
 import views.html.btn.CheckYourAnswersView
 
-import java.time.ZonedDateTime
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.{Future, Promise}
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar {
@@ -48,7 +48,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   override val mockAuditService:      AuditService      = mock[AuditService]
 
   def application: Application =
-    applicationBuilder(userAnswers = Option(UserAnswers("id", JsObject.empty)), subscriptionLocalData = Some(someSubscriptionLocalData))
+    applicationBuilder(userAnswers = Option(UserAnswers(userAnswersId, JsObject.empty)), subscriptionLocalData = Some(someSubscriptionLocalData))
       .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
       .overrides(bind[BTNService].toInstance(mockBTNService))
       .overrides(bind[AuditService].toInstance(mockAuditService))
@@ -61,7 +61,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     ".onPageLoad" should {
 
       "must return OK and the correct view for a GET" in {
-
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(validBTNCyaUa)))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
@@ -75,6 +74,36 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(btnCyaSummaryList, isAgent = false, "orgName")(
+            request,
+            appConfig(application),
+            messages(application)
+          ).toString
+        }
+      }
+
+      "must return OK with the correct view showing the user-selected Accounting Period" in {
+        lazy val testLocalDateFrom: LocalDate   = LocalDate.of(2024, 11, 30)
+        lazy val testLocalDateTo:   LocalDate   = testLocalDateFrom.plusYears(1)
+        lazy val testUserAnswers:   UserAnswers = buildBtnUserAnswers(testLocalDateFrom, testLocalDateTo, testLocalDateTo.plusMonths(3))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswers)))
+
+        def application: Application =
+          applicationBuilder(userAnswers = Some(testUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
+
+        running(application) {
+          val request = FakeRequest(GET, CheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[CheckYourAnswersView]
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(
+            buildSummaryList(testLocalDateFrom, testLocalDateTo, testLocalDateTo.plusMonths(2)),
+            isAgent = false,
+            "orgName"
+          )(
             request,
             appConfig(application),
             messages(application)
