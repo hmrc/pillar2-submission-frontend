@@ -34,7 +34,6 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
     bind(classOf[DataRequiredAction]).to(classOf[DataRequiredActionImpl]).asEagerSingleton()
     bind(classOf[SubscriptionDataRetrievalAction]).to(classOf[SubscriptionDataRetrievalActionImpl]).asEagerSingleton()
     bind(classOf[SubscriptionDataRequiredAction]).to(classOf[SubscriptionDataRequiredActionImpl]).asEagerSingleton()
-    bind(classOf[ObligationsAndSubmissionsDataRetrievalAction]).to(classOf[ObligationsAndSubmissionsDataRetrievalActionImpl]).asEagerSingleton()
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[IdentifierAction]).annotatedWith(Names.named("EnrolmentIdentifier")).to(classOf[EnrolmentIdentifierAction]).asEagerSingleton()

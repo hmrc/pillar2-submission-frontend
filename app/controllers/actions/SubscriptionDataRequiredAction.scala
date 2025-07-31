@@ -20,7 +20,6 @@ import models.requests.{OptionalSubscriptionDataRequest, SubscriptionDataRequest
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-import utils.JourneyCheck
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,11 +49,7 @@ class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContex
         Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       case (None, _, _) =>
         logger.warn(s"subscription data not found")
-        if (JourneyCheck.isBTNJourney(request.path)) {
-          Future.successful(Left(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)))
-        } else {
-          Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-        }
+        Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       case (_, _, None) =>
         logger.warn(s"organisation name not found")
         Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
