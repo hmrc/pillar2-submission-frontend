@@ -16,96 +16,12 @@
 
 package helpers
 
-import models.btn.BTNStatus
-import models.obligationsandsubmissions.ObligationStatus.Fulfilled
-import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
-import models.obligationsandsubmissions._
 import models.subscription._
-import models.{MneOrDomestic, NonUKAddress, UserAnswers}
-import pages._
-import play.api.i18n.Messages
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.checkAnswers._
-import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
+import models.{MneOrDomestic, NonUKAddress}
 
-import java.time.temporal.ChronoUnit
-import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
+import java.time.LocalDate
 
-trait TestDataFixture extends SubscriptionLocalDataFixture {
-
-  lazy val testZonedDateTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
-
-  lazy val obligationsAndSubmissionsSuccessResponseJson: JsValue = Json.toJson(obligationsAndSubmissionsSuccessResponse().success)
-
-  lazy val submittedBTNRecord: UserAnswers = validBTNCyaUa.set(BTNStatus, BTNStatus.submitted).get
-
-  lazy val validBTNCyaUa: UserAnswers = UserAnswers("id")
-    .setOrException(SubAccountingPeriodPage, accountingPeriod)
-    .setOrException(EntitiesInsideOutsideUKPage, true)
-
-  def btnCyaSummaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(
-    rows = Seq(
-      SubAccountingPeriodSummary.row(accountingPeriod, multipleAccountingPeriods = false),
-      BTNEntitiesInsideOutsideUKSummary.row(validBTNCyaUa, ukOnly = true)
-    ).flatten
-  ).withCssClass("govuk-!-margin-bottom-9")
-
-  def buildAccountingPeriodDetails(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate): AccountingPeriodDetails =
-    AccountingPeriodDetails(
-      startDate = startDate,
-      endDate = endDate,
-      dueDate = dueDate,
-      underEnquiry = false,
-      obligations = Nil
-    )
-
-  def buildBtnUserAnswers(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate): UserAnswers =
-    UserAnswers("id")
-      .setOrException(BTNChooseAccountingPeriodPage, buildAccountingPeriodDetails(startDate, endDate, dueDate))
-      .setOrException(SubAccountingPeriodPage, AccountingPeriod(startDate, endDate))
-      .setOrException(EntitiesInsideOutsideUKPage, true)
-
-  def buildSummaryList(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate)(implicit messages: Messages): SummaryList = SummaryListViewModel(
-    rows = Seq(
-      SubAccountingPeriodSummary.row(AccountingPeriod(startDate, endDate), multipleAccountingPeriods = true),
-      BTNEntitiesInsideOutsideUKSummary.row(buildBtnUserAnswers(startDate, endDate, dueDate), ukOnly = true)
-    ).flatten
-  ).withCssClass("govuk-!-margin-bottom-9")
-
-  def obligationsAndSubmissionsSuccessResponse(
-    underEnquiry:   Boolean = false,
-    obligationType: ObligationType = ObligationType.UKTR,
-    status:         ObligationStatus = Fulfilled,
-    canAmend:       Boolean = true,
-    submissionType: SubmissionType = UKTR_CREATE,
-    receivedDate:   ZonedDateTime = testZonedDateTime,
-    country:        Option[String] = None
-  ): ObligationsAndSubmissionsSuccessResponse =
-    ObligationsAndSubmissionsSuccessResponse(
-      ObligationsAndSubmissionsSuccess(
-        processingDate = testZonedDateTime,
-        accountingPeriodDetails = Seq(
-          AccountingPeriodDetails(
-            startDate = localDateFrom,
-            endDate = localDateTo,
-            dueDate = localDateTo.plusMonths(10),
-            underEnquiry = underEnquiry,
-            obligations = Seq(
-              Obligation(
-                obligationType = obligationType,
-                status = status,
-                canAmend = canAmend,
-                submissions = Seq(
-                  Submission(submissionType = submissionType, receivedDate = receivedDate, country = country)
-                )
-              )
-            )
-          )
-        )
-      )
-    )
-}
+trait TestDataFixture extends SubscriptionLocalDataFixture
 
 trait SubscriptionLocalDataFixture {
   lazy val localDateFrom: LocalDate = LocalDate.of(2024, 10, 24)

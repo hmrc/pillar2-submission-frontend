@@ -17,7 +17,6 @@
 package navigation
 
 import base.SpecBase
-import controllers.btn.routes._
 import controllers.routes._
 import models._
 import pages._
@@ -34,15 +33,6 @@ class NavigatorSpec extends SpecBase {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe IndexController.onPageLoad
-      }
-    }
-
-    "in Check mode" when {
-
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
-
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe CheckYourAnswersController.onPageLoad
       }
     }
   }

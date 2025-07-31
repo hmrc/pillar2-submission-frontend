@@ -16,7 +16,6 @@
 
 package navigation
 
-import controllers.btn
 import controllers.routes
 import models._
 import pages._
@@ -31,14 +30,8 @@ class Navigator @Inject() () {
     _ => routes.IndexController.onPageLoad
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = { case _ =>
-    _ => btn.routes.CheckYourAnswersController.onPageLoad
-  }
-
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
       normalRoutes(page)(userAnswers)
-    case CheckMode =>
-      checkRouteMap(page)(userAnswers)
   }
 }

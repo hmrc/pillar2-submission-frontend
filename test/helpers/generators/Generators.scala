@@ -16,11 +16,9 @@
 
 package helpers.generators
 
-import models.obligationsandsubmissions.AccountingPeriodDetails
-import models.subscription.AccountingPeriod
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
-import org.scalacheck.{Arbitrary, Gen, Shrink}
+import org.scalacheck.{Gen, Shrink}
 import wolfendale.scalacheck.regexp.RegexpGen
 
 import java.time.{Instant, LocalDate, ZoneOffset}
@@ -120,23 +118,5 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     regexGen
       .suchThat(s => s.trim.nonEmpty && s.length <= maxLength)
   }
-
-  implicit lazy val accountingPeriodArbitrary: Arbitrary[AccountingPeriod] =
-    Arbitrary {
-      for {
-        startDate <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-        endDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-        dueDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-      } yield AccountingPeriod(startDate, endDate, Some(dueDate))
-    }
-
-  implicit lazy val accountingPeriodDetailsArbitrary: Arbitrary[AccountingPeriodDetails] =
-    Arbitrary {
-      for {
-        startDate <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-        endDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-        dueDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-      } yield new AccountingPeriodDetails(startDate, endDate, dueDate, false, Seq.empty)
-    }
 
 }
